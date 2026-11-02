@@ -215,7 +215,7 @@ A definition-style table: Annotation Grey row labels at 9.5em, values in ink, 10
 Columns of ref (mono, grey, 5.5em), title (semi-bold link, no wrapping on desktop), then constraint, safeguard and result. Header is Label type in grey over an ink rule; rows are separated by hairlines. On a phone each row becomes a stack with small uppercase labels from `data-k`.
 
 ### Movement drawing (signature)
-An exploded line drawing of a watch movement with five numbered callouts, one per work area, set in a `figure` with a grey caption. Hovering or focusing a callout colours its part and leader active; on a work page the chosen part lifts, the rest fade to 10% and the callouts leave the tab order. All motion is 0.25s to 0.7s on the `cubic-bezier(.16, 1, .3, 1)` curve and is removed under `prefers-reduced-motion`.
+An exploded line drawing of a watch movement with five numbered callouts, one per work area, set in a `figure` with no caption. Hovering or focusing a callout colours its part and leader active; on a work page the chosen part lifts, the rest fade to 10% and the callouts leave the tab order. All motion is 0.25s to 0.7s on the `cubic-bezier(.16, 1, .3, 1)` curve and is removed under `prefers-reduced-motion`.
 
 ### Area detail list
 An ordered list of records with a mono ref in a 5.5em column, a semi-bold link and Constraint, Safeguard and Result lines introduced by small uppercase labels; hairlines above and below.
