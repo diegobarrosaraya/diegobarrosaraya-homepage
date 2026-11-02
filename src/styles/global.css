@@ -28,3 +28,32 @@ a:hover { color: var(--steel-hi); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* Shared page layout: the two-column hero (home and work areas) and sheet sections. */
+.hero {
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 40px;
+  padding: 34px 0 30px; border-bottom: 1px solid var(--rule);
+}
+section.block { padding: 30px 0 34px; border-bottom: 1px solid var(--rule); }
+section.block > h2 {
+  font: 700 15px/1 var(--font-label); letter-spacing: .12em; text-transform: uppercase;
+  margin: 0 0 18px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline;
+}
+section.block > h2 .mono { color: var(--ink-2); font-weight: 400; }
+section.block > h2 small {
+  margin-left: auto; font: 400 14px var(--font-body); letter-spacing: 0; text-transform: none; color: var(--ink-2);
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+  font: 600 15px/1 var(--font-label); letter-spacing: .08em; text-transform: uppercase;
+  padding: 14px 18px; border: 1px solid var(--steel); color: var(--steel);
+  transition: background-color .2s, color .2s, box-shadow .2s;
+}
+.btn.primary { background: var(--steel); color: var(--ground); box-shadow: var(--btn-glow); }
+.btn:hover { background: var(--steel-hi); border-color: var(--steel-hi); color: var(--ground); box-shadow: var(--btn-glow); }
+.btn svg { width: 14px; height: 14px; }
+
+@media (max-width: 880px) {
+  .hero { grid-template-columns: 1fr; gap: 26px; }
+  section.block > h2 small { margin-left: 0; width: 100%; }
+}

@@ -1,0 +1,218 @@
+---
+// Exploded view of the movement, generated at build time so the page ships a static SVG.
+// Geometry ported from the approved mockup (caliber-mockup.html). Placeholder drawing until traced from a real watch.
+import { AREAS, type AreaSlug, type PartId } from '../data/work';
+
+export interface Props { focus?: AreaSlug }
+const { focus } = Astro.props;
+const focusPart = focus ? AREAS.find((a) => a.slug === focus)?.part : undefined;
+
+type Shape =
+  | { El: 'path'; d: string; class?: string; 'stroke-width'?: number; 'stroke-dasharray'?: string }
+  | { El: 'circle'; cx?: number; cy?: number; r: number; class?: string }
+  | { El: 'line'; x1: number; y1: number; x2: number; y2: number };
+
+const f = (n: number) => n.toFixed(2);
+const pt = (a: number, r: number) => `${f(Math.cos(a) * r)} ${f(Math.sin(a) * r)}`;
+
+const gearPath = (r: number, teeth: number, depth: number) => {
+  let d = '';
+  for (let i = 0; i < teeth; i++) {
+    const a = (i / teeth) * Math.PI * 2, s = (Math.PI * 2) / teeth;
+    const pts: [number, number][] = [[a, r - depth], [a + s * 0.18, r], [a + s * 0.5, r], [a + s * 0.68, r - depth]];
+    pts.forEach(([t, rr], j) => { d += (i === 0 && j === 0 ? 'M' : 'L') + pt(t, rr) + ' '; });
+  }
+  return d + 'Z';
+};
+const spiral = (r0: number, r1: number, turns: number) => {
+  let d = '';
+  const steps = turns * 60;
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    d += (i ? 'L' : 'M') + pt(t * turns * Math.PI * 2, r0 + (r1 - r0) * t) + ' ';
+  }
+  return d;
+};
+const range = (n: number) => Array.from({ length: n }, (_, i) => i);
+
+const SQ = 0.46; // perspective squash of each disc
+
+// Drawn back to front: plate, barrel, train, escape wheel, balance.
+const parts: { id: PartId; x: number; y: number; shapes: Shape[]; sub?: { x: number; y: number; shapes: Shape[] } }[] = [
+  {
+    id: 'plate', x: 300, y: 520, shapes: [
+      { El: 'path', class: 'fill', d: 'M-210 -40 C-200 -150 -60 -175 40 -170 C150 -165 225 -110 215 -10 C205 90 120 165 -10 168 C-140 170 -220 70 -210 -40 Z' },
+      { El: 'path', 'stroke-dasharray': '1 4', d: 'M-196 -36 C-186 -138 -58 -160 40 -156 C142 -151 210 -102 201 -10 C192 82 112 152 -10 154 C-130 156 -206 62 -196 -36 Z' },
+      ...[[-100, -10], [72, -60], [18, 40], [-30, -90]].flatMap(([cx, cy]): Shape[] => [
+        { El: 'circle', cx, cy, r: 9 }, { El: 'circle', cx, cy, r: 3 },
+      ]),
+      ...[[-170, 40], [160, 60], [100, -130]].flatMap(([cx, cy]): Shape[] => [
+        { El: 'circle', cx, cy, r: 12 }, { El: 'line', x1: cx - 8, y1: cy, x2: cx + 8, y2: cy },
+      ]),
+    ],
+  },
+  {
+    id: 'barrel', x: 200, y: 400, shapes: [
+      { El: 'path', class: 'fill', d: gearPath(80, 84, 5) },
+      { El: 'circle', r: 66 },
+      { El: 'path', d: spiral(12, 60, 7), 'stroke-width': 0.8 },
+      { El: 'circle', r: 12 },
+    ],
+  },
+  {
+    id: 'train', x: 318, y: 268, shapes: [
+      { El: 'path', class: 'fill', d: gearPath(84, 80, 5) },
+      ...range(4).map((i): Shape => {
+        const a = (i * Math.PI) / 2 + 0.4;
+        return { El: 'path', d: `M${pt(a, 16)} L${pt(a, 70)} M${pt(a + 0.32, 16)} L${pt(a + 0.14, 70)}` };
+      }),
+      { El: 'circle', r: 70 },
+      { El: 'path', d: gearPath(14, 10, 4) },
+    ],
+    sub: {
+      x: 118, y: 18, shapes: [
+        { El: 'path', class: 'fill', d: gearPath(44, 50, 4) },
+        { El: 'circle', r: 34 },
+        { El: 'path', d: gearPath(9, 8, 3) },
+      ],
+    },
+  },
+  {
+    id: 'escape', x: 372, y: 160, shapes: [
+      { El: 'circle', class: 'fill', r: 36 },
+      {
+        El: 'path',
+        d: range(15).map((i) => {
+          const a = (i / 15) * Math.PI * 2;
+          return `M${pt(a, 34)} L${pt(a + 0.3, 50)} L${pt(a + 0.42, 36)}`;
+        }).join(' '),
+      },
+      { El: 'circle', r: 26 },
+      { El: 'circle', r: 6 },
+      ...range(5).map((i): Shape => {
+        const a = (i / 5) * Math.PI * 2;
+        return { El: 'line', x1: +f(Math.cos(a) * 6), y1: +f(Math.sin(a) * 6), x2: +f(Math.cos(a) * 26), y2: +f(Math.sin(a) * 26) };
+      }),
+    ],
+  },
+  {
+    id: 'balance', x: 200, y: 70, shapes: [
+      { El: 'circle', class: 'fill', r: 76 },
+      { El: 'circle', r: 64 },
+      ...range(3).map((i): Shape => {
+        const a = (i / 3) * Math.PI * 2 - Math.PI / 2;
+        return { El: 'line', x1: +f(Math.cos(a) * 8), y1: +f(Math.sin(a) * 8), x2: +f(Math.cos(a) * 64), y2: +f(Math.sin(a) * 64) };
+      }),
+      ...range(12).map((i): Shape => {
+        const a = (i / 12) * Math.PI * 2;
+        return { El: 'circle', cx: +f(Math.cos(a) * 70), cy: +f(Math.sin(a) * 70), r: 2.2 };
+      }),
+      { El: 'path', d: spiral(8, 46, 9), 'stroke-width': 0.7 },
+    ],
+  },
+];
+
+const axes = [[200, 70, 470], [372, 160, 470], [318, 268, 470]];
+
+// Callouts: part, anchor on the part, label position (final positions from the mockup's CALLS).
+const CALLS: { part: PartId; anchor: [number, number]; at: [number, number] }[] = [
+  { part: 'balance', anchor: [120, 52], at: [18, 28] },
+  { part: 'escape', anchor: [420, 160], at: [470, 118] },
+  { part: 'train', anchor: [236, 262], at: [18, 214] },
+  { part: 'barrel', anchor: [118, 400], at: [18, 340] },
+  { part: 'plate', anchor: [95, 515], at: [18, 598] },
+];
+const callouts = CALLS.map((c) => ({ ...c, area: AREAS.find((a) => a.part === c.part)! }));
+const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.number));
+---
+<figure class="drawing">
+  <svg
+    id="movement"
+    viewBox="0 0 600 600"
+    role="group"
+    aria-labelledby="mv-title"
+    data-focus={focus}
+    transition:persist="movement"
+  >
+    <title id="mv-title">Exploded view of a watch movement. Each part is labelled with an area of Diego's work.</title>
+    <g fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+      {axes.map(([x, y1, y2]) => <line class="axis" x1={x} y1={y1} x2={x} y2={y2} />)}
+      {parts.map((p) => (
+        <g class:list={['part', { focus: p.id === focusPart }]} data-part={p.id}>
+          <g transform={`translate(${p.x} ${p.y}) scale(1 ${SQ})`}>
+            {p.shapes.map(({ El, ...a }) => <El {...a} />)}
+            {p.sub && (
+              <g transform={`translate(${p.sub.x} ${p.sub.y})`}>
+                {p.sub.shapes.map(({ El, ...a }) => <El {...a} />)}
+              </g>
+            )}
+          </g>
+        </g>
+      ))}
+    </g>
+    <g class="callouts">
+      {callouts.map(({ part, anchor: [ax, ay], at: [lx, ly], area }) => (
+        <a class="callout" href={`/work/${area.slug}/`} data-part={part} aria-label={`${area.number} ${area.title}`}>
+          <path class="leader" d={`M${ax} ${ay} L${lx + 11} ${ly - 4}`} fill="none" stroke-width="1" />
+          <circle class="dot" cx={ax} cy={ay} r="2.4" />
+          <circle class="ring" cx={lx + 11} cy={ly - 4} r="11" stroke-width="1.1" />
+          <text class="num" x={lx + 11} y={ly} text-anchor="middle">{area.number}</text>
+          <text class="name" x={lx + 28} y={ly + 1}>{area.title}</text>
+        </a>
+      ))}
+    </g>
+  </svg>
+  <figcaption class="caption label">Fig. 1 · Exploded view</figcaption>
+  <ol class="callout-list" aria-label="Work areas">
+    {listed.map(({ area }) => (
+      <li><a href={`/work/${area.slug}/`}><span class="mono">{area.number}</span>{area.title}</a></li>
+    ))}
+  </ol>
+</figure>
+
+<style>
+  .drawing { margin: 0; position: relative; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .axis { stroke: var(--hair); stroke-dasharray: 2 5; transition: opacity .5s var(--ease); }
+  .part {
+    color: var(--ink);
+    transition: color .25s var(--ease), filter .25s, opacity .5s var(--ease), transform .7s var(--ease);
+  }
+  .part .fill { fill: var(--plate); }
+
+  .callout { color: var(--ink); cursor: pointer; }
+  .callout .name { fill: currentColor; font: 500 15px var(--font-body); }
+  .callout .num { fill: var(--ink-2); font: 500 12px var(--font-mono); }
+  .callout .ring { fill: var(--ground); stroke: currentColor; }
+  .callout .dot { fill: currentColor; }
+  .callout .leader { stroke: var(--hair); transition: stroke .25s; }
+  .callout:hover, .callout:focus-visible { color: var(--active); }
+  .callout:hover .leader, .callout:focus-visible .leader { stroke: var(--active); }
+  .callout:focus { outline: none; }
+  .callout:focus-visible .ring { stroke: var(--steel); stroke-width: 2.5; }
+
+  /* Hovering or focusing a callout lights its part. */
+  svg:has(.callout[data-part="train"]:is(:hover, :focus-visible)) .part[data-part="train"],
+  svg:has(.callout[data-part="barrel"]:is(:hover, :focus-visible)) .part[data-part="barrel"],
+  svg:has(.callout[data-part="escape"]:is(:hover, :focus-visible)) .part[data-part="escape"],
+  svg:has(.callout[data-part="balance"]:is(:hover, :focus-visible)) .part[data-part="balance"],
+  svg:has(.callout[data-part="plate"]:is(:hover, :focus-visible)) .part[data-part="plate"],
+  .part.focus {
+    color: var(--active); filter: var(--glow);
+  }
+  .part.focus { transform: translateY(-10px); }
+  svg[data-focus] .part:not(.focus), svg[data-focus] .axis { opacity: .1; }
+
+  .caption { color: var(--ink-2); margin-top: 10px; }
+  .callout-list { display: none; }
+
+  /* On a phone the in-drawing labels drop to about 9px: keep the numbers, list the labels below. */
+  @media (max-width: 880px) {
+    .callout .name { display: none; }
+    .callout-list { display: block; list-style: none; margin: 14px 0 0; padding: 0; }
+    .callout-list li { border-top: 1px solid var(--hair); }
+    .callout-list li:last-child { border-bottom: 1px solid var(--hair); }
+    .callout-list a { display: flex; gap: 12px; align-items: baseline; padding: 10px 0; text-decoration: none; }
+    .callout-list .mono { color: var(--ink-2); }
+  }
+</style>

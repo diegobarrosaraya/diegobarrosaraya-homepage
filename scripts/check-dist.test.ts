@@ -11,3 +11,12 @@ test('home page is built HTML, not the Vite source', () => {
 test('custom domain survives the build', () => {
   assert.equal(readFileSync('dist/CNAME', 'utf8').trim(), 'diegobarrosaraya.com');
 });
+
+test('home links every work area from the drawing', () => {
+  const html = readFileSync('dist/index.html', 'utf8');
+  for (const s of ['integrations', 'backend', 'agents', 'open-source', 'infrastructure'])
+    assert.match(html, new RegExp(`class="callout[^"]*"[^>]*href="/work/${s}/"|href="/work/${s}/"[^>]*class="callout[^"]*"`));
+});
+test('home has the resume action without JavaScript', () => {
+  assert.match(readFileSync('dist/index.html', 'utf8'), /href="\/resume\.pdf"/);
+});
