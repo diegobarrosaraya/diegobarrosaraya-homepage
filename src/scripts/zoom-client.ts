@@ -25,6 +25,7 @@ document.addEventListener('astro:page-load', () => {
   svg.querySelectorAll('.part').forEach((p) => p.classList.toggle('focus', p === part));
 
   cancelAnimationFrame(frame);
+  delete svg.dataset.zooming;
   const from = parseViewBox(svg.getAttribute('viewBox') ?? toViewBox(FULL_VIEWBOX));
   const to: Box = part?.dataset.viewbox ? parseViewBox(part.dataset.viewbox) : FULL_VIEWBOX;
   if (toViewBox(from) === toViewBox(to)) return; // first load: the server already rendered this state
@@ -34,12 +35,13 @@ document.addEventListener('astro:page-load', () => {
     svg.setAttribute('viewBox', toViewBox(to));
     return settle(!!area);
   }
+  svg.dataset.zooming = ''; // keeps the clip on while zooming out, after data-focus is gone
   const t0 = performance.now();
   const step = (now: number) => {
     const t = Math.min(1, (now - t0) / DURATION);
     svg.setAttribute('viewBox', toViewBox(lerpBox(from, to, easeOutExpo(t))));
     if (t < 1) frame = requestAnimationFrame(step);
-    else settle(!!area);
+    else { delete svg.dataset.zooming; settle(!!area); }
   };
   frame = requestAnimationFrame(step);
 });

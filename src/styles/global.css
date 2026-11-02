@@ -26,8 +26,9 @@ a:hover { color: var(--steel-hi); }
 
 @media (max-width: 880px) { .sheet { padding: 0 16px; } }
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after,
-  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { transition: none !important; animation: none !important; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  /* Own rule: a browser without view transitions drops the whole selector list. */
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 
 /* Shared page layout: the two-column hero (home and work areas) and sheet sections. */

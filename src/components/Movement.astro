@@ -124,7 +124,7 @@ const CALLS: { part: PartId; anchor: [number, number]; at: [number, number] }[] 
   { part: 'plate', anchor: [95, 515], at: [18, 598] },
 ];
 // Zoom target per part, computed here so a work page is already zoomed on first paint and without JavaScript.
-// shortcut: Bezier control points count as bounds (only the plate has curves), so its box is a little loose; fine unless the plate is redrawn with big arcs.
+// shortcut: reads coordinates as absolute x,y pairs (M, L, C, Z only); H, V, A and relative commands would give wrong bounds, and Bezier control points count as bounds (the plate's box is a little loose). Upgrade if a part is drawn with those commands.
 const localPoints = (shapes: Shape[]): [number, number][] => shapes.flatMap((s): [number, number][] => {
   if (s.El === 'circle') { const { cx = 0, cy = 0, r } = s; return [[cx - r, cy - r], [cx + r, cy + r]]; }
   if (s.El === 'line') return [[s.x1, s.y1], [s.x2, s.y2]];
@@ -223,7 +223,7 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
   svg[data-focus] .part:not(.focus), svg[data-focus] .axis { opacity: .1; }
 
   /* Zoomed into a part (a work page): the loupe clips, callouts leave the tab order too. */
-  svg[data-focus] { overflow: hidden; }
+  svg[data-focus], svg[data-zooming] { overflow: hidden; } /* data-zooming: still clipped while zooming out */
   .callouts { transition: opacity .5s var(--ease); }
   svg[data-focus] .callouts { opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility 0s .5s; }
 
