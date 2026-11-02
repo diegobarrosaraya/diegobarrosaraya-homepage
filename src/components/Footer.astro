@@ -1,0 +1,14 @@
+---
+import { buildInfo } from '../lib/build-info';
+const { date, commit } = buildInfo();
+---
+<footer class="foot">
+  <span class="label">Last regulated {date} · build {commit}</span>
+</footer>
+
+<style>
+  .foot {
+    display: flex; flex-wrap: wrap; gap: 8px 28px; padding: 18px 0 40px;
+    color: var(--ink-2); border-top: 3px double var(--rule); margin-top: 40px;
+  }
+</style>

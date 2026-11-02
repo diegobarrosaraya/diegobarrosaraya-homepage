@@ -1,0 +1,30 @@
+@import '@fontsource/barlow/400.css';
+@import '@fontsource/barlow/500.css';
+@import '@fontsource/barlow/600.css';
+@import '@fontsource/barlow-condensed/500.css';
+@import '@fontsource/barlow-condensed/600.css';
+@import '@fontsource/barlow-condensed/700.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+@import './tokens.css';
+
+* { box-sizing: border-box; }
+html { background: var(--ground); color: var(--ink); scrollbar-color: var(--hair) var(--ground); }
+body {
+  margin: 0; background: var(--ground); color: var(--ink);
+  font: 400 17px/1.55 var(--font-body);
+  font-variant-numeric: tabular-nums;
+  transition: background-color .4s var(--ease), color .4s var(--ease);
+}
+::selection { background: var(--sel); color: var(--sel-ink); }
+a { color: var(--steel); text-decoration-thickness: 1px; text-underline-offset: .22em; }
+a:hover { color: var(--steel-hi); }
+:focus-visible { outline: 2px solid var(--steel); outline-offset: 3px; }
+.mono { font-family: var(--font-mono); font-size: .82em; letter-spacing: 0; }
+.label { font: 600 13px/1 var(--font-label); letter-spacing: .09em; text-transform: uppercase; }
+.sheet { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+
+@media (max-width: 880px) { .sheet { padding: 0 16px; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
