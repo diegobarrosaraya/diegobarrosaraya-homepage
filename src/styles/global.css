@@ -36,6 +36,8 @@ a:hover { color: var(--steel-hi); }
   padding: 34px 0 30px; border-bottom: 1px solid var(--rule);
 }
 section.block { padding: 30px 0 34px; border-bottom: 1px solid var(--rule); }
+/* The footer's double rule closes the page; no single rule stacked above it. */
+main > :last-child { border-bottom: 0; }
 section.block > :is(h1, h2) {
   font: 700 15px/1 var(--font-label); letter-spacing: .12em; text-transform: uppercase;
   margin: 0 0 18px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline;
@@ -50,8 +52,8 @@ section.block > :is(h1, h2) small {
   padding: 14px 18px; border: 1px solid var(--steel); color: var(--steel);
   transition: background-color .2s, color .2s, box-shadow .2s;
 }
-.btn.primary { background: var(--steel); color: var(--ground); box-shadow: var(--btn-glow); }
-.btn:hover { background: var(--steel-hi); border-color: var(--steel-hi); color: var(--ground); box-shadow: var(--btn-glow); }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: var(--ground); box-shadow: var(--btn-glow); }
+.btn:hover { background: var(--steel-hi); border-color: var(--steel-hi); color: var(--ground); }
 .btn svg { width: 14px; height: 14px; }
 
 @media (max-width: 880px) {

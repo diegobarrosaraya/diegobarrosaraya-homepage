@@ -131,10 +131,14 @@ const localPoints = (shapes: Shape[]): [number, number][] => shapes.flatMap((s):
   const n = s.d.match(/-?\d*\.?\d+/g)!.map(Number);
   return n.flatMap((_, i): [number, number][] => (i % 2 ? [] : [[n[i], n[i + 1]]]));
 });
-const viewBoxOf = (p: (typeof parts)[number]) => toViewBox(viewBoxFor(boundsOf([
-  ...localPoints(p.shapes),
-  ...(p.sub ? localPoints(p.sub.shapes).map(([x, y]): [number, number] => [x + p.sub!.x, y + p.sub!.y]) : []),
-].map(([x, y]): [number, number] => [p.x + x, p.y + y * SQ]))));
+// Loose loupe: faded neighbours stay in frame. Capped at 560 so the plate (largest part) still zooms in a little.
+const viewBoxOf = (p: (typeof parts)[number]) => {
+  const b = boundsOf([
+    ...localPoints(p.shapes),
+    ...(p.sub ? localPoints(p.sub.shapes).map(([x, y]): [number, number] => [x + p.sub!.x, y + p.sub!.y]) : []),
+  ].map(([x, y]): [number, number] => [p.x + x, p.y + y * SQ]));
+  return toViewBox(viewBoxFor(b, Math.min(1.7, 560 / Math.max(b.width, b.height))));
+};
 const focused = parts.find((p) => p.id === focusPart);
 
 const callouts = CALLS.map((c) => ({ ...c, area: AREAS.find((a) => a.part === c.part)! }));
@@ -177,7 +181,7 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
       ))}
     </g>
   </svg>
-  <figcaption class="caption label">Fig. 1 · Exploded view</figcaption>
+  <figcaption class="caption label">Fig. 1 · Exploded view · Placeholder drawing</figcaption>
   <ol class="callout-list" aria-label="Work areas">
     {listed.map(({ area }) => (
       <li><a href={`/work/${area.slug}/`}><span class="mono">{area.number}</span>{area.title}</a></li>

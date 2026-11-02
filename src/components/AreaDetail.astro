@@ -11,8 +11,7 @@ const next = AREAS[(i + 1) % AREAS.length];
   <a class="back" href="/">
     <svg viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 7H2M6 3 2 7l4 4" /></svg>
     Full movement</a>
-  <div class="ref mono">{area.number}</div>
-  <h1>{area.title}</h1>
+  <h1><span class="ref mono">{area.number}</span>{area.title}</h1>
   <p class="lede">{area.lede}</p>
   <ol>
     {area.records.map((r, n) => (
@@ -25,8 +24,11 @@ const next = AREAS[(i + 1) % AREAS.length];
     ))}
   </ol>
   <nav class="nextprev" aria-label="Other work areas">
-    <a href={`/work/${prev.slug}/`}>&larr; {prev.title}</a>
-    <a href={`/work/${next.slug}/`}>{next.title} &rarr;</a>
+    <a href={`/work/${prev.slug}/`}>
+      <svg viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 7H2M6 3 2 7l4 4" /></svg>
+      {prev.title}</a>
+    <a href={`/work/${next.slug}/`}>{next.title}
+      <svg viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" /></svg></a>
   </nav>
 </div>
 
@@ -35,7 +37,7 @@ const next = AREAS[(i + 1) % AREAS.length];
     color: var(--steel); font: 600 14px/1 var(--font-label); letter-spacing: .09em; text-transform: uppercase;
     display: inline-flex; gap: 8px; align-items: center; margin-bottom: 22px;
   }
-  .ref { color: var(--ink-2); }
+  .ref { font: 400 15px var(--font-mono); color: var(--ink-2); margin-right: 14px; }
   h1 { font: 700 clamp(30px, 3.4vw, 44px)/1.05 var(--font-label); margin: 6px 0 10px; text-wrap: balance; }
   .lede { font-size: 19px; color: var(--ink-2); margin: 0 0 22px; max-width: 46ch; }
   ol { list-style: none; margin: 0; padding: 0; }
@@ -46,4 +48,5 @@ const next = AREAS[(i + 1) % AREAS.length];
   li p { margin: 0; color: var(--ink-2); }
   li p b { font: 600 12px var(--font-label); letter-spacing: .09em; text-transform: uppercase; color: var(--ink); margin-right: 6px; }
   .nextprev { display: flex; justify-content: space-between; gap: 16px; margin-top: 20px; }
+  .nextprev a { display: inline-flex; gap: 8px; align-items: center; }
 </style>

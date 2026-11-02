@@ -16,9 +16,10 @@ const steps = [
 ---
 <Sheet title={`${record.name} | Diego Barros Araya`} description={record.constraint} current="records">
   <article class="block">
-    <a class="back" href={`/work/${area.slug}/`}>&larr; {area.title}</a>
-    <div class="ref mono">{ref}</div>
-    <h1>{record.name}</h1>
+    <a class="back" href={`/work/${area.slug}/`}>
+      <svg viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 7H2M6 3 2 7l4 4" /></svg>
+      {area.title}</a>
+    <h1><span class="ref mono">{ref}</span>{record.name}</h1>
     <ol>
       {steps.map(([label, text], n) => (
         <li id={`${ref}.${n + 1}`}>
@@ -32,13 +33,16 @@ const steps = [
 </Sheet>
 
 <style>
-  .back { color: var(--steel); font: 600 14px/1 var(--font-label); letter-spacing: .09em; text-transform: uppercase; }
-  .ref { color: var(--ink-2); margin-top: 22px; }
-  h1 { font: 700 clamp(30px, 3.4vw, 44px)/1.05 var(--font-label); margin: 6px 0 22px; text-wrap: balance; }
+  .back {
+    color: var(--steel); font: 600 14px/1 var(--font-label); letter-spacing: .09em; text-transform: uppercase;
+    display: inline-flex; gap: 8px; align-items: center;
+  }
+  .ref { font: 400 15px var(--font-mono); color: var(--ink-2); margin-right: 14px; }
+  h1 { font: 700 clamp(30px, 3.4vw, 44px)/1.05 var(--font-label); margin: 28px 0 22px; text-wrap: balance; }
   ol { list-style: none; margin: 0; padding: 0; max-width: 62ch; }
   li { border-top: 1px solid var(--hair); padding: 14px 0; display: grid; grid-template-columns: 6.5em 1fr; gap: 14px; }
   li:last-child { border-bottom: 1px solid var(--hair); }
-  .step { color: var(--ink-2); }
+  .step { color: var(--steel); }
   .label { color: var(--ink-2); margin-bottom: 6px; }
   li p { margin: 0; }
   .repo { margin: 22px 0 0; }

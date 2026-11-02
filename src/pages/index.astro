@@ -44,4 +44,6 @@ const records = AREAS.flatMap((area) => area.records.map((record, i) => ({ area,
   .lede { font-size: 19px; color: var(--ink-2); margin: 0 0 22px; max-width: 46ch; text-wrap: pretty; }
   .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
   .soon { margin: 0; color: var(--ink-2); }
+  /* Phones: the headline comes before the drawing. */
+  @media (max-width: 880px) { .spec { order: -1; } }
 </style>

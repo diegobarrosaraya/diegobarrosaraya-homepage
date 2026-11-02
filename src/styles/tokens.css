@@ -7,6 +7,7 @@
   --rule: #121518;
   --steel: #1F3F8F;
   --steel-hi: #142C69;
+  --primary: #1F3F8F;
   --active: #A3142D;
   --glow: none;
   --btn-glow: none;
@@ -18,11 +19,11 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-/* Lume view: follows the system unless the visitor chose light */
+/* Lume view: follows the system unless the visitor chose light. Links are pale lume ink; the green and its glow belong to the active item and the primary button only. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --ground: #060807; --plate: #0E1210; --ink: #D5DCD2; --ink-2: #93A08F;
-    --hair: #34403A; --rule: #5B6A60; --steel: #A6F58A; --steel-hi: #CBFFB8;
+    --hair: #34403A; --rule: #5B6A60; --steel: #CFE3C7; --steel-hi: #EEF7EA; --primary: #A6F58A;
     --active: #A6F58A; --glow: drop-shadow(0 0 6px rgba(166, 245, 138, .55));
     --btn-glow: 0 0 18px rgba(166, 245, 138, .35);
     --sel: #A6F58A; --sel-ink: #060807;
@@ -30,7 +31,7 @@
 }
 :root[data-theme="dark"] {
   --ground: #060807; --plate: #0E1210; --ink: #D5DCD2; --ink-2: #93A08F;
-  --hair: #34403A; --rule: #5B6A60; --steel: #A6F58A; --steel-hi: #CBFFB8;
+  --hair: #34403A; --rule: #5B6A60; --steel: #CFE3C7; --steel-hi: #EEF7EA; --primary: #A6F58A;
   --active: #A6F58A; --glow: drop-shadow(0 0 6px rgba(166, 245, 138, .55));
   --btn-glow: 0 0 18px rgba(166, 245, 138, .35);
   --sel: #A6F58A; --sel-ink: #060807;
