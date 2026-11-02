@@ -1,14 +1,16 @@
-<button class="theme" id="theme" type="button" aria-pressed="false">Lume view</button>
+<button class="theme" id="theme" type="button">Lume view</button>
 
 <script>
-  import { readTheme, writeTheme } from '../lib/theme';
+  import { writeTheme } from '../lib/theme';
 
   const root = document.documentElement;
-  const dark = () =>
-    root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const system = matchMedia('(prefers-color-scheme: dark)');
+  const dark = () => (root.dataset.theme ? root.dataset.theme === 'dark' : system.matches);
 
+  // The label names the view the button switches to, so it follows the effective theme.
   function sync() {
-    document.getElementById('theme')?.setAttribute('aria-pressed', String(dark()));
+    const btn = document.getElementById('theme');
+    if (btn) btn.textContent = dark() ? 'Light view' : 'Lume view';
   }
   function bind() {
     const btn = document.getElementById('theme');
@@ -24,10 +26,12 @@
   function init() { bind(); sync(); }
 
   init();
-  // ClientRouter swaps the document: restore the saved theme on the new root
-  document.addEventListener('astro:after-swap', () => {
-    const t = readTheme(localStorage);
-    if (t) root.dataset.theme = t;
+  system.addEventListener('change', sync);
+  // ClientRouter replaces the root attributes on swap: carry the current theme into the new
+  // document so it survives navigation even when localStorage is blocked.
+  document.addEventListener('astro:before-swap', (e) => {
+    const t = root.dataset.theme;
+    if (t) e.newDocument.documentElement.dataset.theme = t;
   });
   document.addEventListener('astro:page-load', init);
 </script>
@@ -38,5 +42,4 @@
     background: none; border: 1px solid var(--hair); color: var(--ink); padding: 7px 10px; cursor: pointer;
   }
   .theme:hover { border-color: var(--steel); color: var(--steel); }
-  .theme[aria-pressed="true"] { border-color: var(--steel); color: var(--steel); }
 </style>

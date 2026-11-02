@@ -12,10 +12,12 @@ const sections = [
 ];
 ---
 <Sheet title="Resume | Diego Barros Araya" description={r.basics.summary} current="resume">
-  <section class="block" aria-labelledby="spec-h">
-    <h2 id="spec-h"><span class="mono">01</span>Specification</h2>
+  <header class="title">
     <h1>{r.basics.name}</h1>
     <p class="lede">{r.basics.label}</p>
+  </header>
+  <section class="block" aria-labelledby="spec-h">
+    <h2 id="spec-h"><span class="mono">01</span>Specification</h2>
     <table aria-label="Specification">
       <tr><th class="label" scope="row">Summary</th><td>{r.basics.summary}</td></tr>
       <tr><th class="label" scope="row">Base</th><td>{r.basics.location.city}, {r.basics.location.region}</td></tr>
@@ -44,8 +46,9 @@ const sections = [
 </Sheet>
 
 <style>
-  h1 { font: 700 clamp(30px, 3.4vw, 44px)/1.05 var(--font-label); margin: 6px 0 8px; }
-  .lede { color: var(--ink-2); margin: 0 0 20px; }
+  h1 { font: 700 clamp(30px, 3.4vw, 44px)/1.05 var(--font-label); margin: 0 0 8px; text-wrap: balance; }
+  .title { padding-top: 34px; }
+  .lede { color: var(--ink-2); margin: 0; }
   table { width: 100%; max-width: 62ch; border-collapse: collapse; }
   th, td { text-align: left; vertical-align: top; padding: 10px 0; border-top: 1px solid var(--hair); }
   th { width: 9.5em; padding-right: 14px; color: var(--ink-2); line-height: 1.55; }

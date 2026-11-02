@@ -29,6 +29,8 @@ const { records } = Astro.props;
   td { padding: 14px 16px 14px 0; border-bottom: 1px solid var(--hair); vertical-align: top; }
   td:first-child { width: 5.5em; color: var(--ink-2); }
   td.title a { font-weight: 600; }
+  /* Repo names break at hyphens otherwise; keep them whole on desktop. */
+  @media (min-width: 881px) { td.title { white-space: nowrap; } }
   @media (max-width: 880px) {
     thead { display: none; }
     .records, tbody, tr, td { display: block; width: 100%; }

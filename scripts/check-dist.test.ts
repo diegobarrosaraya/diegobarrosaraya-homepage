@@ -68,3 +68,11 @@ test('the day job appears only on the resume', () => {
   for (const file of htmlFilesUnder('dist').filter(f => !f.startsWith('dist/resume/')))
     assert.doesNotMatch(readFileSync(file, 'utf8'), /atlassian|jira|confluence|servicerocket/i, file);
 });
+test('every page has one h1, before any h2', () => {
+  for (const file of htmlFilesUnder('dist')) {
+    const html = readFileSync(file, 'utf8');
+    assert.equal(html.match(/<h1[\s>]/g)?.length, 1, file);
+    const h2 = html.search(/<h2[\s>]/);
+    assert.ok(h2 === -1 || html.search(/<h1[\s>]/) < h2, file);
+  }
+});

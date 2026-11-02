@@ -1,7 +1,6 @@
 @import '@fontsource/barlow/400.css';
 @import '@fontsource/barlow/500.css';
 @import '@fontsource/barlow/600.css';
-@import '@fontsource/barlow-condensed/500.css';
 @import '@fontsource/barlow-condensed/600.css';
 @import '@fontsource/barlow-condensed/700.css';
 @import '@fontsource/jetbrains-mono/400.css';
@@ -37,12 +36,12 @@ a:hover { color: var(--steel-hi); }
   padding: 34px 0 30px; border-bottom: 1px solid var(--rule);
 }
 section.block { padding: 30px 0 34px; border-bottom: 1px solid var(--rule); }
-section.block > h2 {
+section.block > :is(h1, h2) {
   font: 700 15px/1 var(--font-label); letter-spacing: .12em; text-transform: uppercase;
   margin: 0 0 18px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline;
 }
-section.block > h2 .mono { color: var(--ink-2); font-weight: 400; }
-section.block > h2 small {
+section.block > :is(h1, h2) .mono { color: var(--ink-2); font-weight: 400; }
+section.block > :is(h1, h2) small {
   margin-left: auto; font: 400 14px var(--font-body); letter-spacing: 0; text-transform: none; color: var(--ink-2);
 }
 .btn {
@@ -57,5 +56,5 @@ section.block > h2 small {
 
 @media (max-width: 880px) {
   .hero { grid-template-columns: 1fr; gap: 26px; }
-  section.block > h2 small { margin-left: 0; width: 100%; }
+  section.block > :is(h1, h2) small { margin-left: 0; width: 100%; }
 }
