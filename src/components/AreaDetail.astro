@@ -1,4 +1,5 @@
 ---
+import { fade } from 'astro:transitions';
 import { AREAS, recordRef, type WorkArea } from '../data/work';
 export interface Props { area: WorkArea }
 const { area } = Astro.props;
@@ -6,7 +7,7 @@ const i = AREAS.findIndex((a) => a.slug === area.slug);
 const prev = AREAS[(i + AREAS.length - 1) % AREAS.length];
 const next = AREAS[(i + 1) % AREAS.length];
 ---
-<div class="detail" transition:name="detail">
+<div class="detail" transition:name="detail" transition:animate={fade({ duration: '450ms' })}>
   <a class="back" href="/">
     <svg viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 7H2M6 3 2 7l4 4" /></svg>
     Full movement</a>

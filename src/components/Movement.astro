@@ -2,6 +2,7 @@
 // Exploded view of the movement, generated at build time so the page ships a static SVG.
 // Geometry ported from the approved mockup (caliber-mockup.html). Placeholder drawing until traced from a real watch.
 import { AREAS, type AreaSlug, type PartId } from '../data/work';
+import { FULL_VIEWBOX, boundsOf, toViewBox, viewBoxFor } from '../lib/zoom';
 
 export interface Props { focus?: AreaSlug }
 const { focus } = Astro.props;
@@ -122,13 +123,27 @@ const CALLS: { part: PartId; anchor: [number, number]; at: [number, number] }[] 
   { part: 'barrel', anchor: [118, 400], at: [18, 340] },
   { part: 'plate', anchor: [95, 515], at: [18, 598] },
 ];
+// Zoom target per part, computed here so a work page is already zoomed on first paint and without JavaScript.
+// shortcut: Bezier control points count as bounds (only the plate has curves), so its box is a little loose; fine unless the plate is redrawn with big arcs.
+const localPoints = (shapes: Shape[]): [number, number][] => shapes.flatMap((s): [number, number][] => {
+  if (s.El === 'circle') { const { cx = 0, cy = 0, r } = s; return [[cx - r, cy - r], [cx + r, cy + r]]; }
+  if (s.El === 'line') return [[s.x1, s.y1], [s.x2, s.y2]];
+  const n = s.d.match(/-?\d*\.?\d+/g)!.map(Number);
+  return n.flatMap((_, i): [number, number][] => (i % 2 ? [] : [[n[i], n[i + 1]]]));
+});
+const viewBoxOf = (p: (typeof parts)[number]) => toViewBox(viewBoxFor(boundsOf([
+  ...localPoints(p.shapes),
+  ...(p.sub ? localPoints(p.sub.shapes).map(([x, y]): [number, number] => [x + p.sub!.x, y + p.sub!.y]) : []),
+].map(([x, y]): [number, number] => [p.x + x, p.y + y * SQ]))));
+const focused = parts.find((p) => p.id === focusPart);
+
 const callouts = CALLS.map((c) => ({ ...c, area: AREAS.find((a) => a.part === c.part)! }));
 const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.number));
 ---
 <figure class="drawing">
   <svg
     id="movement"
-    viewBox="0 0 600 600"
+    viewBox={focused ? viewBoxOf(focused) : toViewBox(FULL_VIEWBOX)}
     role="group"
     aria-labelledby="mv-title"
     data-focus={focus}
@@ -138,7 +153,7 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
     <g fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
       {axes.map(([x, y1, y2]) => <line class="axis" x1={x} y1={y1} x2={x} y2={y2} />)}
       {parts.map((p) => (
-        <g class:list={['part', { focus: p.id === focusPart }]} data-part={p.id}>
+        <g class:list={['part', { focus: p.id === focusPart }]} data-part={p.id} data-viewbox={viewBoxOf(p)}>
           <g transform={`translate(${p.x} ${p.y}) scale(1 ${SQ})`}>
             {p.shapes.map(({ El, ...a }) => <El {...a} />)}
             {p.sub && (
@@ -169,6 +184,10 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
     ))}
   </ol>
 </figure>
+
+<script>
+  import '../scripts/zoom-client';
+</script>
 
 <style>
   .drawing { margin: 0; position: relative; }
@@ -202,6 +221,11 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
   }
   .part.focus { transform: translateY(-10px); }
   svg[data-focus] .part:not(.focus), svg[data-focus] .axis { opacity: .1; }
+
+  /* Zoomed into a part (a work page): the loupe clips, callouts leave the tab order too. */
+  svg[data-focus] { overflow: hidden; }
+  .callouts { transition: opacity .5s var(--ease); }
+  svg[data-focus] .callouts { opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility 0s .5s; }
 
   .caption { color: var(--ink-2); margin-top: 10px; }
   .callout-list { display: none; }

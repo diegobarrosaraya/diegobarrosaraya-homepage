@@ -51,3 +51,14 @@ test('every internal link resolves to a built file', () => {
     }
   }
 });
+
+const movementViewBox = (html: string) => html.match(/<svg[^>]*id="movement"[^>]*viewBox="([^"]+)"|<svg[^>]*viewBox="([^"]+)"[^>]*id="movement"/)?.slice(1).find(Boolean);
+test('home shows the full movement, work pages are already zoomed without JavaScript', () => {
+  assert.equal(movementViewBox(readFileSync('dist/index.html', 'utf8')), '0 0 600 600');
+  for (const area of AREAS) {
+    const html = readFileSync(`dist/work/${area.slug}/index.html`, 'utf8');
+    const vb = movementViewBox(html)!.split(' ').map(Number);
+    assert.ok(vb[2] < 600 && vb[2] === vb[3], `${area.slug} viewBox ${vb}`);
+    assert.match(html, new RegExp(`class="part focus[^"]*" data-part="${area.part}"`));
+  }
+});

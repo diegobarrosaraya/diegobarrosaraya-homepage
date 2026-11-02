@@ -1,5 +1,6 @@
 ---
 // DRAFT: Diego reviews the headline, lede and parts list line.
+import { fade } from 'astro:transitions';
 import Sheet from '../layouts/Sheet.astro';
 import Movement from '../components/Movement.astro';
 import SpecTable from '../components/SpecTable.astro';
@@ -11,7 +12,7 @@ const records = AREAS.flatMap((area) => area.records.map((record, i) => ({ area,
 <Sheet title="Diego Barros Araya" description="Platform and developer-tooling engineer in Santiago, Chile.">
   <div class="hero" id="work">
     <Movement />
-    <div class="spec">
+    <div class="spec" transition:name="detail" transition:animate={fade({ duration: '450ms' })}>
       <h1>I build systems that are safe to run, inside the constraints they come with.</h1>
       <p class="lede">Platform and developer-tooling engineer in Santiago. Integrations, automation and backends, shipped carefully and adapted fast.</p>
       <SpecTable />
