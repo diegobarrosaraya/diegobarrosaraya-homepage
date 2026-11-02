@@ -15,7 +15,7 @@
         in
         pkgs.mkShell {
           packages = [
-            pkgs.nodejs_20
+            pkgs.nodejs_24
             pkgs.pnpm
             pkgs.pandoc
             pkgs.texliveFull
@@ -24,7 +24,7 @@
           shellHook = ''
             echo "Diego's Homepage Dev Environment"
             echo "Run: pnpm dev"
-            echo "Open: http://localhost:5173"
+            echo "Open: http://localhost:4321"
           '';
         };
     in
