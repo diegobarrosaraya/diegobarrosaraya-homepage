@@ -1,0 +1,425 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-02T20:55:29.347Z",
+  "title": "Design System: Diego Barros Araya",
+  "extensions": {
+    "colorMeta": {
+      "ground": {
+        "role": "neutral",
+        "displayName": "Rhodium White",
+        "canonical": "#EDF0F2",
+        "tonalRamp": [
+          "oklch(15% 0.004 236)",
+          "oklch(26% 0.004 236)",
+          "oklch(37% 0.004 236)",
+          "oklch(48% 0.004 236)",
+          "oklch(59% 0.004 236)",
+          "oklch(70% 0.004 236)",
+          "oklch(82% 0.004 236)",
+          "oklch(95% 0.004 236)"
+        ]
+      },
+      "plate": {
+        "role": "neutral",
+        "displayName": "Plate Grey",
+        "canonical": "#E2E6E9",
+        "tonalRamp": [
+          "oklch(15% 0.006 240)",
+          "oklch(26% 0.006 240)",
+          "oklch(37% 0.006 240)",
+          "oklch(48% 0.006 240)",
+          "oklch(59% 0.006 240)",
+          "oklch(70% 0.006 240)",
+          "oklch(82% 0.006 240)",
+          "oklch(95% 0.006 240)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Movement Ink",
+        "canonical": "#121518",
+        "tonalRamp": [
+          "oklch(15% 0.008 248)",
+          "oklch(26% 0.008 248)",
+          "oklch(37% 0.008 248)",
+          "oklch(48% 0.008 248)",
+          "oklch(59% 0.008 248)",
+          "oklch(70% 0.008 248)",
+          "oklch(82% 0.008 248)",
+          "oklch(95% 0.008 248)"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Annotation Grey",
+        "canonical": "#47515A",
+        "tonalRamp": [
+          "oklch(15% 0.020 245)",
+          "oklch(26% 0.020 245)",
+          "oklch(37% 0.020 245)",
+          "oklch(48% 0.020 245)",
+          "oklch(59% 0.020 245)",
+          "oklch(70% 0.020 245)",
+          "oklch(82% 0.020 245)",
+          "oklch(95% 0.020 245)"
+        ]
+      },
+      "hair": {
+        "role": "neutral",
+        "displayName": "Hairline Steel",
+        "canonical": "#9AA4AD",
+        "tonalRamp": [
+          "oklch(15% 0.017 245)",
+          "oklch(26% 0.017 245)",
+          "oklch(37% 0.017 245)",
+          "oklch(48% 0.017 245)",
+          "oklch(59% 0.017 245)",
+          "oklch(70% 0.017 245)",
+          "oklch(82% 0.017 245)",
+          "oklch(95% 0.017 245)"
+        ]
+      },
+      "steel": {
+        "role": "primary",
+        "displayName": "Heat-Blued Steel",
+        "canonical": "#1F3F8F",
+        "tonalRamp": [
+          "oklch(15% 0.138 264)",
+          "oklch(26% 0.138 264)",
+          "oklch(37% 0.138 264)",
+          "oklch(48% 0.138 264)",
+          "oklch(59% 0.138 264)",
+          "oklch(70% 0.138 264)",
+          "oklch(82% 0.138 264)",
+          "oklch(95% 0.138 264)"
+        ]
+      },
+      "steel-hi": {
+        "role": "primary",
+        "displayName": "Deep Blue Steel",
+        "canonical": "#142C69",
+        "tonalRamp": [
+          "oklch(15% 0.111 265)",
+          "oklch(26% 0.111 265)",
+          "oklch(37% 0.111 265)",
+          "oklch(48% 0.111 265)",
+          "oklch(59% 0.111 265)",
+          "oklch(70% 0.111 265)",
+          "oklch(82% 0.111 265)",
+          "oklch(95% 0.111 265)"
+        ]
+      },
+      "active": {
+        "role": "secondary",
+        "displayName": "Ruby Jewel",
+        "canonical": "#A3142D",
+        "tonalRamp": [
+          "oklch(15% 0.174 20)",
+          "oklch(26% 0.174 20)",
+          "oklch(37% 0.174 20)",
+          "oklch(48% 0.174 20)",
+          "oklch(59% 0.174 20)",
+          "oklch(70% 0.174 20)",
+          "oklch(82% 0.174 20)",
+          "oklch(95% 0.174 20)"
+        ]
+      },
+      "lume-ground": {
+        "role": "neutral",
+        "displayName": "Lume Black",
+        "canonical": "#060807",
+        "tonalRamp": [
+          "oklch(15% 0.005 165)",
+          "oklch(26% 0.005 165)",
+          "oklch(37% 0.005 165)",
+          "oklch(48% 0.005 165)",
+          "oklch(59% 0.005 165)",
+          "oklch(70% 0.005 165)",
+          "oklch(82% 0.005 165)",
+          "oklch(95% 0.005 165)"
+        ]
+      },
+      "lume-plate": {
+        "role": "neutral",
+        "displayName": "Lume Plate",
+        "canonical": "#0E1210",
+        "tonalRamp": [
+          "oklch(15% 0.008 164)",
+          "oklch(26% 0.008 164)",
+          "oklch(37% 0.008 164)",
+          "oklch(48% 0.008 164)",
+          "oklch(59% 0.008 164)",
+          "oklch(70% 0.008 164)",
+          "oklch(82% 0.008 164)",
+          "oklch(95% 0.008 164)"
+        ]
+      },
+      "lume-ink": {
+        "role": "neutral",
+        "displayName": "Lume Ink",
+        "canonical": "#D5DCD2",
+        "tonalRamp": [
+          "oklch(15% 0.015 136)",
+          "oklch(26% 0.015 136)",
+          "oklch(37% 0.015 136)",
+          "oklch(48% 0.015 136)",
+          "oklch(59% 0.015 136)",
+          "oklch(70% 0.015 136)",
+          "oklch(82% 0.015 136)",
+          "oklch(95% 0.015 136)"
+        ]
+      },
+      "lume-ink-2": {
+        "role": "neutral",
+        "displayName": "Lume Annotation",
+        "canonical": "#93A08F",
+        "tonalRamp": [
+          "oklch(15% 0.029 138)",
+          "oklch(26% 0.029 138)",
+          "oklch(37% 0.029 138)",
+          "oklch(48% 0.029 138)",
+          "oklch(59% 0.029 138)",
+          "oklch(70% 0.029 138)",
+          "oklch(82% 0.029 138)",
+          "oklch(95% 0.029 138)"
+        ]
+      },
+      "lume-hair": {
+        "role": "neutral",
+        "displayName": "Lume Hairline",
+        "canonical": "#34403A",
+        "tonalRamp": [
+          "oklch(15% 0.019 164)",
+          "oklch(26% 0.019 164)",
+          "oklch(37% 0.019 164)",
+          "oklch(48% 0.019 164)",
+          "oklch(59% 0.019 164)",
+          "oklch(70% 0.019 164)",
+          "oklch(82% 0.019 164)",
+          "oklch(95% 0.019 164)"
+        ]
+      },
+      "lume-rule": {
+        "role": "neutral",
+        "displayName": "Lume Rule",
+        "canonical": "#5B6A60",
+        "tonalRamp": [
+          "oklch(15% 0.024 156)",
+          "oklch(26% 0.024 156)",
+          "oklch(37% 0.024 156)",
+          "oklch(48% 0.024 156)",
+          "oklch(59% 0.024 156)",
+          "oklch(70% 0.024 156)",
+          "oklch(82% 0.024 156)",
+          "oklch(95% 0.024 156)"
+        ]
+      },
+      "lume-link": {
+        "role": "tertiary",
+        "displayName": "Pale Lume Link",
+        "canonical": "#CFE3C7",
+        "tonalRamp": [
+          "oklch(15% 0.043 137)",
+          "oklch(26% 0.043 137)",
+          "oklch(37% 0.043 137)",
+          "oklch(48% 0.043 137)",
+          "oklch(59% 0.043 137)",
+          "oklch(70% 0.043 137)",
+          "oklch(82% 0.043 137)",
+          "oklch(95% 0.043 137)"
+        ]
+      },
+      "lume-green": {
+        "role": "tertiary",
+        "displayName": "Lume Green",
+        "canonical": "#A6F58A",
+        "tonalRamp": [
+          "oklch(15% 0.160 138)",
+          "oklch(26% 0.160 138)",
+          "oklch(37% 0.160 138)",
+          "oklch(48% 0.160 138)",
+          "oklch(59% 0.160 138)",
+          "oklch(70% 0.160 138)",
+          "oklch(82% 0.160 138)",
+          "oklch(95% 0.160 138)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "heading": {
+        "displayName": "Heading",
+        "purpose": "Page h1, one per page."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Name in the title block."
+      },
+      "section": {
+        "displayName": "Section",
+        "purpose": "Numbered section headings."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Nav, buttons, table headers."
+      },
+      "lede": {
+        "displayName": "Lede",
+        "purpose": "Sentence under the heading, 46ch max."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text and table cells."
+      },
+      "data": {
+        "displayName": "Data",
+        "purpose": "Refs, part numbers, callout numbers."
+      }
+    },
+    "shadows": [
+      {
+        "name": "lume-glow",
+        "value": "drop-shadow(0 0 6px rgba(166, 245, 138, .55))",
+        "purpose": "Active part and current nav item, lume view only."
+      },
+      {
+        "name": "lume-btn-glow",
+        "value": "0 0 18px rgba(166, 245, 138, .35)",
+        "purpose": "Primary button halo, lume view only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Part lift, fades, theme change; all disabled under reduced motion."
+      },
+      {
+        "name": "state-fast",
+        "value": ".2s",
+        "purpose": "Button and link state changes."
+      },
+      {
+        "name": "part-lift",
+        "value": ".7s",
+        "purpose": "Exploded part transform on work pages."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sheet-collapse",
+        "value": "880px"
+      },
+      {
+        "name": "sheet-max",
+        "value": "1240px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main action: filled steel, lume green with halo at night.",
+      "html": "<a class=\"ds-btn ds-primary\" href=\"#\">Read the service records</a>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font:600 15px/1 'Barlow Condensed',sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:14px 18px;border:1px solid var(--steel,#1F3F8F);color:var(--steel,#1F3F8F);background:transparent;border-radius:0;transition:background-color .2s,color .2s}.ds-btn:hover,.ds-btn:focus-visible{background:var(--steel-hi,#142C69);border-color:var(--steel-hi,#142C69);color:var(--ground,#EDF0F2)}.ds-btn:focus-visible{outline:2px solid var(--steel,#1F3F8F);outline-offset:3px}.ds-btn.ds-primary{background:var(--primary,#1F3F8F);border-color:var(--primary,#1F3F8F);color:var(--ground,#EDF0F2)}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action: steel outline on transparent.",
+      "html": "<a class=\"ds-btn\" href=\"#\">Resume PDF</a>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font:600 15px/1 'Barlow Condensed',sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:14px 18px;border:1px solid var(--steel,#1F3F8F);color:var(--steel,#1F3F8F);background:transparent;border-radius:0;transition:background-color .2s,color .2s}.ds-btn:hover,.ds-btn:focus-visible{background:var(--steel-hi,#142C69);border-color:var(--steel-hi,#142C69);color:var(--ground,#EDF0F2)}.ds-btn:focus-visible{outline:2px solid var(--steel,#1F3F8F);outline-offset:3px}.ds-btn.ds-primary{background:var(--primary,#1F3F8F);border-color:var(--primary,#1F3F8F);color:var(--ground,#EDF0F2)}"
+    },
+    {
+      "name": "Theme Toggle",
+      "kind": "button",
+      "refersTo": "theme-toggle",
+      "description": "Square outline switch between day and lume views.",
+      "html": "<button class=\"ds-theme\">Lume view</button>",
+      "css": ".ds-theme{font:600 13px/1 'Barlow Condensed',sans-serif;letter-spacing:.09em;text-transform:uppercase;background:none;border:1px solid var(--hair,#9AA4AD);color:var(--ink,#121518);padding:7px 10px;cursor:pointer;border-radius:0}.ds-theme:hover{border-color:var(--steel,#1F3F8F);color:var(--steel,#1F3F8F)}.ds-theme:focus-visible{outline:2px solid var(--steel,#1F3F8F);outline-offset:3px}"
+    },
+    {
+      "name": "Title Block Nav",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Numbered nav under a double rule; current page in the active colour.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\"><span class=\"ds-n\">01</span>Work</a><a href=\"#\"><span class=\"ds-n\">02</span>Records</a><a href=\"#\" aria-current=\"page\"><span class=\"ds-n\">03</span>Notes</a></nav>",
+      "css": ".ds-nav{display:flex;gap:6px 22px;padding:0 0 14px;border-bottom:3px double var(--ink,#121518)}.ds-nav a{font:600 13px/1 'Barlow Condensed',sans-serif;letter-spacing:.09em;text-transform:uppercase;text-decoration:none;color:var(--steel,#1F3F8F)}.ds-nav a:hover{text-decoration:underline}.ds-nav a:focus-visible{outline:2px solid var(--steel,#1F3F8F);outline-offset:3px}.ds-nav a[aria-current=page]{color:var(--active,#A3142D)}.ds-n{font:400 11px 'JetBrains Mono',monospace;color:var(--ink-2,#47515A);margin-right:6px}"
+    },
+    {
+      "name": "Spec Table",
+      "kind": "custom",
+      "refersTo": "spec-table",
+      "description": "Hairline definition table: grey label, ink value.",
+      "html": "<table class=\"ds-spec\"><tr><th>Function</th><td>Integrations and automation</td></tr><tr><th>Tolerance</th><td>Strict change windows</td></tr></table>",
+      "css": ".ds-spec{width:100%;border-collapse:collapse;font:400 17px/1.55 'Barlow',sans-serif;color:var(--ink,#121518)}.ds-spec th,.ds-spec td{text-align:left;vertical-align:top;padding:10px 0;border-top:1px solid var(--hair,#9AA4AD)}.ds-spec th{width:9.5em;padding-right:14px;color:var(--ink-2,#47515A);font-weight:400}.ds-spec tr:last-child th,.ds-spec tr:last-child td{border-bottom:1px solid var(--hair,#9AA4AD)}"
+    },
+    {
+      "name": "Record Row",
+      "kind": "card",
+      "refersTo": "records-table",
+      "description": "Service record entry: mono ref, linked title, constraint line.",
+      "html": "<div class=\"ds-rec\"><span class=\"ds-ref\">W-02</span><a href=\"#\">Record title</a><p>Constraint, safeguard, result.</p></div>",
+      "css": ".ds-rec{display:grid;grid-template-columns:5.5em 1fr;gap:4px 14px;padding:14px 0;border-top:1px solid var(--hair,#9AA4AD);border-bottom:1px solid var(--hair,#9AA4AD);font:400 17px/1.55 'Barlow',sans-serif}.ds-ref{font:400 14px 'JetBrains Mono',monospace;color:var(--ink-2,#47515A);grid-row:span 2}.ds-rec a{font-weight:600;color:var(--steel,#1F3F8F)}.ds-rec a:hover{color:var(--steel-hi,#142C69)}.ds-rec a:focus-visible{outline:2px solid var(--steel,#1F3F8F);outline-offset:3px}.ds-rec p{margin:0;color:var(--ink-2,#47515A)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Caliber Sheet",
+    "overview": "The site is the technical service sheet of a watch movement. One idea runs through it: precision you can inspect. Every part is specified, every claim sits in a record that names its constraint, safeguard and result, and the page is laid out like the document a watchmaker would file them in: a title block over a double rule, a line drawing with numbered callouts, tables with hairline rows.\n\nThe day view is a cool rhodium-white sheet printed in near-black ink. The night view is a lume view: a black ground where only the active part and the primary action glow green, the way lume marks sit on a dial. Color is rationed by meaning. Blue means you can click it, ruby (or lume green at night) means this is the active part, and everything else is ink on paper.\n\nThe system rejects the category default of a centred hero, a photo, a tagline and a card grid. It uses no shadows, no radii, no fills beyond the plate tone, and no decorative imagery. The line drawing and the tables are the imagery.",
+    "keyCharacteristics": [
+      "Flat, square-cornered, ruled: structure comes from hairlines and double rules, never from boxes or shadows.",
+      "Condensed uppercase labels for the sheet furniture, a humanist sans for reading, monospace only for references and data.",
+      "Colour means state: steel for links and actions, ruby or lume green for the one active item.",
+      "Two views from one set of tokens: light by default, lume when the system or the visitor asks.",
+      "Numbered references (`01`, `W-02`) tie callouts, nav, sections and records together."
+    ],
+    "rules": [
+      {
+        "name": "The Click Rule",
+        "body": "Blue steel appears only on things that respond to a click. If it is not interactive, it is ink.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Active Part Rule",
+        "body": "Ruby (day) or lume green (night) marks the single active item on a view. If two things are red, neither is active.",
+        "section": "colors"
+      },
+      {
+        "name": "The Lume Rule",
+        "body": "Glow exists only in the lume view and only on the active item and the primary button. Links, rules and text never glow.",
+        "section": "colors"
+      },
+      {
+        "name": "The Part Stamp Rule",
+        "body": "Mono is for references and data only (`W-02`, `01`, repo names). A sentence is never set in mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The Furniture Rule",
+        "body": "Uppercase condensed type is for the sheet's furniture (title block, section heads, nav, buttons, table headers). Headings that carry the argument are sentence case.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Sheet Rule",
+        "body": "Nothing floats above the sheet. Separation is a rule or whitespace, never a shadow or a card.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** use ink-black rules: 1px between bands, 3px double for the title block and footer; hairline (#9AA4AD) for rows.",
+      "**Do** give every addressable thing a number or reference in mono (callouts, nav, sections, records).",
+      "**Do** keep the day and night views on the same tokens: change `--ground`, `--plate`, `--ink`, `--ink-2`, `--hair`, `--rule`, `--steel`, `--active` and the glow variables, never component rules.",
+      "**Do** keep the page readable without JavaScript and without motion; the theme falls back to the system setting.",
+      "**Do** write each service record as constraint, safeguard, result."
+    ],
+    "donts": [
+      "**Don't** put a centred hero, a photograph, a tagline, or a card grid on the sheet.",
+      "**Don't** use shadows, rounded corners, gradients or fills other than Plate Grey for parts.",
+      "**Don't** colour something blue that cannot be clicked, or glow anything that is not the active part or the primary button.",
+      "**Don't** set sentences in mono or headings in body-weight Barlow.",
+      "**Don't** mimic window management or a terminal; the site is a document."
+    ]
+  }
+}
