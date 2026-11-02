@@ -22,8 +22,6 @@ test('home has the resume action without JavaScript', () => {
   assert.match(readFileSync('dist/index.html', 'utf8'), /href="\/resume\.pdf"/);
 });
 
-// shortcut: pages built in Task 7; remove this list there
-const PENDING_PAGES = ['/resume/', '/contact/', '/now/'];
 
 const htmlFilesUnder = (dir: string): string[] =>
   readdirSync(dir).flatMap((name) => {
@@ -46,7 +44,6 @@ test('every area and record has a built page', () => {
 test('every internal link resolves to a built file', () => {
   for (const file of htmlFilesUnder('dist')) {
     for (const href of internalHrefs(readFileSync(file, 'utf8'))) {
-      if (PENDING_PAGES.includes(href)) continue;
       assert.ok(resolvesInDist(href), `${file} -> ${href}`);
     }
   }
@@ -61,4 +58,13 @@ test('home shows the full movement, work pages are already zoomed without JavaSc
     assert.ok(vb[2] < 600 && vb[2] === vb[3], `${area.slug} viewBox ${vb}`);
     assert.match(html, new RegExp(`class="part focus[^"]*" data-part="${area.part}"`));
   }
+});
+
+test('resume, contact, now and 404 are built', () => {
+  for (const p of ['resume/index.html', 'contact/index.html', 'now/index.html', '404.html', 'resume.pdf', 'sitemap-index.xml'])
+    assert.ok(existsSync(`dist/${p}`), p);
+});
+test('the day job appears only on the resume', () => {
+  for (const file of htmlFilesUnder('dist').filter(f => !f.startsWith('dist/resume/')))
+    assert.doesNotMatch(readFileSync(file, 'utf8'), /atlassian|jira|confluence|servicerocket/i, file);
 });
