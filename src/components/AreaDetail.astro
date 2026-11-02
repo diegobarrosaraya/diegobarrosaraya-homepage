@@ -1,0 +1,48 @@
+---
+import { AREAS, recordRef, type WorkArea } from '../data/work';
+export interface Props { area: WorkArea }
+const { area } = Astro.props;
+const i = AREAS.findIndex((a) => a.slug === area.slug);
+const prev = AREAS[(i + AREAS.length - 1) % AREAS.length];
+const next = AREAS[(i + 1) % AREAS.length];
+---
+<div class="detail" transition:name="detail">
+  <a class="back" href="/">
+    <svg viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 7H2M6 3 2 7l4 4" /></svg>
+    Full movement</a>
+  <div class="ref mono">{area.number}</div>
+  <h1>{area.title}</h1>
+  <p class="lede">{area.lede}</p>
+  <ol>
+    {area.records.map((r, n) => (
+      <li>
+        <span class="mono">{recordRef(area, n)}</span>
+        <a href={`/work/${area.slug}/${r.slug}/`}>{r.name}</a>
+        <p><b>Constraint</b>{r.constraint}</p>
+        <p><b>Safeguard</b>{r.safeguard}</p>
+      </li>
+    ))}
+  </ol>
+  <nav class="nextprev" aria-label="Other work areas">
+    <a href={`/work/${prev.slug}/`}>&larr; {prev.title}</a>
+    <a href={`/work/${next.slug}/`}>{next.title} &rarr;</a>
+  </nav>
+</div>
+
+<style>
+  .back {
+    color: var(--steel); font: 600 14px/1 var(--font-label); letter-spacing: .09em; text-transform: uppercase;
+    display: inline-flex; gap: 8px; align-items: center; margin-bottom: 22px;
+  }
+  .ref { color: var(--ink-2); }
+  h1 { font: 700 clamp(30px, 3.4vw, 44px)/1.05 var(--font-label); margin: 6px 0 10px; text-wrap: balance; }
+  .lede { font-size: 19px; color: var(--ink-2); margin: 0 0 22px; max-width: 46ch; }
+  ol { list-style: none; margin: 0; padding: 0; }
+  li { border-top: 1px solid var(--hair); padding: 14px 0; display: grid; grid-template-columns: 5.5em 1fr; gap: 4px 14px; }
+  li:last-child { border-bottom: 1px solid var(--hair); }
+  li .mono { color: var(--ink-2); grid-row: span 3; }
+  li a { font-weight: 600; }
+  li p { margin: 0; color: var(--ink-2); }
+  li p b { font: 600 12px var(--font-label); letter-spacing: .09em; text-transform: uppercase; color: var(--ink); margin-right: 6px; }
+  .nextprev { display: flex; justify-content: space-between; gap: 16px; margin-top: 20px; }
+</style>

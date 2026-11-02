@@ -1,0 +1,45 @@
+---
+// DRAFT: Diego reviews
+import Sheet from '../../../layouts/Sheet.astro';
+import { AREAS, recordRef } from '../../../data/work';
+
+export const getStaticPaths = () =>
+  AREAS.flatMap((area) => area.records.map((record, i) => ({
+    params: { area: area.slug, record: record.slug },
+    props: { area, record, ref: recordRef(area, i) },
+  })));
+const { area, record, ref } = Astro.props;
+const steps = [
+  ['Constraint', record.constraint], ['Approach', record.approach],
+  ['Safeguard', record.safeguard], ['Result', record.result],
+] as const;
+---
+<Sheet title={`${record.name} | Diego Barros Araya`} description={record.constraint} current="records">
+  <article class="block">
+    <a class="back" href={`/work/${area.slug}/`}>&larr; {area.title}</a>
+    <div class="ref mono">{ref}</div>
+    <h1>{record.name}</h1>
+    <ol>
+      {steps.map(([label, text], n) => (
+        <li id={`${ref}.${n + 1}`}>
+          <a class="mono step" href={`#${ref}.${n + 1}`}>{ref}.{n + 1}</a>
+          <div><div class="label">{label}</div><p>{text}</p></div>
+        </li>
+      ))}
+    </ol>
+    {record.repo && <p class="repo"><a class="btn" href={record.repo}>Source on GitHub</a></p>}
+  </article>
+</Sheet>
+
+<style>
+  .back { color: var(--steel); font: 600 14px/1 var(--font-label); letter-spacing: .09em; text-transform: uppercase; }
+  .ref { color: var(--ink-2); margin-top: 22px; }
+  h1 { font: 700 clamp(30px, 3.4vw, 44px)/1.05 var(--font-label); margin: 6px 0 22px; text-wrap: balance; }
+  ol { list-style: none; margin: 0; padding: 0; max-width: 62ch; }
+  li { border-top: 1px solid var(--hair); padding: 14px 0; display: grid; grid-template-columns: 6.5em 1fr; gap: 14px; }
+  li:last-child { border-bottom: 1px solid var(--hair); }
+  .step { color: var(--ink-2); }
+  .label { color: var(--ink-2); margin-bottom: 6px; }
+  li p { margin: 0; }
+  .repo { margin: 22px 0 0; }
+</style>
