@@ -26,6 +26,7 @@ document.addEventListener('astro:page-load', () => {
 
   cancelAnimationFrame(frame);
   delete svg.dataset.zooming;
+  if (svg.closest('[data-three]')) return settle(!!area); // spike: the 3D view moves its own camera
   const from = parseViewBox(svg.getAttribute('viewBox') ?? toViewBox(FULL_VIEWBOX));
   const to: Box = part?.dataset.viewbox ? parseViewBox(part.dataset.viewbox) : FULL_VIEWBOX;
   if (toViewBox(from) === toViewBox(to)) return; // first load: the server already rendered this state

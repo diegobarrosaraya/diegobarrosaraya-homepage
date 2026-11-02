@@ -145,13 +145,13 @@ const callouts = CALLS.map((c) => ({ ...c, area: AREAS.find((a) => a.part === c.
 const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.number));
 ---
 <figure class="drawing">
+  <div class="mv-stage" transition:persist="movement">
   <svg
     id="movement"
     viewBox={focused ? viewBoxOf(focused) : toViewBox(FULL_VIEWBOX)}
     role="group"
     aria-labelledby="mv-title"
     data-focus={focus}
-    transition:persist="movement"
   >
     <title id="mv-title">Exploded view of a watch movement. Each part is labelled with an area of Diego's work.</title>
     <g fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
@@ -181,6 +181,7 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
       ))}
     </g>
   </svg>
+  </div>
   <figcaption class="caption label">Fig. 1 · Exploded view · Placeholder drawing</figcaption>
   <ol class="callout-list" aria-label="Work areas">
     {listed.map(({ area }) => (
@@ -191,10 +192,43 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
 
 <script>
   import '../scripts/zoom-client';
+
+  // Spike: swap in the 3D movement after load, only with WebGL and without reduced motion. Any failure leaves the SVG.
+  let mod: Promise<typeof import('../scripts/movement-3d')> | undefined;
+  const webgl = () => { try { return !!document.createElement('canvas').getContext('webgl2'); } catch { return false; } };
+  function load(animate: boolean) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !webgl()) return;
+    mod ??= import('../scripts/movement-3d');
+    mod.then((m) => m.mount(animate)).catch(() => document.querySelector<HTMLElement>('.mv-stage')?.removeAttribute('data-three'));
+  }
+  if (document.readyState === 'complete') load(false); else addEventListener('load', () => load(false), { once: true });
+  document.addEventListener('astro:page-load', () => { if (mod) load(true); });
 </script>
 
 <style>
   .drawing { margin: 0; position: relative; }
+  .mv-stage { position: relative; }
+
+  /* Spike: the 3D view covers the SVG's box; the SVG stays for layout and as the no-WebGL fallback. */
+  .mv-stage[data-three] svg { visibility: hidden; }
+  .mv-stage :global(.mv3d-canvas) { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .mv-stage :global(.mv3d-labels) { position: absolute; inset: 0; pointer-events: none; }
+  .mv-stage :global(.mv3d-callout) {
+    position: absolute; left: 0; top: 0; pointer-events: auto; white-space: nowrap;
+    display: flex; gap: 8px; align-items: center; text-decoration: none;
+    color: var(--ink); font: 500 15px var(--font-body);
+    transition: opacity .5s var(--ease), color .25s, visibility 0s;
+  }
+  .mv-stage :global(.mv3d-callout b) {
+    font: 500 12px var(--font-mono); color: var(--ink-2); width: 22px; height: 22px; flex: none;
+    display: grid; place-items: center; border: 1.1px solid currentColor; border-radius: 50%; background: var(--ground);
+  }
+  .mv-stage :global(.mv3d-callout span) { background: color-mix(in srgb, var(--ground) 80%, transparent); padding: 0 4px; }
+  .mv-stage :global(.mv3d-callout:is(:hover, :focus-visible, .on)) { color: var(--active); }
+  .mv-stage :global(.mv3d-callout:is(:hover, :focus-visible, .on) b) { color: var(--active); border-color: var(--active); }
+  .mv-stage :global(.mv3d-callout:focus) { outline: none; }
+  .mv-stage :global(.mv3d-callout:focus-visible b) { border-width: 2.5px; }
+  .mv-stage :global(.focused .mv3d-callout:not(.on)) { opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility 0s .5s; }
   svg { width: 100%; height: auto; display: block; overflow: visible; }
   .axis { stroke: var(--hair); stroke-dasharray: 2 5; transition: opacity .5s var(--ease); }
   .part {
@@ -237,6 +271,7 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
   /* On a phone the in-drawing labels drop to about 9px: keep the numbers, list the labels below. */
   @media (max-width: 880px) {
     .callout .name { display: none; }
+    .mv-stage :global(.mv3d-callout span) { display: none; }
     .callout-list { display: block; list-style: none; margin: 14px 0 0; padding: 0; }
     .callout-list li { border-top: 1px solid var(--hair); }
     .callout-list li:last-child { border-bottom: 1px solid var(--hair); }
