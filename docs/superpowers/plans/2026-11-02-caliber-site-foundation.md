@@ -8,7 +8,7 @@
 
 **Tech Stack:** Astro 7 (static), TypeScript, pnpm, Node 24 (Astro 7 needs Node >= 22.23.4), `tsx` for tests with `node:test`, `@astrojs/sitemap`, GitHub Actions (`actions/upload-pages-artifact`, `actions/deploy-pages`), existing pandoc resume pipeline.
 
-**Spec:** `~/Notes/Projects/Personal/homepage/Homepage Redesign - Design.md`. Product record: `PRODUCT.md`. Approved mockup: `~/Notes/Projects/Personal/homepage/caliber-mockup.html` (the reference for drawing, layout, tokens and zoom behaviour).
+**Spec:** the private design note (kept outside this repo). Product record: `PRODUCT.md`. Approved mockup: the approved mockup (kept outside this repo) (the reference for drawing, layout, tokens and zoom behaviour).
 
 **Scope:** This plan covers spec phases 0 and 1. Two later plans follow once this ships: notes sync (phase 2), and motion, console and extras (phases 3 and 4).
 
@@ -286,7 +286,7 @@ Areas, titles and ledes come from the mockup's `SECTIONS` object. Records:
 | open-source | `ardour-wayland` |
 | infrastructure | `nix-config`, `this-site` |
 
-The "headless agent runs" record from the mockup is left out: it comes from vault notes and waits for the TSM check. Draft `approach` and `result` from each repo's README (`gh api repos/diegobarrosaraya/<repo>/readme --jq .content | base64 -d`). `teams-calls-fetcher` copy mentions no real meeting. Put `// DRAFT: Diego reviews` at the top of the file.
+The "headless agent runs" record from the mockup is left out: it comes from private notes and is not published yet. Draft `approach` and `result` from each repo's README (`gh api repos/diegobarrosaraya/<repo>/readme --jq .content | base64 -d`). `teams-calls-fetcher` copy mentions no real meeting. Put `// DRAFT: Diego reviews` at the top of the file.
 
 - [ ] **Step 4: Run to see them pass**
 

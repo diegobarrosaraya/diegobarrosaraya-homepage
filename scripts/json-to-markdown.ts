@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import https from 'https';
 import { execSync } from 'child_process';
 
 interface Resume {
@@ -123,20 +122,10 @@ function convertToMarkdown(resume: Resume): string {
   return lines.join('\n');
 }
 
-function fetchJson(url: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        try {
-          resolve(JSON.parse(data));
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }).on('error', reject);
-  });
+async function fetchJson(url: string): Promise<any> {
+  const res = await fetch(url, { redirect: "follow" });
+  if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
+  return res.json();
 }
 
 async function main() {
@@ -145,6 +134,9 @@ async function main() {
   
   console.log(`Fetching resume from ${apiUrl}...`);
   const resume: Resume = await fetchJson(apiUrl);
+  if (!resume || typeof resume.basics !== "object" || !resume.basics) {
+    throw new Error("Payload has no basics object; refusing to write files");
+  }
   
   const jsonPath = path.resolve('public/resume.json');
   fs.writeFileSync(jsonPath, JSON.stringify(resume, null, 2));
@@ -159,4 +151,7 @@ async function main() {
   console.log(`Generated resume.pdf`);
 }
 
-main().catch(console.error);
+main().catch((e) => {
+  console.error(e);
+  process.exitCode = 1;
+});
