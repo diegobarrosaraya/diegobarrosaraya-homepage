@@ -153,6 +153,18 @@ function tick(dt) {
 // ---------- explode ----------
 const EXPLODE = { home: 0.5, focus: 0.7 };
 let explode = EXPLODE.home;
+
+// visitor-driven assembly: 0 = assembled, 1 = fully exploded
+const controls = document.createElement('label');
+controls.className = 'mv3d-explode';
+controls.innerHTML = '<span>Assembled</span><input type="range" min="0" max="1" step="0.001" aria-label="Assemble or explode the movement"><span>Exploded</span>';
+const slider = controls.querySelector('input');
+slider.value = String(EXPLODE.home);
+slider.addEventListener('input', () => {
+  EXPLODE.home = +slider.value;
+  EXPLODE.focus = Math.max(EXPLODE.home, 0.7);
+  if (!tween) { explode = focusSite ? EXPLODE.focus : EXPLODE.home; applyExplode(); render(); }
+});
 function applyExplode(e = explode) {
   for (const p of parts) p.g.position.z = p.baseZ * (0.35 + e * 2.4) - (p.id === 'plate' ? e * 40 : 0);
   for (const { p, l } of axes) {
@@ -270,7 +282,7 @@ export function mount(animate: boolean) {
   const stage = document.querySelector<HTMLElement>('.mv-stage');
   if (!stage) return;
   if (!stage.contains(canvas)) {
-    stage.append(canvas, labelsEl);
+    stage.append(canvas, labelsEl, controls);
     stage.dataset.three = '';
     io.disconnect(); io.observe(stage);
     ro.disconnect(); ro.observe(stage);
