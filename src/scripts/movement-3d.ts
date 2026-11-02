@@ -121,7 +121,8 @@ const fork = part('fork', 'escape', P.fork, 46, (s) => {
 const balance = part('balance', 'balance', P.balance, 58, (s) => {
   s.add(disc(30, 3, 26));
   for (let k = 0; k < 3; k++) { const g = new THREE.BoxGeometry(26, 2.4, 2); g.translate(13, 0, 1); const b = drawn(g); b.rotation.z = k / 3 * Math.PI * 2; s.add(b); }
-  for (let k = 0; k < 12; k++) { const a = k / 12 * Math.PI * 2; const sc = disc(1.6, 2.2); sc.position.set(Math.cos(a) * 31.5, Math.sin(a) * 31.5, .4); s.add(sc); }
+  // smooth screwless rim (modern balance), so it doesn't read as a toothed cog
+  const lip = disc(30, 4.4, 28.2); lip.position.z = -0.7; s.add(lip);
   s.add(spiralLine(500, 11, 3, 19, 6)); s.add(arbor(14, 1.4));
 });
 

@@ -221,9 +221,13 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
   }
   .mv-stage :global(.mv3d-callout b) {
     font: 500 12px var(--font-mono); color: var(--ink-2); width: 22px; height: 22px; flex: none;
-    display: grid; place-items: center; border: 1.1px solid currentColor; border-radius: 50%; background: var(--ground);
+    display: grid; place-items: center; border: 1.1px solid currentColor; border-radius: 50%; background: transparent;
   }
-  .mv-stage :global(.mv3d-callout span) { background: color-mix(in srgb, var(--ground) 80%, transparent); padding: 0 4px; }
+  /* no box behind labels: a ground-coloured halo keeps text legible over the hairlines */
+  .mv-stage :global(.mv3d-callout :is(span, b)) {
+    -webkit-text-stroke: 4px var(--ground); paint-order: stroke fill;
+    text-shadow: 0 0 3px var(--ground), 0 0 6px var(--ground);
+  }
   .mv-stage :global(.mv3d-callout:is(:hover, :focus-visible, .on)) { color: var(--active); }
   .mv-stage :global(.mv3d-callout:is(:hover, :focus-visible, .on) b) { color: var(--active); border-color: var(--active); }
   .mv-stage :global(.mv3d-callout:focus) { outline: none; }
