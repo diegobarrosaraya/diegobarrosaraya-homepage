@@ -182,6 +182,7 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
     </g>
   </svg>
   </div>
+  <figcaption class="caption label">Fig. 1 · Exploded view · Placeholder drawing</figcaption>
   <ol class="callout-list" aria-label="Work areas">
     {listed.map(({ area }) => (
       <li><a href={`/work/${area.slug}/`}><span class="mono">{area.number}</span>{area.title}</a></li>
@@ -273,6 +274,7 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
   .callouts { transition: opacity .5s var(--ease); }
   svg[data-focus] .callouts { opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility 0s .5s; }
 
+  .caption { color: var(--ink-2); margin-top: 10px; }
   .callout-list { display: none; }
 
   /* On a phone the in-drawing labels drop to about 9px: keep the numbers, list the labels below. */
