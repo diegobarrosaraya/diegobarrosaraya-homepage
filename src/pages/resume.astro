@@ -33,7 +33,7 @@ const sections = [
       <h2 id={`${s.id}-h`}>{s.title}</h2>
       <ul>
         {s.rows.map(([title, where, when, text, marks]: any[]) => (
-          <li><div><strong>{title}</strong>{where && <div class="sub">{where}</div>}{text && <p>{text}</p>}{marks?.length > 0 && <ul class="marks">{marks.map((m: string) => <li>{m}</li>)}</ul>}</div><span class="mono when">{when}</span></li>
+          <li><div><strong>{title}</strong>{where && <div class="sub">{where}</div>}{text && <p>{text}</p>}{marks?.length > 0 && <ul class="marks">{marks.map((m: string) => <li>{m}</li>)}</ul>}</div><span class="when">{when}</span></li>
         ))}
       </ul>
     </section>
@@ -62,6 +62,6 @@ const sections = [
   .marks { margin: 6px 0 0; } .marks li { border: 0; padding: 0; display: list-item; list-style: disc inside; }
   .sub { color: var(--ink-2); }
   li p { margin: 6px 0 0; }
-  .when { color: var(--ink-2); white-space: nowrap; }
+  .when { color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
   @media (max-width: 560px) { li { flex-direction: column; gap: 4px; } }
 </style>

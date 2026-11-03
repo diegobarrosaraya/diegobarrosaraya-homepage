@@ -32,5 +32,9 @@ const nav = [
   nav a { text-decoration: none; color: var(--steel); }
   nav a:hover { text-decoration: underline; }
   nav a[aria-current="page"] { color: var(--active-text); filter: var(--glow); }
-  @media (max-width: 880px) { nav { margin-left: 0; width: 100%; } }
+  /* Phones: the toggle shares the name line, the nav takes the row below. */
+  @media (max-width: 880px) {
+    nav { margin-left: 0; width: 100%; order: 1; }
+    header.top :global(.theme) { margin-left: auto; }
+  }
 </style>

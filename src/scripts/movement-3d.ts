@@ -179,8 +179,11 @@ const callouts = PRINCIPLES.map((principle) => {
 // ---------- camera ----------
 const HOME_DIR = new THREE.Vector3(-150, -330, 330).normalize();
 const FOCUS_DIR = new THREE.Vector3(-0.45, -0.7, 0.8).normalize();
-// World x offset of each label from its part, so neighbouring labels do not collide.
-const LABEL_DX: Record<string, number> = { balance: 8, fork: 44 };
+// World offset of each label from its part, so neighbouring labels do not collide.
+// Verify sits above the balance and Agents below it on the open plate, away from the text column.
+const LABEL_OFFSET: Record<string, [number, number, number]> = { balance: [-10, 0, 30], fork: [0, 10, -50] };
+// Zoomed into one part only its label shows; these keep it beside the part at that scale.
+const FOCUS_OFFSET: Record<string, [number, number, number]> = { balance: [30, 0, 25], fork: [62, 0, 0] };
 const cam = { pos: new THREE.Vector3(), target: new THREE.Vector3() };
 let width = 1, height = 1, focusSite: PartId | null = null, tween: ((now: number) => void) | null = null;
 
@@ -241,7 +244,7 @@ function render() {
   const widths = callouts.map(({ a }) => a.offsetWidth); // read all before writing, so layout runs once
   callouts.forEach(({ p, a }, i) => {
     if (p.id === 'plate') v.set(-118, -60, p.g.position.z + 3); // plate edge, not its centre
-    else { box.setFromObject(p.g).getCenter(v); v.x += LABEL_DX[p.id] ?? -40; if (p.id === 'balance') v.z += 25; }
+    else { const [dx, dy, dz] = (focusSite ? FOCUS_OFFSET : LABEL_OFFSET)[p.id] ?? [-40, 0, 0]; box.setFromObject(p.g).getCenter(v); v.x += dx; v.y += dy; v.z += dz; }
     v.project(camera);
     // The label starts 11px left of x; keep its whole width inside the stage so it never reaches the text column.
     const x = Math.min(width - widths[i] + 11 - 4, Math.max(16, (v.x * .5 + .5) * width)), y = Math.min(height - 12, Math.max(12, (-v.y * .5 + .5) * height));
