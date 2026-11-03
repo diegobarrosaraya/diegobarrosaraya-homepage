@@ -183,7 +183,10 @@ const FOCUS_DIR = new THREE.Vector3(-0.45, -0.7, 0.8).normalize();
 // Verify sits above the balance and Agents below it on the open plate, away from the text column.
 const LABEL_OFFSET: Record<string, [number, number, number]> = { balance: [-10, 0, 30], fork: [0, 10, -50] };
 // Zoomed into one part only its label shows; these keep it beside the part at that scale.
+// labelK runs 0 (home offsets) to 1 (focus offsets) with the camera tween, so labels move with it, never jump.
 const FOCUS_OFFSET: Record<string, [number, number, number]> = { balance: [30, 0, 25], fork: [62, 0, 0] };
+let labelK = 0;
+const DEFAULT_OFFSET: [number, number, number] = [-40, 0, 0];
 const cam = { pos: new THREE.Vector3(), target: new THREE.Vector3() };
 let width = 1, height = 1, focusSite: PartId | null = null, tween: ((now: number) => void) | null = null;
 
@@ -199,12 +202,39 @@ function view(site: PartId | null, e: number) {
   if (site) parts.filter((p) => p.site === site).forEach((p) => box.expandByObject(p.g));
   else parts.forEach((p) => box.expandByObject(p.g));
   box.getBoundingSphere(sphere);
-  applyExplode(); // restore the live value
   const target = sphere.center.clone();
   // The bounding sphere is loose around a flat movement, so it is shrunk to frame the parts, not the sphere.
   // A floor on the radius keeps neighbours in frame around a small part (the fork).
-  const d = fitDist(Math.max(sphere.radius, 34) * (site ? 0.8 : 0.72));
-  return { pos: target.clone().addScaledVector(site ? FOCUS_DIR : HOME_DIR, d), target };
+  let d = fitDist(Math.max(sphere.radius, 34) * (site ? 0.8 : 0.72));
+  const dir = site ? FOCUS_DIR : HOME_DIR;
+  // Full view: centre the drawn parts in the stage and scale them to fill it, from their projected vertices.
+  if (!site) {
+    for (let i = 0; i < 2; i++) {
+      const b = screenBounds(target.clone().addScaledVector(dir, d), target);
+      const z = v.copy(target).project(camera).z;
+      target.copy(v.set((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2, z).unproject(camera));
+      d *= Math.max(b.x1 - b.x0, b.y1 - b.y0) / 2 / HOME_FILL;
+    }
+  }
+  applyExplode(); // restore the live value
+  return { pos: target.clone().addScaledVector(dir, d), target };
+}
+// Share of the stage the full view fills, leaving room for the labels at the edges.
+const HOME_FILL = 0.9;
+const ndc = new THREE.Vector3();
+/** Projected bounds (NDC) of every part's vertices, seen from `pos` looking at `target`. */
+function screenBounds(pos: THREE.Vector3, target: THREE.Vector3) {
+  camera.position.copy(pos); camera.lookAt(target); camera.updateMatrixWorld();
+  const b = { x0: Infinity, x1: -Infinity, y0: Infinity, y1: -Infinity };
+  for (const p of parts) p.g.traverse((n) => {
+    const a = (n as THREE.Mesh).geometry?.attributes?.position as THREE.BufferAttribute | undefined;
+    if (!a) return;
+    for (let i = 0; i < a.count; i++) {
+      ndc.fromBufferAttribute(a, i).applyMatrix4(n.matrixWorld).project(camera);
+      b.x0 = Math.min(b.x0, ndc.x); b.x1 = Math.max(b.x1, ndc.x); b.y0 = Math.min(b.y0, ndc.y); b.y1 = Math.max(b.y1, ndc.y);
+    }
+  });
+  return b;
 }
 
 const materialOf = (n: THREE.Object3D) => (n as THREE.Mesh).material as THREE.Material | undefined;
@@ -227,12 +257,13 @@ function go(animate: boolean) {
   const toE = focusSite ? EXPLODE.focus : EXPLODE.home;
   const to = view(focusSite, toE);
   start();
-  if (!animate) { cam.pos.copy(to.pos); cam.target.copy(to.target); explode = toE; applyExplode(); tween = null; return render(); }
-  const fp = cam.pos.clone(), ft = cam.target.clone(), fe = explode, t0 = performance.now();
+  const toK = focusSite ? 1 : 0;
+  if (!animate) { cam.pos.copy(to.pos); cam.target.copy(to.target); explode = toE; labelK = toK; applyExplode(); tween = null; return render(); }
+  const fp = cam.pos.clone(), ft = cam.target.clone(), fe = explode, fk = labelK, t0 = performance.now();
   tween = (now) => {
     const k = easeOutExpo(Math.min(1, (now - t0) / 950));
     cam.pos.lerpVectors(fp, to.pos, k); cam.target.lerpVectors(ft, to.target, k);
-    explode = fe + (toE - fe) * k; applyExplode();
+    explode = fe + (toE - fe) * k; labelK = fk + (toK - fk) * k; applyExplode();
     if (k >= 1) tween = null;
   };
 }
@@ -244,7 +275,11 @@ function render() {
   const widths = callouts.map(({ a }) => a.offsetWidth); // read all before writing, so layout runs once
   callouts.forEach(({ p, a }, i) => {
     if (p.id === 'plate') v.set(-118, -60, p.g.position.z + 3); // plate edge, not its centre
-    else { const [dx, dy, dz] = (focusSite ? FOCUS_OFFSET : LABEL_OFFSET)[p.id] ?? [-40, 0, 0]; box.setFromObject(p.g).getCenter(v); v.x += dx; v.y += dy; v.z += dz; }
+    else {
+      const h = LABEL_OFFSET[p.id] ?? DEFAULT_OFFSET, f = FOCUS_OFFSET[p.id] ?? DEFAULT_OFFSET;
+      box.setFromObject(p.g).getCenter(v);
+      v.x += h[0] + (f[0] - h[0]) * labelK; v.y += h[1] + (f[1] - h[1]) * labelK; v.z += h[2] + (f[2] - h[2]) * labelK;
+    }
     v.project(camera);
     // The label starts 11px left of x; keep its whole width inside the stage so it never reaches the text column.
     const x = Math.min(width - widths[i] + 11 - 4, Math.max(16, (v.x * .5 + .5) * width)), y = Math.min(height - 12, Math.max(12, (-v.y * .5 + .5) * height));
