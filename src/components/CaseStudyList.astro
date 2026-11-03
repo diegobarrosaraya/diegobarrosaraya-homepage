@@ -1,0 +1,32 @@
+---
+import { CASES } from '../data/story';
+
+// The four main case studies get full rows; this site is a short item after them.
+const main = CASES.filter((c) => c.slug !== 'this-site');
+const site = CASES.find((c) => c.slug === 'this-site')!;
+---
+<ul class="cases">
+  {main.map((c) => (
+    <li>
+      <a href={`/work/${c.slug}/`}>
+        <span class="name">{c.name}</span>
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" /></svg>
+      </a>
+      <p>{c.summary}</p>
+    </li>
+  ))}
+</ul>
+<p class="site"><a href={`/work/${site.slug}/`}>{site.name}</a>: {site.summary}</p>
+
+<style>
+  .cases { list-style: none; margin: 0; padding: 0; max-width: 72ch; }
+  .cases li { padding: 20px 0 22px; border-top: 1px solid var(--hair); }
+  .cases li:last-child { border-bottom: 1px solid var(--hair); }
+  .cases a { display: inline-flex; align-items: baseline; gap: 12px; text-decoration: none; }
+  .name { font: 400 clamp(19px, 1.8vw, 23px)/1.3 var(--font-head); }
+  .cases a:hover .name { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+  .cases svg { width: 14px; height: 14px; flex: none; transition: transform .25s var(--ease); }
+  .cases a:hover svg { transform: translateX(3px); }
+  .cases p { margin: 8px 0 0; color: var(--ink-2); max-width: 62ch; text-wrap: pretty; }
+  .site { margin: 20px 0 0; color: var(--ink-2); max-width: 62ch; }
+</style>

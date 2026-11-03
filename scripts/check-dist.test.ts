@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { CASES, PRINCIPLES } from '../src/data/story';
+import { CASES, HOME, PRINCIPLES } from '../src/data/story';
 import { LEGACY_REDIRECTS } from '../src/data/redirects';
 
 // Parts the SVG drawing has today. Task 4 adds the pallet fork as the sixth.
@@ -24,6 +24,16 @@ test('home links every drawn part to its principle page', () => {
 });
 test('home has the resume action without JavaScript', () => {
   assert.match(readFileSync('dist/index.html', 'utf8'), /href="\/resume\.pdf"/);
+});
+test('home tells the story in order', () => {
+  const html = readFileSync('dist/index.html', 'utf8');
+  // Astro escapes an apostrophe in an expression, not in literal markup.
+  const at = (s: string) => Math.max(html.indexOf(s), html.indexOf(s.replace(/'/g, '&#39;')));
+  const order = [HOME.headline, HOME.atWork, HOME.team[0], 'id="work"', HOME.path, 'id="how"', 'id="contact"'].map(at);
+  assert.ok(order.every(i => i >= 0), 'missing section');
+  assert.deepEqual([...order].sort((a, b) => a - b), order);
+  for (const p of PRINCIPLES) assert.match(html, new RegExp(`href="/how/${p.slug}/"`));
+  for (const c of CASES) assert.match(html, new RegExp(`href="/work/${c.slug}/"`));
 });
 
 
