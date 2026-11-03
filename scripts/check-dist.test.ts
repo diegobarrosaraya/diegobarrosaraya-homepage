@@ -109,3 +109,12 @@ test('font licences ship with the site', () => {
   for (const n of ['Barlow', 'JetBrainsMono']) assert.ok(existsSync(`dist/licenses/${n}-OFL.txt`), n);
   assert.match(readFileSync('dist/index.html', 'utf8'), /Barlow-OFL[\s\S]*JetBrainsMono-OFL/);
 });
+
+test('resume.pdf is a PDF printed from the current resume.json', async () => {
+  const { createHash } = await import('node:crypto');
+  const pdf = readFileSync('dist/resume.pdf');
+  assert.equal(pdf.subarray(0, 4).toString(), '%PDF');
+  assert.ok(pdf.length > 10 * 1024, `${pdf.length} bytes`);
+  const meta = JSON.parse(readFileSync('dist/resume.pdf.json', 'utf8'));
+  assert.equal(meta.sha256, createHash('sha256').update(readFileSync('public/resume.json')).digest('hex'));
+});

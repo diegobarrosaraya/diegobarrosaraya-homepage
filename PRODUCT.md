@@ -44,7 +44,7 @@ Name: Diego Barros Araya. Domain: diegobarrosaraya.com. No simulated window mana
 - Photos of his watch collection.
 - Screenshots of his Sway / NixOS desktop.
 - Public repos: `nix-config`, `ydk-wayland` / Ardour Wayland fork, `teams-calls-fetcher`, `github-readme-stats-worker`, `linkedin-resume-generator`.
-- Resume data: `public/resume.json` and the generated `public/resume.pdf`.
+- Resume data: `public/resume.json` and the PDF printed from `/resume/` by `scripts/print-resume.ts` into `dist/resume.pdf`.
 - Vault notes that Diego flags for publishing (none flagged yet).
 - Absent, do not fabricate: testimonials, client names, usage numbers, employer endorsements.
 
