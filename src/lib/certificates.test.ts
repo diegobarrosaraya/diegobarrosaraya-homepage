@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { activeCertificates } from './certificates';
+import { activeCertificates, expiredCertificates } from './certificates';
 
 test('expired certificates drop out, undated ones stay', () => {
   const certs = [{ name: 'a', expires: '2026-01' }, { name: 'b', expires: '2026-12' }, { name: 'c' }];
@@ -8,4 +8,8 @@ test('expired certificates drop out, undated ones stay', () => {
 });
 test('a certificate stays active through its expiry month', () => {
   assert.equal(activeCertificates([{ expires: '2026-11-01' }], '2026-11-30').length, 1);
+});
+test('expiredCertificates is the exact complement of activeCertificates', () => {
+  const certs = [{ name: 'a', expires: '2026-01' }, { name: 'b', expires: '2026-11-30' }, { name: 'c' }];
+  assert.deepEqual(expiredCertificates(certs, '2026-11-03').map(c => c.name), ['a']);
 });
