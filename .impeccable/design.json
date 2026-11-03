@@ -1,317 +1,286 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-02T20:55:29.347Z",
+  "generatedAt": "2026-11-03T14:44:29.999Z",
   "title": "Design System: Diego Barros Araya",
   "extensions": {
     "colorMeta": {
       "ground": {
         "role": "neutral",
-        "displayName": "Rhodium White",
-        "canonical": "#EDF0F2",
+        "displayName": "Dial Violet-Black",
+        "canonical": "#1C1B1F",
         "tonalRamp": [
-          "oklch(15% 0.004 236)",
-          "oklch(26% 0.004 236)",
-          "oklch(37% 0.004 236)",
-          "oklch(48% 0.004 236)",
-          "oklch(59% 0.004 236)",
-          "oklch(70% 0.004 236)",
-          "oklch(82% 0.004 236)",
-          "oklch(95% 0.004 236)"
+          "#080809",
+          "#0e0e10",
+          "#141316",
+          "#18171a",
+          "#3e3d41",
+          "#6b6b6d",
+          "#a4a4a5",
+          "#d2d1d2"
         ]
       },
       "plate": {
         "role": "neutral",
-        "displayName": "Plate Grey",
-        "canonical": "#E2E6E9",
+        "displayName": "Case Plate",
+        "canonical": "#2A282D",
         "tonalRamp": [
-          "oklch(15% 0.006 240)",
-          "oklch(26% 0.006 240)",
-          "oklch(37% 0.006 240)",
-          "oklch(48% 0.006 240)",
-          "oklch(59% 0.006 240)",
-          "oklch(70% 0.006 240)",
-          "oklch(82% 0.006 240)",
-          "oklch(95% 0.006 240)"
+          "#0d0c0e",
+          "#151417",
+          "#1d1c20",
+          "#242226",
+          "#4a484d",
+          "#757377",
+          "#aaa9ab",
+          "#d4d4d5"
         ]
       },
       "ink": {
         "role": "neutral",
-        "displayName": "Movement Ink",
-        "canonical": "#121518",
+        "displayName": "Display White",
+        "canonical": "#EDEAF1",
         "tonalRamp": [
-          "oklch(15% 0.008 248)",
-          "oklch(26% 0.008 248)",
-          "oklch(37% 0.008 248)",
-          "oklch(48% 0.008 248)",
-          "oklch(59% 0.008 248)",
-          "oklch(70% 0.008 248)",
-          "oklch(82% 0.008 248)",
-          "oklch(95% 0.008 248)"
+          "#474648",
+          "#777579",
+          "#a6a4a9",
+          "#c9c7cd",
+          "#f0edf3",
+          "#f3f1f6",
+          "#f8f7f9",
+          "#fbfbfc"
         ]
       },
       "ink-2": {
         "role": "neutral",
-        "displayName": "Annotation Grey",
-        "canonical": "#47515A",
+        "displayName": "Dial Grey",
+        "canonical": "#9C9CA6",
         "tonalRamp": [
-          "oklch(15% 0.020 245)",
-          "oklch(26% 0.020 245)",
-          "oklch(37% 0.020 245)",
-          "oklch(48% 0.020 245)",
-          "oklch(59% 0.020 245)",
-          "oklch(70% 0.020 245)",
-          "oklch(82% 0.020 245)",
-          "oklch(95% 0.020 245)"
+          "#2f2f32",
+          "#4e4e53",
+          "#6d6d74",
+          "#85858d",
+          "#ababb3",
+          "#bfbfc5",
+          "#d7d7db",
+          "#ebebed"
         ]
       },
       "hair": {
         "role": "neutral",
-        "displayName": "Hairline Steel",
-        "canonical": "#9AA4AD",
+        "displayName": "Hairline",
+        "canonical": "#49474C",
         "tonalRamp": [
-          "oklch(15% 0.017 245)",
-          "oklch(26% 0.017 245)",
-          "oklch(37% 0.017 245)",
-          "oklch(48% 0.017 245)",
-          "oklch(59% 0.017 245)",
-          "oklch(70% 0.017 245)",
-          "oklch(82% 0.017 245)",
-          "oklch(95% 0.017 245)"
+          "#161517",
+          "#252426",
+          "#333235",
+          "#3e3c41",
+          "#646367",
+          "#89878b",
+          "#b6b5b7",
+          "#dbdadb"
         ]
       },
       "steel": {
-        "role": "primary",
-        "displayName": "Heat-Blued Steel",
-        "canonical": "#1F3F8F",
+        "role": "secondary",
+        "displayName": "Rhodium Steel",
+        "canonical": "#A8D0D9",
         "tonalRamp": [
-          "oklch(15% 0.138 264)",
-          "oklch(26% 0.138 264)",
-          "oklch(37% 0.138 264)",
-          "oklch(48% 0.138 264)",
-          "oklch(59% 0.138 264)",
-          "oklch(70% 0.138 264)",
-          "oklch(82% 0.138 264)",
-          "oklch(95% 0.138 264)"
+          "#323e41",
+          "#54686d",
+          "#769298",
+          "#8fb1b8",
+          "#b5d7df",
+          "#c6e0e6",
+          "#dcecf0",
+          "#eef6f7"
         ]
       },
       "steel-hi": {
-        "role": "primary",
-        "displayName": "Deep Blue Steel",
-        "canonical": "#142C69",
-        "tonalRamp": [
-          "oklch(15% 0.111 265)",
-          "oklch(26% 0.111 265)",
-          "oklch(37% 0.111 265)",
-          "oklch(48% 0.111 265)",
-          "oklch(59% 0.111 265)",
-          "oklch(70% 0.111 265)",
-          "oklch(82% 0.111 265)",
-          "oklch(95% 0.111 265)"
-        ]
-      },
-      "active": {
         "role": "secondary",
-        "displayName": "Ruby Jewel",
-        "canonical": "#A3142D",
+        "displayName": "Bright Steel",
+        "canonical": "#CDE6EC",
         "tonalRamp": [
-          "oklch(15% 0.174 20)",
-          "oklch(26% 0.174 20)",
-          "oklch(37% 0.174 20)",
-          "oklch(48% 0.174 20)",
-          "oklch(59% 0.174 20)",
-          "oklch(70% 0.174 20)",
-          "oklch(82% 0.174 20)",
-          "oklch(95% 0.174 20)"
+          "#3e4547",
+          "#677376",
+          "#90a1a5",
+          "#aec4c9",
+          "#d5eaef",
+          "#dfeff3",
+          "#ebf5f7",
+          "#f5fafb"
         ]
       },
-      "lume-ground": {
-        "role": "neutral",
-        "displayName": "Lume Black",
-        "canonical": "#060807",
+      "primary": {
+        "role": "primary",
+        "displayName": "Dial Red",
+        "canonical": "#DE2D4F",
         "tonalRamp": [
-          "oklch(15% 0.005 165)",
-          "oklch(26% 0.005 165)",
-          "oklch(37% 0.005 165)",
-          "oklch(48% 0.005 165)",
-          "oklch(59% 0.005 165)",
-          "oklch(70% 0.005 165)",
-          "oklch(82% 0.005 165)",
-          "oklch(95% 0.005 165)"
+          "#430e18",
+          "#6f1728",
+          "#9b2037",
+          "#bd2643",
+          "#e34d69",
+          "#ea778d",
+          "#f2abb9",
+          "#f8d5dc"
         ]
       },
-      "lume-plate": {
-        "role": "neutral",
-        "displayName": "Lume Plate",
-        "canonical": "#0E1210",
+      "active-text": {
+        "role": "primary",
+        "displayName": "Active Rose",
+        "canonical": "#F0566F",
         "tonalRamp": [
-          "oklch(15% 0.008 164)",
-          "oklch(26% 0.008 164)",
-          "oklch(37% 0.008 164)",
-          "oklch(48% 0.008 164)",
-          "oklch(59% 0.008 164)",
-          "oklch(70% 0.008 164)",
-          "oklch(82% 0.008 164)",
-          "oklch(95% 0.008 164)"
+          "#481a21",
+          "#782b38",
+          "#a83c4e",
+          "#cc495e",
+          "#f26f85",
+          "#f591a1",
+          "#f9bbc5",
+          "#fcdde2"
         ]
       },
-      "lume-ink": {
-        "role": "neutral",
-        "displayName": "Lume Ink",
-        "canonical": "#D5DCD2",
-        "tonalRamp": [
-          "oklch(15% 0.015 136)",
-          "oklch(26% 0.015 136)",
-          "oklch(37% 0.015 136)",
-          "oklch(48% 0.015 136)",
-          "oklch(59% 0.015 136)",
-          "oklch(70% 0.015 136)",
-          "oklch(82% 0.015 136)",
-          "oklch(95% 0.015 136)"
-        ]
-      },
-      "lume-ink-2": {
-        "role": "neutral",
-        "displayName": "Lume Annotation",
-        "canonical": "#93A08F",
-        "tonalRamp": [
-          "oklch(15% 0.029 138)",
-          "oklch(26% 0.029 138)",
-          "oklch(37% 0.029 138)",
-          "oklch(48% 0.029 138)",
-          "oklch(59% 0.029 138)",
-          "oklch(70% 0.029 138)",
-          "oklch(82% 0.029 138)",
-          "oklch(95% 0.029 138)"
-        ]
-      },
-      "lume-hair": {
-        "role": "neutral",
-        "displayName": "Lume Hairline",
-        "canonical": "#34403A",
-        "tonalRamp": [
-          "oklch(15% 0.019 164)",
-          "oklch(26% 0.019 164)",
-          "oklch(37% 0.019 164)",
-          "oklch(48% 0.019 164)",
-          "oklch(59% 0.019 164)",
-          "oklch(70% 0.019 164)",
-          "oklch(82% 0.019 164)",
-          "oklch(95% 0.019 164)"
-        ]
-      },
-      "lume-rule": {
-        "role": "neutral",
-        "displayName": "Lume Rule",
-        "canonical": "#5B6A60",
-        "tonalRamp": [
-          "oklch(15% 0.024 156)",
-          "oklch(26% 0.024 156)",
-          "oklch(37% 0.024 156)",
-          "oklch(48% 0.024 156)",
-          "oklch(59% 0.024 156)",
-          "oklch(70% 0.024 156)",
-          "oklch(82% 0.024 156)",
-          "oklch(95% 0.024 156)"
-        ]
-      },
-      "lume-link": {
+      "highlight": {
         "role": "tertiary",
-        "displayName": "Pale Lume Link",
-        "canonical": "#CFE3C7",
+        "displayName": "Alarm Yellow",
+        "canonical": "#D8C84D",
         "tonalRamp": [
-          "oklch(15% 0.043 137)",
-          "oklch(26% 0.043 137)",
-          "oklch(37% 0.043 137)",
-          "oklch(48% 0.043 137)",
-          "oklch(59% 0.043 137)",
-          "oklch(70% 0.043 137)",
-          "oklch(82% 0.043 137)",
-          "oklch(95% 0.043 137)"
+          "#413c17",
+          "#6c6427",
+          "#978c36",
+          "#b8aa41",
+          "#ded068",
+          "#e6db8b",
+          "#efe9b8",
+          "#f7f4db"
         ]
       },
-      "lume-green": {
-        "role": "tertiary",
-        "displayName": "Lume Green",
-        "canonical": "#A6F58A",
+      "lcd-ground": {
+        "role": "neutral",
+        "displayName": "LCD Grey-Green",
+        "canonical": "#C9C7B7",
         "tonalRamp": [
-          "oklch(15% 0.160 138)",
-          "oklch(26% 0.160 138)",
-          "oklch(37% 0.160 138)",
-          "oklch(48% 0.160 138)",
-          "oklch(59% 0.160 138)",
-          "oklch(70% 0.160 138)",
-          "oklch(82% 0.160 138)",
-          "oklch(95% 0.160 138)"
+          "#3c3c37",
+          "#65645c",
+          "#8d8b80",
+          "#aba99c",
+          "#d1cfc2",
+          "#dcdbd0",
+          "#e9e9e2",
+          "#f4f4f1"
+        ]
+      },
+      "lcd-ink": {
+        "role": "neutral",
+        "displayName": "LCD Ink",
+        "canonical": "#141013",
+        "tonalRamp": [
+          "#060506",
+          "#0a080a",
+          "#0e0b0d",
+          "#110e10",
+          "#373436",
+          "#666466",
+          "#a19fa1",
+          "#d0cfd0"
+        ]
+      },
+      "lcd-steel": {
+        "role": "secondary",
+        "displayName": "LCD Steel",
+        "canonical": "#2C4550",
+        "tonalRamp": [
+          "#0d1518",
+          "#162328",
+          "#1f3038",
+          "#253b44",
+          "#4c616a",
+          "#76868d",
+          "#abb5b9",
+          "#d5dadc"
+        ]
+      },
+      "lcd-primary": {
+        "role": "primary",
+        "displayName": "LCD Red",
+        "canonical": "#B3203D",
+        "tonalRamp": [
+          "#360a12",
+          "#5a101f",
+          "#7d162b",
+          "#981b34",
+          "#be415a",
+          "#ce6e81",
+          "#e1a6b1",
+          "#f0d2d8"
         ]
       }
     },
     "typographyMeta": {
       "heading": {
         "displayName": "Heading",
-        "purpose": "Page h1, one per page."
+        "purpose": "Page headline and h1s, Archivo Expanded 750."
       },
-      "title": {
-        "displayName": "Title",
-        "purpose": "Name in the title block."
+      "item-title": {
+        "displayName": "Item title",
+        "purpose": "Case study names."
       },
       "section": {
         "displayName": "Section",
-        "purpose": "Numbered section headings."
+        "purpose": "Home section h2 in the label column."
       },
-      "label": {
-        "displayName": "Label",
-        "purpose": "Nav, buttons, table headers."
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "The name in the header."
+      },
+      "statement": {
+        "displayName": "Statement",
+        "purpose": "At-work and path paragraphs, Barlow clamp(20px, 1.9vw, 24px)."
       },
       "lede": {
         "displayName": "Lede",
-        "purpose": "Sentence under the heading, 46ch max."
+        "purpose": "Line under a headline."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Running text and table cells."
+        "purpose": "All reading text."
       },
-      "data": {
-        "displayName": "Data",
-        "purpose": "Refs, part numbers, callout numbers."
+      "label": {
+        "displayName": "Label",
+        "purpose": "Footer text and the theme toggle, sentence case."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Button text."
+      },
+      "callout": {
+        "displayName": "Callout",
+        "purpose": "In-drawing part labels."
+      },
+      "segment": {
+        "displayName": "Segment",
+        "purpose": "DSEG7 footer date panel only."
+      },
+      "id": {
+        "displayName": "Id",
+        "purpose": "Real identifiers only: callout numbers, build id."
       }
     },
-    "shadows": [
-      {
-        "name": "lume-glow",
-        "value": "drop-shadow(0 0 6px rgba(166, 245, 138, .55))",
-        "purpose": "Active part and current nav item, lume view only."
-      },
-      {
-        "name": "lume-btn-glow",
-        "value": "0 0 18px rgba(166, 245, 138, .35)",
-        "purpose": "Primary button halo, lume view only."
-      }
-    ],
+    "shadows": [],
     "motion": [
       {
         "name": "ease",
         "value": "cubic-bezier(.16, 1, .3, 1)",
-        "purpose": "Part lift, fades, theme change; all disabled under reduced motion."
-      },
-      {
-        "name": "state-fast",
-        "value": ".2s",
-        "purpose": "Button and link state changes."
-      },
-      {
-        "name": "part-lift",
-        "value": ".7s",
-        "purpose": "Exploded part transform on work pages."
+        "purpose": "Default easing for hover, theme change and part movement (0.25s to 0.7s)."
       }
     ],
     "breakpoints": [
       {
-        "name": "sheet-collapse",
-        "value": "880px"
+        "name": "phone",
+        "value": "560px"
       },
       {
-        "name": "sheet-max",
-        "value": "1240px"
+        "name": "stage",
+        "value": "881px"
       }
     ]
   },
@@ -320,106 +289,136 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Main action: filled steel, lume green with halo at night.",
-      "html": "<a class=\"ds-btn ds-primary\" href=\"#\">Read the service records</a>",
-      "css": ".ds-btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font:600 15px/1 'Barlow Condensed',sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:14px 18px;border:1px solid var(--steel,#1F3F8F);color:var(--steel,#1F3F8F);background:transparent;border-radius:0;transition:background-color .2s,color .2s}.ds-btn:hover,.ds-btn:focus-visible{background:var(--steel-hi,#142C69);border-color:var(--steel-hi,#142C69);color:var(--ground,#EDF0F2)}.ds-btn:focus-visible{outline:2px solid var(--steel,#1F3F8F);outline-offset:3px}.ds-btn.ds-primary{background:var(--primary,#1F3F8F);border-color:var(--primary,#1F3F8F);color:var(--ground,#EDF0F2)}"
+      "description": "Red filled action, one per view.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Read the case studies <svg viewBox=\"0 0 14 14\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"M2 7h10M8 3l4 4-4 4\"/></svg></a>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font:600 16px/1 Barlow,system-ui,sans-serif;padding:14px 18px;border:1px solid var(--steel,#A8D0D9);color:var(--steel,#A8D0D9);transition:background-color .2s,color .2s;background:#DE2D4F;border-color:#DE2D4F;color:#fff}.ds-btn-primary:hover{filter:brightness(1.1)}.ds-btn-primary:focus-visible{outline:2px solid #A8D0D9;outline-offset:3px}"
     },
     {
       "name": "Outline Button",
       "kind": "button",
       "refersTo": "button-outline",
-      "description": "Secondary action: steel outline on transparent.",
-      "html": "<a class=\"ds-btn\" href=\"#\">Resume PDF</a>",
-      "css": ".ds-btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font:600 15px/1 'Barlow Condensed',sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:14px 18px;border:1px solid var(--steel,#1F3F8F);color:var(--steel,#1F3F8F);background:transparent;border-radius:0;transition:background-color .2s,color .2s}.ds-btn:hover,.ds-btn:focus-visible{background:var(--steel-hi,#142C69);border-color:var(--steel-hi,#142C69);color:var(--ground,#EDF0F2)}.ds-btn:focus-visible{outline:2px solid var(--steel,#1F3F8F);outline-offset:3px}.ds-btn.ds-primary{background:var(--primary,#1F3F8F);border-color:var(--primary,#1F3F8F);color:var(--ground,#EDF0F2)}"
+      "description": "Secondary action in steel.",
+      "html": "<a class=\"ds-btn-outline\" href=\"#\">Resume PDF <svg viewBox=\"0 0 14 14\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"M2 7h10M8 3l4 4-4 4\"/></svg></a>",
+      "css": ".ds-btn-outline{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font:600 16px/1 Barlow,system-ui,sans-serif;padding:14px 18px;border:1px solid var(--steel,#A8D0D9);color:var(--steel,#A8D0D9);transition:background-color .2s,color .2s;}.ds-btn-outline:hover{background:#CDE6EC;border-color:#CDE6EC;color:#1C1B1F}.ds-btn-outline:focus-visible{outline:2px solid #A8D0D9;outline-offset:3px}"
     },
     {
       "name": "Theme Toggle",
       "kind": "button",
       "refersTo": "theme-toggle",
-      "description": "Square outline switch between day and lume views.",
-      "html": "<button class=\"ds-theme\">Lume view</button>",
-      "css": ".ds-theme{font:600 13px/1 'Barlow Condensed',sans-serif;letter-spacing:.09em;text-transform:uppercase;background:none;border:1px solid var(--hair,#9AA4AD);color:var(--ink,#121518);padding:7px 10px;cursor:pointer;border-radius:0}.ds-theme:hover{border-color:var(--steel,#1F3F8F);color:var(--steel,#1F3F8F)}.ds-theme:focus-visible{outline:2px solid var(--steel,#1F3F8F);outline-offset:3px}"
+      "description": "Names the view it switches to.",
+      "html": "<button class=\"ds-theme\" type=\"button\">LCD view</button>",
+      "css": ".ds-theme{font:500 14px/1 Barlow,system-ui,sans-serif;background:none;border:1px solid #49474C;color:#EDEAF1;padding:7px 10px;cursor:pointer}.ds-theme:hover{border-color:#A8D0D9;color:#A8D0D9}.ds-theme:focus-visible{outline:2px solid #A8D0D9;outline-offset:3px}"
     },
     {
-      "name": "Title Block Nav",
+      "name": "Header",
       "kind": "nav",
       "refersTo": "nav-link",
-      "description": "Numbered nav under a double rule; current page in the active colour.",
-      "html": "<nav class=\"ds-nav\"><a href=\"#\"><span class=\"ds-n\">01</span>Work</a><a href=\"#\"><span class=\"ds-n\">02</span>Records</a><a href=\"#\" aria-current=\"page\"><span class=\"ds-n\">03</span>Notes</a></nav>",
-      "css": ".ds-nav{display:flex;gap:6px 22px;padding:0 0 14px;border-bottom:3px double var(--ink,#121518)}.ds-nav a{font:600 13px/1 'Barlow Condensed',sans-serif;letter-spacing:.09em;text-transform:uppercase;text-decoration:none;color:var(--steel,#1F3F8F)}.ds-nav a:hover{text-decoration:underline}.ds-nav a:focus-visible{outline:2px solid var(--steel,#1F3F8F);outline-offset:3px}.ds-nav a[aria-current=page]{color:var(--active,#A3142D)}.ds-n{font:400 11px 'JetBrains Mono',monospace;color:var(--ink-2,#47515A);margin-right:6px}"
+      "description": "Wordmark, steel nav, toggle, 3px double rule.",
+      "html": "<header class=\"ds-top\"><a class=\"ds-name\" href=\"#\">Diego Barros Araya</a><nav><a href=\"#\">Work</a><a href=\"#\">How I work</a><a href=\"#\" aria-current=\"page\">Resume</a><a href=\"#\">Contact</a></nav></header>",
+      "css": ".ds-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 28px;padding:22px 0 14px;border-bottom:3px double #49474C;background:#1C1B1F;color:#EDEAF1;font:400 17px/1.55 Barlow,system-ui,sans-serif}.ds-name{font:750 18px/1.2 \"Archivo Variable\",Barlow,sans-serif;font-stretch:125%;letter-spacing:.02em;color:#EDEAF1;text-decoration:none}.ds-top nav{margin-left:auto;display:flex;gap:6px 22px}.ds-top nav a{color:#A8D0D9;text-decoration:none}.ds-top nav a:hover{text-decoration:underline}.ds-top nav a[aria-current]{color:#F0566F}"
     },
     {
-      "name": "Spec Table",
-      "kind": "custom",
-      "refersTo": "spec-table",
-      "description": "Hairline definition table: grey label, ink value.",
-      "html": "<table class=\"ds-spec\"><tr><th>Function</th><td>Integrations and automation</td></tr><tr><th>Tolerance</th><td>Strict change windows</td></tr></table>",
-      "css": ".ds-spec{width:100%;border-collapse:collapse;font:400 17px/1.55 'Barlow',sans-serif;color:var(--ink,#121518)}.ds-spec th,.ds-spec td{text-align:left;vertical-align:top;padding:10px 0;border-top:1px solid var(--hair,#9AA4AD)}.ds-spec th{width:9.5em;padding-right:14px;color:var(--ink-2,#47515A);font-weight:400}.ds-spec tr:last-child th,.ds-spec tr:last-child td{border-bottom:1px solid var(--hair,#9AA4AD)}"
-    },
-    {
-      "name": "Record Row",
+      "name": "Case Study Row",
       "kind": "card",
-      "refersTo": "records-table",
-      "description": "Service record entry: mono ref, linked title, constraint line.",
-      "html": "<div class=\"ds-rec\"><span class=\"ds-ref\">W-02</span><a href=\"#\">Record title</a><p>Constraint, safeguard, result.</p></div>",
-      "css": ".ds-rec{display:grid;grid-template-columns:5.5em 1fr;gap:4px 14px;padding:14px 0;border-top:1px solid var(--hair,#9AA4AD);border-bottom:1px solid var(--hair,#9AA4AD);font:400 17px/1.55 'Barlow',sans-serif}.ds-ref{font:400 14px 'JetBrains Mono',monospace;color:var(--ink-2,#47515A);grid-row:span 2}.ds-rec a{font-weight:600;color:var(--steel,#1F3F8F)}.ds-rec a:hover{color:var(--steel-hi,#142C69)}.ds-rec a:focus-visible{outline:2px solid var(--steel,#1F3F8F);outline-offset:3px}.ds-rec p{margin:0;color:var(--ink-2,#47515A)}"
+      "refersTo": "",
+      "description": "Hairline row: expanded name, steel, summary in grey.",
+      "html": "<div class=\"ds-case\"><a href=\"#\">nix-config <svg viewBox=\"0 0 14 14\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"M2 7h10M8 3l4 4-4 4\"/></svg></a><p>My home server, desktop and phone, declared in one public repo.</p></div>",
+      "css": ".ds-case{background:#1C1B1F;padding:20px 0 22px;border-top:1px solid #49474C;max-width:62ch}.ds-case a{font:750 21px/1.3 \"Archivo Variable\",Barlow,sans-serif;font-stretch:125%;color:#A8D0D9;text-decoration:none;display:inline-flex;gap:10px;align-items:center}.ds-case a:hover{text-decoration:underline;text-underline-offset:.22em}.ds-case svg{width:14px;height:14px}.ds-case p{margin:8px 0 0;color:#9C9CA6;font:400 17px/1.55 Barlow,system-ui,sans-serif}"
+    },
+    {
+      "name": "Spec Rows",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "Label column and value, hairlines.",
+      "html": "<dl class=\"ds-spec\"><div><dt>Email</dt><dd><a href=\"#\">contact@diegobarrosaraya.com</a></dd></div><div><dt>GitHub</dt><dd><a href=\"#\">github.com/diegobarrosaraya</a></dd></div></dl>",
+      "css": ".ds-spec{margin:0;max-width:62ch;background:#1C1B1F;font:400 17px/1.55 Barlow,system-ui,sans-serif;color:#EDEAF1}.ds-spec div{display:grid;grid-template-columns:7em 1fr;gap:14px;padding:10px 0;border-top:1px solid #49474C}.ds-spec div:last-child{border-bottom:1px solid #49474C}.ds-spec dt{color:#9C9CA6}.ds-spec dd{margin:0}.ds-spec a{color:#A8D0D9}"
+    },
+    {
+      "name": "Callout",
+      "kind": "custom",
+      "refersTo": "callout-badge",
+      "description": "Numbered ring and short part label; lights red on hover.",
+      "html": "<a class=\"ds-callout\" href=\"#\"><b>03</b><span>People</span></a>",
+      "css": ".ds-callout{display:inline-flex;gap:8px;align-items:center;text-decoration:none;color:#EDEAF1;font:500 15px Barlow,system-ui,sans-serif;background:#1C1B1F;padding:12px}.ds-callout b{font:500 12px \"JetBrains Mono\",monospace;color:#9C9CA6;width:22px;height:22px;display:grid;place-items:center;border:1.1px solid currentColor;border-radius:50%}.ds-callout:hover,.ds-callout:focus-visible{color:#F0566F}.ds-callout:hover b,.ds-callout:focus-visible b{color:#F0566F;border-color:#DE2D4F}.ds-callout:focus-visible{outline:none}.ds-callout:focus-visible b{border-width:2.5px}"
+    },
+    {
+      "name": "Footer Date Panel",
+      "kind": "custom",
+      "refersTo": "date-panel",
+      "description": "Seven-segment date with ghosted unlit segments.",
+      "html": "<span class=\"ds-foot\">Last regulated <span class=\"ds-seg\" data-ghost=\"8888-88-88\">2026-11-03</span></span>",
+      "css": ".ds-foot{display:inline-flex;gap:8px;align-items:center;background:#1C1B1F;padding:12px;color:#9C9CA6;font:600 14px/1.2 Barlow,system-ui,sans-serif}.ds-seg{position:relative;display:inline-block;font:400 11px/1 \"DSEG7 Classic\",\"JetBrains Mono\",monospace;letter-spacing:.06em;padding:3px 5px;background:#2A282D;border:1px solid #49474C;color:#EDEAF1}.ds-seg::before{content:attr(data-ghost);position:absolute;inset:3px 5px;opacity:.12}"
     }
   ],
   "narrative": {
-    "northStar": "The Caliber Sheet",
-    "overview": "The site is the technical service sheet of a watch movement. One idea runs through it: precision you can inspect. Every part is specified, every claim sits in a record that names its constraint, safeguard and result, and the page is laid out like the document a watchmaker would file them in: a title block over a double rule, a line drawing with numbered callouts, tables with hairline rows.\n\nThe day view is a cool rhodium-white sheet printed in near-black ink. The night view is a lume view: a black ground where only the active part and the primary action glow green, the way lume marks sit on a dial. Color is rationed by meaning. Blue means you can click it, ruby (or lume green at night) means this is the active part, and everything else is ink on paper.\n\nThe system rejects the category default of a centred hero, a photo, a tagline and a card grid. It uses no shadows, no radii, no fills beyond the plate tone, and no decorative imagery. The line drawing and the tables are the imagery.",
+    "northStar": "The G-Shock Dial",
+    "overview": "The site is the face of a rugged digital-analog watch with a movement under it. It opens on the dial: near-black violet ground, a pale steel-blue for everything clickable, and one red that belongs to the active part and the primary button. A second view, the LCD, re-skins the same tokens in the watch's grey-green display with dark ink. The dial is the default for everyone; the LCD only appears after a choice.\n\nThe drawing is the structure. Six parts of a movement are the six working principles, each a callout with a short label and a page at /how/<slug>/. It renders in 3D with an SVG fallback, and a principle page zooms into its part. Around it the page is a plain spec sheet: hairline rules, square corners, left label column on wide screens, sentence-case headings in an expanded heavy face.\n\nType carries the character. Archivo at 125% stretch and weight 750 is the squat, wide G-Shock lettering. Barlow carries every sentence. A seven-segment face appears once, in the footer date panel. JetBrains Mono is kept for real identifiers only.",
     "keyCharacteristics": [
-      "Flat, square-cornered, ruled: structure comes from hairlines and double rules, never from boxes or shadows.",
-      "Condensed uppercase labels for the sheet furniture, a humanist sans for reading, monospace only for references and data.",
-      "Colour means state: steel for links and actions, ruby or lume green for the one active item.",
-      "Two views from one set of tokens: light by default, lume when the system or the visitor asks.",
-      "Numbered references (`01`, `W-02`) tie callouts, nav, sections and records together."
+      "Dark Dial by default, grey-green LCD by choice, on one token set.",
+      "Red (primary) is scarce: the active part, the current nav link, the primary button.",
+      "Steel blue marks what can be clicked.",
+      "Square corners, 1px hairlines, a 3px double rule on the header and footer.",
+      "Archivo Expanded for headings only; Barlow for all reading text.",
+      "A 4:3 movement stage at 881px and wider."
     ],
     "rules": [
       {
-        "name": "The Click Rule",
-        "body": "Blue steel appears only on things that respond to a click. If it is not interactive, it is ink.",
+        "name": "The One Red Rule",
+        "body": "Red marks the one thing that is active or primary. It is never decoration and never a second accent.",
         "section": "colors"
       },
       {
-        "name": "The One Active Part Rule",
-        "body": "Ruby (day) or lume green (night) marks the single active item on a view. If two things are red, neither is active.",
+        "name": "The Steel Means Click Rule",
+        "body": "Only interactive text and outlines use steel. Static text is ink or Dial Grey.",
         "section": "colors"
       },
       {
-        "name": "The Lume Rule",
-        "body": "Glow exists only in the lume view and only on the active item and the primary button. Links, rules and text never glow.",
+        "name": "The Same Tokens Rule",
+        "body": "Dial and LCD differ only in tokens.css values. Component rules never branch on theme.",
         "section": "colors"
       },
       {
-        "name": "The Part Stamp Rule",
-        "body": "Mono is for references and data only (`W-02`, `01`, repo names). A sentence is never set in mono.",
+        "name": "The Expanded Headings Rule",
+        "body": "Archivo at 125% and 750 is for headings and the wordmark. Never set a sentence in it.",
         "section": "typography"
       },
       {
-        "name": "The Furniture Rule",
-        "body": "Uppercase condensed type is for the sheet's furniture (title block, section heads, nav, buttons, table headers). Headings that carry the argument are sentence case.",
+        "name": "The Segments Are One Panel Rule",
+        "body": "DSEG7 appears only on the footer date panel. Do not use it for headings, numbers in prose or decoration.",
+        "section": "typography"
+      },
+      {
+        "name": "The Real Ids Only Rule",
+        "body": "Mono is for identifiers a reader could copy (build id, callout numbers). Do not set sentences or section names in it.",
+        "section": "typography"
+      },
+      {
+        "name": "The Plain Label Rule",
+        "body": "No tracked or uppercased labels and no numbered sections. Hierarchy comes from the expanded face and from position.",
         "section": "typography"
       },
       {
         "name": "The Flat Sheet Rule",
-        "body": "Nothing floats above the sheet. Separation is a rule or whitespace, never a shadow or a card.",
+        "body": "No box-shadow and no gradients on page chrome. The only depth is the movement drawing.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "**Do** use ink-black rules: 1px between bands, 3px double for the title block and footer; hairline (#9AA4AD) for rows.",
-      "**Do** give every addressable thing a number or reference in mono (callouts, nav, sections, records).",
-      "**Do** keep the day and night views on the same tokens: change `--ground`, `--plate`, `--ink`, `--ink-2`, `--hair`, `--rule`, `--steel`, `--active` and the glow variables, never component rules.",
-      "**Do** keep the page readable without JavaScript and without motion; the theme falls back to the system setting.",
-      "**Do** write each service record as constraint, safeguard, result."
+      "Do keep the dial as the default view and the LCD as an explicit choice stored by the toggle.",
+      "Do change theme values only in tokens.css; components read var(--ground), var(--ink) and the rest.",
+      "Do set every heading in Archivo at font-stretch: expanded, weight 750.",
+      "Do use red only for the active part, the current nav link and the primary button.",
+      "Do keep part labels short (one or two words) and link each part to its principle page.",
+      "Do keep the 4:3 stage at 881px and wider on every page that shows the movement.",
+      "Do keep the page readable without JavaScript, without WebGL and without motion."
     ],
     "donts": [
-      "**Don't** put a centred hero, a photograph, a tagline, or a card grid on the sheet.",
-      "**Don't** use shadows, rounded corners, gradients or fills other than Plate Grey for parts.",
-      "**Don't** colour something blue that cannot be clicked, or glow anything that is not the active part or the primary button.",
-      "**Don't** set sentences in mono or headings in body-weight Barlow.",
-      "**Don't** mimic window management or a terminal; the site is a document."
+      "Don't number sections or add tracked, uppercase small labels.",
+      "Don't use DSEG7 anywhere except the footer date panel, or JetBrains Mono for anything but real ids.",
+      "Don't add shadows, glows, gradients or rounded corners to page chrome.",
+      "Don't colour something steel that cannot be clicked, or red that is not active or primary.",
+      "Don't put a card grid, a photograph or a centred hero on the sheet.",
+      "Don't put a box behind callout labels; use the ground halo."
     ]
   }
 }
