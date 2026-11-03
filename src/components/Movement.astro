@@ -218,6 +218,12 @@ const listed = [...callouts].sort((a, b) => a.num.localeCompare(b.num));
 <style>
   .drawing { margin: 0; position: relative; }
   .mv-stage { position: relative; }
+  /* Wide screens: a 4:3 stage matches the flat movement, so no empty strip sits under it.
+     Every page with the drawing uses it, so the persisted stage keeps its size across the zoom. */
+  @media (min-width: 881px) {
+    .mv-stage { aspect-ratio: 4 / 3; }
+    .mv-stage svg { position: absolute; inset: 0; height: 100%; }
+  }
 
   /* Spike: the 3D view covers the SVG's box; the SVG stays for layout and as the no-WebGL fallback. */
   .mv-stage[data-three] svg { visibility: hidden; }
