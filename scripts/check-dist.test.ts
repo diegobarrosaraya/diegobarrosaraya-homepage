@@ -86,9 +86,10 @@ test('resume, contact, now and 404 are built', () => {
   for (const p of ['resume/index.html', 'contact/index.html', 'now/index.html', '404.html', 'resume.pdf', 'sitemap-index.xml'])
     assert.ok(existsSync(`dist/${p}`), p);
 });
-test('the day job appears only on the resume', () => {
-  for (const file of htmlFilesUnder('dist').filter(f => !f.startsWith('dist/resume/')))
-    assert.doesNotMatch(readFileSync(file, 'utf8'), /atlassian|jira|confluence|servicerocket/i, file);
+test('the day job, including Forge, appears only on the resume', () => {
+  for (const f of htmlFilesUnder('dist').filter(f => !f.startsWith('dist/resume/')))
+    assert.doesNotMatch(readFileSync(f, 'utf8'), /atlassian|jira|confluence|servicerocket|forge/i, f);
+  assert.match(readFileSync('dist/resume/index.html', 'utf8'), /Built 8 Forge apps that run in production for an enterprise Jira Cloud site with 30,000\+ users\./);
 });
 test('every page has one h1, before any h2', () => {
   for (const file of htmlFilesUnder('dist')) {

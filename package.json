@@ -8,7 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "node --import tsx --test \"src/**/*.test.ts\"",
-    "test:dist": "node --import tsx --test scripts/check-dist.test.ts",
+    "test:dist": "node --import tsx --test scripts/check-dist.test.ts scripts/check-private.test.ts",
     "generate-resume": "tsx scripts/json-to-markdown.ts"
   },
   "devDependencies": {

@@ -1,14 +1,16 @@
 ---
-// DRAFT: Diego reviews. Reads public/resume.json at build time. Certificates are shown as listed; Diego decides which to keep.
+// Reads public/resume.json at build time. Expired certificates are hidden.
 import { readFileSync } from 'node:fs';
 import Sheet from '../layouts/Sheet.astro';
+import { activeCertificates } from '../lib/certificates';
+import { buildInfo } from '../lib/build-info';
 
 const r = JSON.parse(readFileSync('public/resume.json', 'utf8'));
 const span = (a: { startDate?: string; endDate?: string }) => `${a.startDate ?? ''} to ${a.endDate ?? 'present'}`;
 const sections = [
-  { id: 'work', title: 'Experience', rows: r.work.map((w: any) => [w.position, `${w.name}, ${w.location}`, span(w), w.summary]) },
+  { id: 'work', title: 'Experience', rows: r.work.map((w: any) => [w.position, `${w.name}, ${w.location}`, span(w), w.summary, w.highlights ?? []]) },
   { id: 'edu', title: 'Education', rows: r.education.map((e: any) => [`${e.studyType}, ${e.area}`, `${e.institution}, ${e.location}`, span(e), '']) },
-  { id: 'certs', title: 'Certificates', rows: r.certificates.map((c: any) => [c.name, '', `${c.date}${c.expires ? ` to ${c.expires}` : ''}`, '']) },
+  { id: 'certs', title: 'Certificates', rows: activeCertificates(r.certificates, buildInfo().date).map((c: any) => [c.name, '', `${c.date}${c.expires ? ` to ${c.expires}` : ''}`, '']) },
 ];
 ---
 <Sheet title="Resume | Diego Barros Araya" description={r.basics.summary} current="resume">
@@ -30,8 +32,8 @@ const sections = [
     <section class="block" id={s.id} aria-labelledby={`${s.id}-h`}>
       <h2 id={`${s.id}-h`}>{s.title}</h2>
       <ul>
-        {s.rows.map(([title, where, when, text]: string[]) => (
-          <li><div><strong>{title}</strong>{where && <div class="sub">{where}</div>}{text && <p>{text}</p>}</div><span class="mono when">{when}</span></li>
+        {s.rows.map(([title, where, when, text, marks]: any[]) => (
+          <li><div><strong>{title}</strong>{where && <div class="sub">{where}</div>}{text && <p>{text}</p>}{marks?.length > 0 && <ul class="marks">{marks.map((m: string) => <li>{m}</li>)}</ul>}</div><span class="mono when">{when}</span></li>
         ))}
       </ul>
     </section>
@@ -57,6 +59,7 @@ const sections = [
   ul { list-style: none; margin: 0; padding: 0; max-width: 62ch; }
   li { border-top: 1px solid var(--hair); padding: 12px 0; display: flex; justify-content: space-between; gap: 14px; }
   li:last-child { border-bottom: 1px solid var(--hair); }
+  .marks { margin: 6px 0 0; } .marks li { border: 0; padding: 0; display: list-item; list-style: disc inside; }
   .sub { color: var(--ink-2); }
   li p { margin: 6px 0 0; }
   .when { color: var(--ink-2); white-space: nowrap; }

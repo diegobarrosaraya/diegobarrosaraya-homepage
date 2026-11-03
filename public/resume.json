@@ -26,6 +26,7 @@
       "url": "https://www.servicerocket.com",
       "startDate": "2025-04",
       "summary": "Provide assistance to application administrators in diagnosing, troubleshooting, and debugging complex B2B software systems.",
+      "highlights": ["Built 8 Forge apps that run in production for an enterprise Jira Cloud site with 30,000+ users."],
       "location": "Santiago, Chile"
     },
     {
