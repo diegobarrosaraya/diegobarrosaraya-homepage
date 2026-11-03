@@ -1,10 +1,10 @@
 {
   "basics": {
     "name": "Diego Pablo Barros Araya",
-    "label": "Senior IT Engineer & Technical Consultant",
+    "label": "Senior Engineer",
     "email": "contact@diegobarrosaraya.com",
     "url": "https://diegobarrosaraya.com",
-    "summary": "Senior Engineer and lifelong Linux user with over 10 years of hands-on experience using and exploring Linux systems. Experienced in agile teams, supporting cloud-based environments, and expertise in automation and cloud-native tools such as Docker and OCI.",
+    "summary": "Senior engineer for Atlassian platforms, Forge apps and Linux, with over 10 years of hands-on Linux experience. Builds production Forge apps for enterprise Jira Cloud, leads delivery workstreams and mentors junior consultants. Delivers under hard constraints, high stakes and short deadlines.",
     "location": {
       "city": "Santiago",
       "countryCode": "CL",
@@ -22,27 +22,70 @@
   "work": [
     {
       "name": "ServiceRocket",
-      "position": "Senior Engineer, Customer Support",
+      "position": "Senior Technical Consultant",
       "url": "https://www.servicerocket.com",
-      "startDate": "2025-04",
-      "summary": "Provide assistance to application administrators in diagnosing, troubleshooting, and debugging complex B2B software systems.",
-      "highlights": ["Built 8 Forge apps that run in production for an enterprise Jira Cloud site with 30,000+ users."],
+      "startDate": "2026-01",
+      "summary": "Leads teams and workstreams that turn client goals into Atlassian solutions.",
+      "highlights": [
+        "Built 8 Forge apps that run in production for an enterprise Jira Cloud site with 30,000+ users.",
+        "Own delivery tasks and risks to keep client deadlines on track.",
+        "Design training materials and guides, and deliver technical training sessions.",
+        "Mentor junior consultants on technical and consulting skills."
+      ],
       "location": "Santiago, Chile"
     },
     {
       "name": "ServiceRocket",
-      "position": "Engineer, Customer Support",
+      "position": "Senior Customer Support Engineer",
+      "url": "https://www.servicerocket.com",
+      "startDate": "2025-04",
+      "endDate": "2026-01",
+      "summary": "Senior support for Atlassian products and complex B2B software systems.",
+      "highlights": [
+        "Debugged complex B2B systems for application administrators."
+      ],
+      "location": "Santiago, Chile"
+    },
+    {
+      "name": "ServiceRocket",
+      "position": "Customer Support Engineer",
       "url": "https://www.servicerocket.com",
       "startDate": "2024-03",
       "endDate": "2025-04",
-      "summary": "Specialized in providing support for Atlassian products.",
+      "summary": "Supported administrators and experienced users of Atlassian products.",
+      "highlights": [
+        "Diagnosed and repaired complex B2B systems, using SQL and Python."
+      ],
+      "location": "Santiago, Chile"
+    },
+    {
+      "name": "ServiceRocket",
+      "position": "Associate Customer Support Engineer",
+      "url": "https://www.servicerocket.com",
+      "startDate": "2023-01",
+      "endDate": "2024-04",
+      "summary": "Contract role supporting customers on Atlassian products.",
+      "highlights": [
+        "Resolved Atlassian product issues, working with SQL and Groovy."
+      ],
+      "location": "Santiago, Chile"
+    },
+    {
+      "name": "Xiaomi Technology",
+      "position": "Sales Consultant",
+      "startDate": "2022-01",
+      "endDate": "2022-04",
+      "summary": "Part-time retail sales role for Xiaomi smartphones and ecosystem products.",
+      "highlights": [
+        "Advised customers and handled stock, checkout, unboxing and delivery."
+      ],
       "location": "Santiago, Chile"
     }
   ],
   "education": [
     {
       "institution": "Duoc UC",
-      "area": "Software Development Engineering",
+      "area": "Computer Software Engineering",
       "studyType": "Bachelor of Engineering",
       "startDate": "2024-08",
       "endDate": "2025-11",
@@ -50,7 +93,7 @@
     },
     {
       "institution": "Duoc UC",
-      "area": "Programming Analyst",
+      "area": "Computer Programming",
       "studyType": "Associate's Degree",
       "startDate": "2021-01",
       "endDate": "2023-07",
@@ -59,80 +102,136 @@
   ],
   "skills": [
     {
-      "name": "Tools",
+      "name": "Atlassian & Consulting",
       "keywords": [
-        "Jira Administration",
-        "Confluence Administration",
-        "Git",
-        "Docker",
-        "Podman"
+        "Jira",
+        "Confluence",
+        "Bitbucket",
+        "SSO",
+        "SAML",
+        "Technical Consultation",
+        "Software Consulting",
+        "Design Consulting",
+        "Scaled Agile Framework"
       ]
     },
     {
       "name": "Languages",
       "keywords": [
-        "Python",
         "Java",
+        "Spring Boot",
+        "Groovy",
+        "Python",
         "TypeScript",
         "JavaScript",
+        "SQL",
         "PL/SQL",
-        "SQL"
-      ]
-    },
-    {
-      "name": "Frameworks",
-      "keywords": [
+        "GraphQL",
+        "Google Apps Script",
         "Django",
-        "Android Studio",
-        "Java Spring",
         "React",
-        "Tailwind CSS"
+        "Tailwind CSS",
+        "Android Studio",
+        "Mobile Application Development"
       ]
     },
     {
-      "name": "AI & Editors",
+      "name": "Cloud, Data & Ops",
       "keywords": [
-        "Model Context Protocol (MCP)",
-        "Cursor AI",
-        "Claude Code",
-        "OpenCode"
+        "Git",
+        "Docker",
+        "Podman",
+        "Kubernetes",
+        "AWS",
+        "Google Cloud Platform (GCP)",
+        "Azure AD",
+        "Cloud-Native Architecture",
+        "Azure Databricks",
+        "Microsoft Power BI",
+        "Datadog"
       ]
     },
     {
-      "name": "Operating Systems",
+      "name": "Linux & OS",
       "keywords": [
+        "Linux System Administration",
         "Debian",
         "Ubuntu",
         "RHEL",
         "NixOS",
         "Arch Linux",
-        "Mac OS",
+        "macOS",
         "Windows 11"
       ]
     },
     {
-      "name": "Cloud",
+      "name": "AI Tooling",
       "keywords": [
-        "AWS",
-        "Azure AD"
+        "Claude Code",
+        "Cursor AI",
+        "OpenCode",
+        "Model Context Protocol (MCP)",
+        "Prompt Engineering"
       ]
     }
   ],
   "certificates": [
     {
+      "name": "Cloud Migration Delivery Accreditation 2024",
+      "issuer": "Atlassian",
+      "date": "2024-10",
+      "expires": "2025-10"
+    },
+    {
+      "name": "Agile At Scale Sales Accreditation 2024-2025",
+      "issuer": "Atlassian",
+      "date": "2024-10",
+      "expires": "2025-10"
+    },
+    {
+      "name": "Curso de JavaScript Flex",
+      "issuer": "Coderhouse",
+      "date": "2024-01"
+    },
+    {
       "name": "Atlassian Certified Expert",
+      "issuer": "Atlassian",
       "date": "2024-01",
       "expires": "2026-01"
     },
     {
-      "name": "Atlassian Certified Jira Administrator",
+      "name": "Confluence Space Administration (APB-CSA)",
+      "issuer": "Atlassian",
       "date": "2024-01",
       "expires": "2026-04"
     },
     {
+      "name": "Atlassian Certified Jira Administrator for Cloud",
+      "issuer": "Atlassian",
+      "date": "2024-01",
+      "expires": "2026-04"
+    },
+    {
+      "name": "Atlassian Cloud Organization Admin Certification",
+      "issuer": "Atlassian",
+      "date": "2023-07"
+    },
+    {
+      "name": "Atlassian Certified in Managing Jira Projects for Cloud",
+      "issuer": "Atlassian",
+      "date": "2023-06",
+      "expires": "2025-09"
+    },
+    {
       "name": "ITIL Foundation Level",
+      "issuer": "PeopleCert",
       "date": "2023-05",
       "expires": "2026-01"
+    },
+    {
+      "name": "Jira: Basic Administration (2020)",
+      "issuer": "LinkedIn",
+      "date": "2023-01"
     }
   ],
   "meta": {
