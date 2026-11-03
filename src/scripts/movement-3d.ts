@@ -1,8 +1,8 @@
-// @ts-nocheck -- spike: no @types/three installed.
-// Throwaway spike: the movement drawn in three.js, mounted over the static SVG in its persisted stage.
+// The movement drawn in three.js, mounted over the static SVG in its persisted stage.
 // Ported from the standalone prototype (movement-3d/index.html), without orbit controls, sliders or speed.
 import * as THREE from 'three';
-import { PRINCIPLES, principleBySlug } from '../data/story';
+import { PRINCIPLES, principleBySlug, type PartId } from '../data/story';
+import { TEETH as T, escapeAngle, trainRatios } from '../lib/movement-math';
 import { easeOutExpo } from '../lib/zoom';
 
 const root = document.documentElement;
@@ -23,25 +23,27 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(30, 1, 1, 5000);
 camera.up.set(0, 0, 1);
 
-const mats = { fill: [], line: [] };
+const mats = { fill: [] as THREE.MeshBasicMaterial[], line: [] as THREE.LineBasicMaterial[] };
 const fillMat = () => { const m = new THREE.MeshBasicMaterial({ color: css('--plate'), polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, transparent: true }); mats.fill.push(m); return m; };
 const lineMat = () => { const m = new THREE.LineBasicMaterial({ color: css('--ink'), transparent: true }); mats.line.push(m); return m; };
 
-function drawn(geo, angle = 25) {
+function drawn(geo: THREE.BufferGeometry, angle = 25) {
   const g = new THREE.Group();
   g.add(new THREE.Mesh(geo, fillMat()), new THREE.LineSegments(new THREE.EdgesGeometry(geo, angle), lineMat()));
   return g;
 }
-const extrude = (shape, depth) => new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false, curveSegments: 24 });
+const extrude = (shape: THREE.Shape, depth: number) => new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false, curveSegments: 24 });
+const outline = (s: THREE.Shape | THREE.Path, pts: number[][]) =>
+  pts.forEach(([t, rr], j) => { const x = Math.cos(t) * rr, y = Math.sin(t) * rr; if (j) s.lineTo(x, y); else s.moveTo(x, y); });
 
-function gearShape(z, m, { spokes = 0, hub = 0.18, rim = 0.8, bore = 0 } = {}) {
+function gearShape(z: number, m: number, { spokes = 0, hub = 0.18, rim = 0.8, bore = 0 } = {}) {
   const r = m * z / 2, ra = r + m, rf = r - 1.25 * m;
-  const s = new THREE.Shape();
+  const s = new THREE.Shape(), pts: number[][] = [];
   for (let i = 0; i < z; i++) {
     const a = i / z * Math.PI * 2, p = Math.PI * 2 / z;
-    const pts = [[a, rf], [a + p * .12, rf], [a + p * .25, ra], [a + p * .5, ra], [a + p * .63, rf], [a + p, rf]];
-    pts.forEach(([t, rr], j) => { const x = Math.cos(t) * rr, y = Math.sin(t) * rr; (i === 0 && j === 0) ? s.moveTo(x, y) : s.lineTo(x, y); });
+    pts.push([a, rf], [a + p * .12, rf], [a + p * .25, ra], [a + p * .5, ra], [a + p * .63, rf], [a + p, rf]);
   }
+  outline(s, pts);
   if (spokes) {
     const ri = rf * rim, rh = rf * hub + m, gap = 0.22;
     for (let k = 0; k < spokes; k++) {
@@ -54,42 +56,45 @@ function gearShape(z, m, { spokes = 0, hub = 0.18, rim = 0.8, bore = 0 } = {}) {
   if (bore) { const h = new THREE.Path(); h.absarc(0, 0, bore, 0, Math.PI * 2, true); s.holes.push(h); }
   return s;
 }
-const wheel = (z, m, depth, opts) => drawn(extrude(gearShape(z, m, opts), depth));
-const pinion = (z, m, len) => drawn(extrude(gearShape(z, m, {}), len), 30);
-function disc(r, depth, holeR = 0) {
+const wheel = (z: number, m: number, depth: number, opts?: Parameters<typeof gearShape>[2]) => drawn(extrude(gearShape(z, m, opts), depth));
+const pinion = (z: number, m: number, len: number) => drawn(extrude(gearShape(z, m, {}), len), 30);
+function disc(r: number, depth: number, holeR = 0) {
   const s = new THREE.Shape(); s.absarc(0, 0, r, 0, Math.PI * 2, false);
   if (holeR) { const h = new THREE.Path(); h.absarc(0, 0, holeR, 0, Math.PI * 2, true); s.holes.push(h); }
   return drawn(extrude(s, depth));
 }
-function arbor(len, r = 1.6) { const g = new THREE.CylinderGeometry(r, r, len, 12); g.rotateX(Math.PI / 2); g.translate(0, 0, len / 2); return drawn(g, 40); }
-const spiralLine = (n, turns, r0, r1, z) => {
-  const pts = []; for (let i = 0; i <= n; i++) { const t = i / n, a = t * turns * Math.PI * 2, r = r0 + r1 * t; pts.push(new THREE.Vector3(Math.cos(a) * r, Math.sin(a) * r, z)); }
+function arbor(len: number, r = 1.6) { const g = new THREE.CylinderGeometry(r, r, len, 12); g.rotateX(Math.PI / 2); g.translate(0, 0, len / 2); return drawn(g, 40); }
+const spiralLine = (n: number, turns: number, r0: number, r1: number, z: number) => {
+  const pts: THREE.Vector3[] = []; for (let i = 0; i <= n; i++) { const t = i / n, a = t * turns * Math.PI * 2, r = r0 + r1 * t; pts.push(new THREE.Vector3(Math.cos(a) * r, Math.sin(a) * r, z)); }
   return new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMat());
 };
 
 // ---------- the train (module m, real tooth counts) ----------
 const m = 1.25;
-const T = { barrel: 72, cPin: 10, center: 80, tPin: 8, third: 75, fPin: 8, fourth: 80, ePin: 7, escape: 15 };
-const dist = (a, b) => m * (a + b) / 2;
-const place = (from, d, ang) => new THREE.Vector2(from.x + Math.cos(ang) * d, from.y + Math.sin(ang) * d);
-const P: Record<string, THREE.Vector2> = { barrel: new THREE.Vector2(-70, -40) };
-P.center = place(P.barrel, dist(T.barrel, T.cPin), 0.35);
-P.third = place(P.center, dist(T.center, T.tPin), 1.05);
-P.fourth = place(P.third, dist(T.third, T.fPin), 0.15);
-P.escape = place(P.fourth, dist(T.fourth, T.ePin), -0.65);
-P.balance = place(P.escape, 46, -1.55);
-P.fork = new THREE.Vector2((P.escape.x + P.balance.x) / 2 + 4, (P.escape.y + P.balance.y) / 2);
-{ const c = new THREE.Vector2(); const ks = Object.keys(P); ks.forEach((k) => c.add(P[k])); c.divideScalar(ks.length); ks.forEach((k) => P[k].sub(c)); }
+const dist = (a: number, b: number) => m * (a + b) / 2;
+const place = (from: THREE.Vector2, d: number, ang: number) => new THREE.Vector2(from.x + Math.cos(ang) * d, from.y + Math.sin(ang) * d);
+const barrelAt = new THREE.Vector2(-70, -40);
+const centerAt = place(barrelAt, dist(T.barrel, T.cPin), 0.35);
+const thirdAt = place(centerAt, dist(T.center, T.tPin), 1.05);
+const fourthAt = place(thirdAt, dist(T.third, T.fPin), 0.15);
+const escapeAt = place(fourthAt, dist(T.fourth, T.ePin), -0.65);
+const balanceAt = place(escapeAt, 46, -1.55);
+const P = {
+  barrel: barrelAt, center: centerAt, third: thirdAt, fourth: fourthAt, escape: escapeAt, balance: balanceAt,
+  fork: new THREE.Vector2((escapeAt.x + balanceAt.x) / 2 + 4, (escapeAt.y + balanceAt.y) / 2),
+};
+{ const ps = Object.values(P), c = new THREE.Vector2(); ps.forEach((p) => c.add(p)); c.divideScalar(ps.length); ps.forEach((p) => p.sub(c)); }
 
-// `site` is the PartId in story.ts this 3D part belongs to (train = centre, third and fourth; escape = escape wheel and fork).
-const parts = [];
-function part(id, site, pos, baseZ, build) {
+// `site` is the PartId in story.ts this 3D part belongs to (train = centre, third and fourth wheels).
+interface Part { id: string; site: PartId; g: THREE.Group; spin: THREE.Group; baseZ: number }
+const parts: Part[] = [];
+function part(id: string, site: PartId, pos: THREE.Vector2, baseZ: number, build: (s: THREE.Group) => void) {
   const g = new THREE.Group(); g.position.set(pos.x, pos.y, baseZ);
   const spin = new THREE.Group(); g.add(spin); build(spin);
   scene.add(g);
   const p = { id, site, g, spin, baseZ }; parts.push(p); return p;
 }
-const holes = ['barrel', 'center', 'third', 'fourth', 'escape', 'balance'];
+const holes = ['barrel', 'center', 'third', 'fourth', 'escape', 'balance'] as const;
 const plate = part('plate', 'plate', new THREE.Vector2(0, 0), -10, (s) => {
   const sh = new THREE.Shape(); sh.absarc(0, 0, 132, 0, Math.PI * 2, false);
   for (const k of holes) { const h = new THREE.Path(); h.absarc(P[k].x, P[k].y, 4, 0, Math.PI * 2, true); sh.holes.push(h); }
@@ -106,15 +111,16 @@ const center = part('center', 'train', P.center, 24, (s) => { s.add(wheel(T.cent
 const third = part('third', 'train', P.third, 30, (s) => { s.add(wheel(T.third, m * .8, 2, { spokes: 5 })); s.add(pinion(T.tPin, m, -24)); s.add(arbor(8)); });
 const fourth = part('fourth', 'train', P.fourth, 36, (s) => { s.add(wheel(T.fourth, m * .7, 2, { spokes: 5 })); s.add(pinion(T.fPin, m * .8, -30)); s.add(arbor(8)); });
 const escape = part('escape', 'escape', P.escape, 42, (s) => {
-  const sh = new THREE.Shape(), R = 16, r = 11;
+  const sh = new THREE.Shape(), R = 16, r = 11, pts: number[][] = [];
   for (let i = 0; i < T.escape; i++) {
     const a = i / T.escape * Math.PI * 2, p = Math.PI * 2 / T.escape;
-    [[a, r], [a + p * .15, R], [a + p * .35, R - 1], [a + p, r]].forEach(([t, rr], j) => { const x = Math.cos(t) * rr, y = Math.sin(t) * rr; (i === 0 && j === 0) ? sh.moveTo(x, y) : sh.lineTo(x, y); });
+    pts.push([a, r], [a + p * .15, R], [a + p * .35, R - 1], [a + p, r]);
   }
+  outline(sh, pts);
   const h = new THREE.Path(); h.absarc(0, 0, 7, 0, Math.PI * 2, true); sh.holes.push(h);
   s.add(drawn(extrude(sh, 1.6))); s.add(pinion(T.ePin, m * .7, -36)); s.add(arbor(6));
 });
-const fork = part('fork', 'escape', P.fork, 46, (s) => {
+const fork = part('fork', 'fork', P.fork, 46, (s) => {
   const sh = new THREE.Shape();
   sh.moveTo(-14, 6); sh.lineTo(14, 6); sh.lineTo(16, 1); sh.lineTo(3, 2); sh.lineTo(2, -20); sh.lineTo(-2, -20); sh.lineTo(-3, 2); sh.lineTo(-16, 1); sh.closePath();
   s.add(drawn(extrude(sh, 1.4))); s.add(arbor(5, 1.2));
@@ -134,21 +140,17 @@ const axes = parts.filter((p) => p.id !== 'plate').map((p) => {
 });
 
 // ---------- kinematics: escape wheel advances half a tooth per balance half-swing, the rest follow by ratio ----------
-const ratio = { escape: 1, fourth: -T.ePin / T.fourth };
-ratio.third = ratio.fourth * -(T.fPin / T.third);
-ratio.center = ratio.third * -(T.tPin / T.center);
-ratio.barrel = ratio.center * -(T.cPin / T.barrel);
+const ratio = trainRatios();
 const phase = { center: 0.02, third: 0.05, fourth: 0.04, escape: 0, barrel: 0.01 };
 const train = { escape, fourth, third, center, barrel };
-const HZ = 0.6, STEP = Math.PI * 2 / T.escape / 2;
+const HZ = 0.6;
 let t = 0;
-function tick(dt) {
+function tick(dt: number) {
   t += dt * HZ;
   balance.spin.rotation.z = Math.sin(t * Math.PI * 2) * 4.2;
-  const half = Math.floor(t * 2), snap = Math.min(1, (t * 2 - half) * 8);
-  const esc = -(half + snap) * STEP;
-  fork.spin.rotation.z = (half % 2 ? 1 : -1) * 0.18;
-  for (const id in ratio) train[id].spin.rotation.z = esc * ratio[id] + phase[id];
+  const esc = escapeAngle(t);
+  fork.spin.rotation.z = (Math.floor(t * 2) % 2 ? 1 : -1) * 0.18;
+  for (const id of Object.keys(train) as (keyof typeof train)[]) train[id].spin.rotation.z = esc * ratio[id] + phase[id];
 }
 
 // ---------- explode ----------
@@ -163,14 +165,13 @@ function applyExplode(e = explode) {
 }
 
 // ---------- labels: real links, projected each frame ----------
-// The fork is still grouped with the escape wheel here, so it gets no label of its own yet (Task 4).
-const callouts = PRINCIPLES.filter((pr) => pr.part !== 'fork').map((principle) => {
-  const p = parts.find((q) => q.id === (principle.part === 'train' ? 'center' : principle.part));
+const callouts = PRINCIPLES.map((principle) => {
+  const p = parts.find((q) => q.id === (principle.part === 'train' ? 'center' : principle.part))!;
   const num = String(PRINCIPLES.indexOf(principle) + 1).padStart(2, '0');
   const a = document.createElement('a');
   a.className = 'mv3d-callout'; a.href = `/how/${principle.slug}/`; a.dataset.part = principle.part;
   a.setAttribute('aria-label', principle.sentence);
-  a.innerHTML = `<b>${num}</b><span>${principle.sentence}</span>`;
+  a.innerHTML = `<b>${num}</b><span>${principle.short}</span>`;
   labelsEl.appendChild(a);
   return { principle, p, a };
 });
@@ -178,17 +179,18 @@ const callouts = PRINCIPLES.filter((pr) => pr.part !== 'fork').map((principle) =
 // ---------- camera ----------
 const HOME_DIR = new THREE.Vector3(-150, -330, 330).normalize();
 const FOCUS_DIR = new THREE.Vector3(-0.45, -0.7, 0.8).normalize();
-const LABEL_DX = { balance: 30 }; // world x offset of each label from its part, so 03 and 04 do not collide
+// World x offset of each label from its part, so neighbouring labels do not collide.
+const LABEL_DX: Record<string, number> = { balance: 30, fork: 62 };
 const cam = { pos: new THREE.Vector3(), target: new THREE.Vector3() };
-let width = 1, height = 1, focusSite = null, tween = null;
+let width = 1, height = 1, focusSite: PartId | null = null, tween: ((now: number) => void) | null = null;
 
 const box = new THREE.Box3(), sphere = new THREE.Sphere(), v = new THREE.Vector3();
 // Distance that fits a sphere of radius r in both the vertical and horizontal field of view.
-function fitDist(r) {
+function fitDist(r: number) {
   const vf = THREE.MathUtils.degToRad(camera.fov) / 2, hf = Math.atan(Math.tan(vf) * camera.aspect);
   return r / Math.sin(Math.min(vf, hf));
 }
-function view(site, e) {
+function view(site: PartId | null, e: number) {
   applyExplode(e); scene.updateMatrixWorld(true);
   box.makeEmpty();
   if (site) parts.filter((p) => p.site === site).forEach((p) => box.expandByObject(p.g));
@@ -197,22 +199,23 @@ function view(site, e) {
   applyExplode(); // restore the live value
   const target = sphere.center.clone();
   // The bounding sphere is loose around a flat movement, so it is shrunk to frame the parts, not the sphere.
-  const d = fitDist(sphere.radius * (site ? 0.8 : 0.72));
+  // A floor on the radius keeps neighbours in frame around a small part (the fork).
+  const d = fitDist(Math.max(sphere.radius, 34) * (site ? 0.8 : 0.72));
   return { pos: target.clone().addScaledVector(site ? FOCUS_DIR : HOME_DIR, d), target };
 }
 
-function setOpacity(p, o) { p.g.traverse((n) => { if (n.material) n.material.opacity = o; }); }
+const materialOf = (n: THREE.Object3D) => (n as THREE.Mesh).material as THREE.Material | undefined;
+function setOpacity(p: Part, o: number) { p.g.traverse((n) => { const mat = materialOf(n); if (mat) mat.opacity = o; }); }
 function recolor() {
   const ink = css('--ink'), active = css('--active');
   mats.fill.forEach((mm) => mm.color.set(css('--plate')));
-  for (const p of parts) p.g.traverse((n) => { if (n.isLine) n.material.color.set(p.site === focusSite ? active : ink); });
+  for (const p of parts) p.g.traverse((n) => { if ((n as THREE.Line).isLine) (materialOf(n) as THREE.LineBasicMaterial).color.set(p.site === focusSite ? active : ink); });
   axisMat.color.set(css('--hair'));
   render();
 }
 
-function go(animate) {
-  const want = focusedPrinciple()?.part;
-  focusSite = parts.some((p) => p.site === want) ? want : null; // a part with no 3D site (the fork, until Task 4) shows the whole movement
+function go(animate: boolean) {
+  focusSite = focusedPrinciple()?.part ?? null;
   for (const p of parts) setOpacity(p, !focusSite || p.site === focusSite ? 1 : 0.1);
   axisMat.opacity = focusSite ? 0.12 : 1;
   labelsEl.classList.toggle('focused', !!focusSite);
@@ -235,16 +238,18 @@ function go(animate) {
 function render() {
   camera.position.copy(cam.pos); camera.lookAt(cam.target);
   renderer.render(scene, camera);
-  for (const { p, a } of callouts) {
+  const widths = callouts.map(({ a }) => a.offsetWidth); // read all before writing, so layout runs once
+  callouts.forEach(({ p, a }, i) => {
     if (p.id === 'plate') v.set(-118, -60, p.g.position.z + 3); // plate edge, not its centre
-    else { box.setFromObject(p.g).getCenter(v); v.x += LABEL_DX[p.id] ?? -40; if (p.id === "balance") v.z += 25; }
+    else { box.setFromObject(p.g).getCenter(v); v.x += LABEL_DX[p.id] ?? -40; if (p.id === 'balance') v.z += 25; }
     v.project(camera);
-    const x = Math.min(width - 16, Math.max(16, (v.x * .5 + .5) * width)), y = Math.min(height - 12, Math.max(12, (-v.y * .5 + .5) * height));
+    // The label starts 11px left of x; keep its whole width inside the stage so it never reaches the text column.
+    const x = Math.min(width - widths[i] + 11 - 4, Math.max(16, (v.x * .5 + .5) * width)), y = Math.min(height - 12, Math.max(12, (-v.y * .5 + .5) * height));
     a.style.transform = `translate(${x}px, ${y}px) translate(-11px, -50%)`;
-  }
+  });
 }
 let last = 0, visible = true, running = false;
-function frame(now) {
+function frame(now: number) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   tick(dt); if (tween) tween(now);
   render();

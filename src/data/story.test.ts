@@ -7,6 +7,9 @@ test('six principles, one per part, in the agreed order', () => {
   assert.equal(new Set(PRINCIPLES.map(p => p.part)).size, 6);
   assert.equal(principleForPart('fork').slug, 'agents');
 });
+test('each principle has a short label for the drawing', () => {
+  assert.deepEqual(PRINCIPLES.map(p => p.short), ['Security', 'A way back', 'People', 'Gates', 'Verify', 'Agents']);
+});
 test('every proof points at a real case study, and every case study is proof of something', () => {
   const used = new Set(PRINCIPLES.flatMap(p => p.proof === 'team' ? [] : p.proof));
   for (const c of CASES) assert.ok(used.has(c.slug), c.slug);

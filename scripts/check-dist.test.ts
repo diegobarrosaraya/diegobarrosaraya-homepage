@@ -1,11 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
 import { CASES, HOME, PRINCIPLES } from '../src/data/story';
 import { LEGACY_REDIRECTS } from '../src/data/redirects';
-
-// Parts the SVG drawing has today. Task 4 adds the pallet fork as the sixth.
-const DRAWN = PRINCIPLES.filter((p) => p.part !== 'fork');
 
 test('home page is built HTML, not the Vite source', () => {
   const html = readFileSync('dist/index.html', 'utf8');
@@ -17,10 +15,15 @@ test('custom domain survives the build', () => {
   assert.equal(readFileSync('dist/CNAME', 'utf8').trim(), 'diegobarrosaraya.com');
 });
 
-test('home links every drawn part to its principle page', () => {
-  const html = readFileSync('dist/index.html', 'utf8');
-  for (const { slug } of DRAWN)
-    assert.match(html, new RegExp(`class="callout[^"]*"[^>]*href="/how/${slug}/"|href="/how/${slug}/"[^>]*class="callout[^"]*"`), slug);
+test('the drawing links all six principles and work pages arrive focused', () => {
+  const home = readFileSync('dist/index.html', 'utf8');
+  for (const p of PRINCIPLES) assert.match(home, new RegExp(`class="callout[^"]*"[^>]*href="/how/${p.slug}/"|href="/how/${p.slug}/"[^>]*class="callout`), p.slug);
+  for (const p of PRINCIPLES) assert.match(readFileSync(`dist/how/${p.slug}/index.html`, 'utf8'), new RegExp(`data-focus="${p.part}"`), p.slug);
+  assert.match(home, /Fig\. 1 · Generic movement/);
+});
+test('the 3D chunk stays within budget', () => {
+  const chunk = readdirSync('dist/_astro').find(f => /^movement-3d.*\.js$/.test(f))!;
+  assert.ok(gzipSync(readFileSync(`dist/_astro/${chunk}`)).length <= 160 * 1024);
 });
 test('home has the resume action without JavaScript', () => {
   assert.match(readFileSync('dist/index.html', 'utf8'), /href="\/resume\.pdf"/);
@@ -70,7 +73,7 @@ test('every internal link resolves to a built file', () => {
 const movementViewBox = (html: string) => html.match(/<svg[^>]*id="movement"[^>]*viewBox="([^"]+)"|<svg[^>]*viewBox="([^"]+)"[^>]*id="movement"/)?.slice(1).find(Boolean);
 test('home shows the full movement, principle pages are already zoomed without JavaScript', () => {
   assert.equal(movementViewBox(readFileSync('dist/index.html', 'utf8')), '0 0 600 600');
-  for (const p of DRAWN) {
+  for (const p of PRINCIPLES) {
     const html = readFileSync(`dist/how/${p.slug}/index.html`, 'utf8');
     const vb = movementViewBox(html)!.split(' ').map(Number);
     assert.ok(vb[2] < 600 && vb[2] === vb[3], `${p.slug} viewBox ${vb}`);

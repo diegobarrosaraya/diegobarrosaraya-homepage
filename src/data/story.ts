@@ -6,7 +6,7 @@ export interface CaseStudy {
   slug: CaseSlug; name: string; repo: string; summary: string;
   constraint: string; decision: string; safeguard: string; result: string; tradeoff: string;
 }
-export interface Principle { slug: PrincipleSlug; part: PartId; sentence: string; explain: string; proof: CaseSlug[] | 'team' }
+export interface Principle { slug: PrincipleSlug; part: PartId; short: string; sentence: string; explain: string; proof: CaseSlug[] | 'team' }
 
 const gh = (name: string) => `https://github.com/diegobarrosaraya/${name}`;
 
@@ -24,32 +24,32 @@ export const HOME = {
 
 export const PRINCIPLES: readonly Principle[] = [
   {
-    slug: 'security', part: 'plate', sentence: 'Security is the base, not a layer.',
+    slug: 'security', part: 'plate', short: 'Security', sentence: 'Security is the base, not a layer.',
     explain: 'I decide where data lives and who can reach it before I write the first feature. If a design only works by handing over more access than it needs, I change the design.',
     proof: ['teams-calls-fetcher'],
   },
   {
-    slug: 'way-back', part: 'barrel', sentence: 'Always leave a way back.',
+    slug: 'way-back', part: 'barrel', short: 'A way back', sentence: 'Always leave a way back.',
     explain: 'Every change I ship has a known way to undo it. A machine I can rebuild from a commit is one I can change without fear.',
     proof: ['nix-config'],
   },
   {
-    slug: 'people', part: 'train', sentence: 'Make the people around me faster.',
+    slug: 'people', part: 'train', short: 'People', sentence: 'Make the people around me faster.',
     explain: 'A deadline is met by the team, not by one person. Time I spend teaching and writing guides comes back as a team that needs me less.',
     proof: 'team',
   },
   {
-    slug: 'gates', part: 'escape', sentence: 'Gates that fail closed.',
+    slug: 'gates', part: 'escape', short: 'Gates', sentence: 'Gates that fail closed.',
     explain: 'A check that can be skipped will be skipped on the worst day. So the checks stop the build, and the default when something is unclear is to not ship.',
     proof: ['this-site'],
   },
   {
-    slug: 'verify', part: 'balance', sentence: 'Verify before you trust.',
+    slug: 'verify', part: 'balance', short: 'Verify', sentence: 'Verify before you trust.',
     explain: 'I trust a change when a test shows it works, not when it looks right. Code that is not proven stays out, even when it is probably fine.',
     proof: ['ardour-wayland'],
   },
   {
-    slug: 'agents', part: 'fork', sentence: 'Let agents do real work, one checked step at a time.',
+    slug: 'agents', part: 'fork', short: 'Agents', sentence: 'Let agents do real work, one checked step at a time.',
     explain: 'Agents are useful when they work on real tasks with limited access and a check after each step. I build the harness so that one bad step cannot become a bad release.',
     proof: ['home-agent-platform', 'this-site'],
   },

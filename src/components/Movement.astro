@@ -37,7 +37,7 @@ const range = (n: number) => Array.from({ length: n }, (_, i) => i);
 
 const SQ = 0.46; // perspective squash of each disc
 
-// Drawn back to front: plate, barrel, train, escape wheel, balance.
+// Drawn back to front: plate, barrel, train, escape wheel, pallet fork, balance.
 const parts: { id: PartId; x: number; y: number; shapes: Shape[]; sub?: { x: number; y: number; shapes: Shape[] } }[] = [
   {
     id: 'plate', x: 300, y: 520, shapes: [
@@ -96,6 +96,15 @@ const parts: { id: PartId; x: number; y: number; shapes: Shape[]; sub?: { x: num
     ],
   },
   {
+    // Pallet fork (anchor): pallets reach toward the escape wheel, the lever toward the balance.
+    id: 'fork', x: 290, y: 116, shapes: [
+      { El: 'path', class: 'fill', d: 'M-6 -7 L28 -30 L40 -26 L34 -18 L10 0 L34 18 L40 26 L28 30 L-6 7 Z' },
+      { El: 'path', class: 'fill', d: 'M-4 -4 L-52 -3 L-60 -10 L-68 -10 L-62 0 L-68 10 L-60 10 L-52 3 L-4 4 Z' },
+      { El: 'circle', r: 7 },
+      { El: 'circle', r: 2.4 },
+    ],
+  },
+  {
     id: 'balance', x: 200, y: 70, shapes: [
       { El: 'circle', class: 'fill', r: 76 },
       { El: 'circle', r: 64 },
@@ -112,11 +121,12 @@ const parts: { id: PartId; x: number; y: number; shapes: Shape[]; sub?: { x: num
   },
 ];
 
-const axes = [[200, 70, 470], [372, 160, 470], [318, 268, 470]];
+const axes = [[200, 70, 470], [290, 116, 470], [372, 160, 470], [318, 268, 470]];
 
 // Callouts: part, anchor on the part, label position (final positions from the mockup's CALLS).
 const CALLS: { part: PartId; anchor: [number, number]; at: [number, number] }[] = [
   { part: 'balance', anchor: [120, 52], at: [18, 28] },
+  { part: 'fork', anchor: [226, 116], at: [18, 128] },
   { part: 'escape', anchor: [420, 160], at: [470, 118] },
   { part: 'train', anchor: [236, 262], at: [18, 214] },
   { part: 'barrel', anchor: [118, 400], at: [18, 340] },
@@ -138,7 +148,7 @@ const viewBoxOf = (p: (typeof parts)[number]) => {
   ].map(([x, y]): [number, number] => [p.x + x, p.y + y * SQ]));
   return toViewBox(viewBoxFor(b, Math.min(1.7, 560 / Math.max(b.width, b.height))));
 };
-const focused = parts.find((p) => p.id === focus); // undefined for the fork until the SVG draws it (Task 4)
+const focused = parts.find((p) => p.id === focus);
 
 const num = (slug: string) => String(PRINCIPLES.findIndex((p) => p.slug === slug) + 1).padStart(2, '0');
 const callouts = CALLS.map((c) => { const principle = principleForPart(c.part); return { ...c, principle, num: num(principle.slug) }; });
@@ -176,16 +186,16 @@ const listed = [...callouts].sort((a, b) => a.num.localeCompare(b.num));
           <circle class="dot" cx={ax} cy={ay} r="2.4" />
           <circle class="ring" cx={lx + 11} cy={ly - 4} r="11" stroke-width="1.1" />
           <text class="num" x={lx + 11} y={ly} text-anchor="middle">{num}</text>
-          <text class="name" x={lx + 28} y={ly + 1}>{principle.sentence}</text>
+          <text class="name" x={lx + 28} y={ly + 1}>{principle.short}</text>
         </a>
       ))}
     </g>
   </svg>
   </div>
-  <figcaption class="caption label">Fig. 1 · Exploded view · Placeholder drawing</figcaption>
+  <figcaption class="caption label">Fig. 1 · Generic movement</figcaption>
   <ol class="callout-list" aria-label="Principles">
     {listed.map(({ principle, num }) => (
-      <li><a href={`/how/${principle.slug}/`}><span class="mono">{num}</span>{principle.sentence}</a></li>
+      <li><a href={`/how/${principle.slug}/`} aria-label={principle.sentence}><span class="mono">{num}</span>{principle.short}</a></li>
     ))}
   </ol>
 </figure>
@@ -258,6 +268,7 @@ const listed = [...callouts].sort((a, b) => a.num.localeCompare(b.num));
   svg:has(.callout[data-part="escape"]:is(:hover, :focus-visible)) .part[data-part="escape"],
   svg:has(.callout[data-part="balance"]:is(:hover, :focus-visible)) .part[data-part="balance"],
   svg:has(.callout[data-part="plate"]:is(:hover, :focus-visible)) .part[data-part="plate"],
+  svg:has(.callout[data-part="fork"]:is(:hover, :focus-visible)) .part[data-part="fork"],
   .part.focus {
     color: var(--active); filter: var(--glow);
   }
