@@ -4,20 +4,22 @@ import { CASES } from '../data/story';
 // The four main case studies get full rows; this site closes the list as a short row.
 const main = CASES.filter((c) => c.slug !== 'this-site');
 const site = CASES.find((c) => c.slug === 'this-site')!;
+// Keep the last word and the arrow together so the arrow never wraps alone.
+const head = (n: string) => (n.includes(" ") ? n.slice(0, n.lastIndexOf(" ")) + " " : "");
+const last = (n: string) => n.slice(n.lastIndexOf(' ') + 1);
 ---
 <ul class="cases">
   {main.map((c) => (
     <li>
       <a href={`/work/${c.slug}/`}>
-        <span class="name">{c.name}</span>
-        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" /></svg>
+        <span class="name">{head(c.name)}<span class="nw">{last(c.name)}<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" /></svg></span></span>
       </a>
       <p>{c.summary}</p>
     </li>
   ))}
   <li class="site">
-    <a href={`/work/${site.slug}/`}>{site.name}
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" /></svg></a>
+    <a href={`/work/${site.slug}/`}>{head(site.name)}<span class="nw">{last(site.name)}
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" /></svg></span></a>
     <p>{site.summary}</p>
   </li>
 </ul>
@@ -27,6 +29,7 @@ const site = CASES.find((c) => c.slug === 'this-site')!;
   .cases li { padding: 20px 0 22px; border-top: 1px solid var(--hair); }
   .cases li:last-child { border-bottom: 1px solid var(--hair); }
   .cases a { text-decoration: none; }
+  .nw { white-space: nowrap; }
   .name { font: expanded var(--head-weight) clamp(19px, 1.8vw, 23px)/1.3 var(--font-head); }
   .cases a:hover .name, .site a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
   .cases svg { width: 14px; height: 14px; margin-left: 10px; vertical-align: baseline; transition: transform .25s var(--ease); }

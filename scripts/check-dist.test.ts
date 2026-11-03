@@ -59,7 +59,7 @@ test('every principle and case study has a built page', () => {
 test('old shared links still land somewhere', () => {
   for (const [from, to] of Object.entries(LEGACY_REDIRECTS)) {
     const html = readFileSync(`dist${from}index.html`, 'utf8');
-    assert.match(html, new RegExp(`url=${to.replace(/\//g, '\\/')}`), from);
+    assert.ok(html.includes(`content="0;url=${to}"`), from);
   }
 });
 test('every internal link resolves to a built file', () => {
@@ -106,4 +106,6 @@ test('no numbered headings anywhere', () => {
 });
 test('font licences ship with the site', () => {
   assert.ok(existsSync('dist/licenses/Archivo-OFL.txt') && existsSync('dist/licenses/DSEG-OFL.txt'));
+  for (const n of ['Barlow', 'JetBrainsMono']) assert.ok(existsSync(`dist/licenses/${n}-OFL.txt`), n);
+  assert.match(readFileSync('dist/index.html', 'utf8'), /Barlow-OFL[\s\S]*JetBrainsMono-OFL/);
 });

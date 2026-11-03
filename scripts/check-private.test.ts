@@ -11,6 +11,7 @@ const filesUnder = (dir: string): string[] =>
 test('no private term appears in the built site', (t) => {
   if (!existsSync('.private-terms')) return t.skip('no local .private-terms list');
   const terms = readFileSync('.private-terms', 'utf8').split('\n').map(s => s.trim().toLowerCase()).filter(Boolean);
+  assert.ok(terms.length > 0, '.private-terms exists but has no terms');
   for (const f of filesUnder('dist')) {
     const body = readFileSync(f, 'utf8').toLowerCase();
     for (const term of terms) assert.ok(!body.includes(term), `${f} contains a term from .private-terms`);
