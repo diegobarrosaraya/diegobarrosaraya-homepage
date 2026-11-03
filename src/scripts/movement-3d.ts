@@ -180,7 +180,7 @@ const callouts = PRINCIPLES.map((principle) => {
 const HOME_DIR = new THREE.Vector3(-150, -330, 330).normalize();
 const FOCUS_DIR = new THREE.Vector3(-0.45, -0.7, 0.8).normalize();
 // World x offset of each label from its part, so neighbouring labels do not collide.
-const LABEL_DX: Record<string, number> = { balance: 30, fork: 62 };
+const LABEL_DX: Record<string, number> = { balance: 8, fork: 44 };
 const cam = { pos: new THREE.Vector3(), target: new THREE.Vector3() };
 let width = 1, height = 1, focusSite: PartId | null = null, tween: ((now: number) => void) | null = null;
 

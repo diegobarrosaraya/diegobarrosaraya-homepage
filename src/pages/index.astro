@@ -89,4 +89,13 @@ const contact = [
   .contact div:last-child { border-bottom: 1px solid var(--hair); }
   .contact dt { color: var(--ink-2); }
   .contact dd { margin: 0; overflow-wrap: anywhere; }
+
+  /* Wide screens: section heading in a label column, content across the rest of the sheet. */
+  @media (min-width: 881px) {
+    .block { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); column-gap: 40px; align-items: start; }
+    .block > h2 { grid-column: 1; grid-row: 1 / span 3; margin: 0; padding-top: 4px; }
+    .block > :not(h2) { grid-column: 2; }
+    .principles { max-width: none; display: grid; grid-auto-flow: column; grid-template-rows: repeat(3, auto); column-gap: 32px; }
+    .principles li:nth-child(3) { border-bottom: 1px solid var(--hair); }
+  }
 </style>

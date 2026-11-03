@@ -28,7 +28,7 @@ const sections = [
     <p class="actions"><a class="btn primary" href="/resume.pdf">Resume PDF</a></p>
   </section>
 
-  {sections.map((s) => (
+  {sections.filter((s) => s.rows.length).map((s) => (
     <section class="block" id={s.id} aria-labelledby={`${s.id}-h`}>
       <h2 id={`${s.id}-h`}>{s.title}</h2>
       <ul>
