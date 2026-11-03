@@ -1,12 +1,11 @@
 ---
 // Exploded view of the movement, generated at build time so the page ships a static SVG.
 // Geometry ported from the approved mockup (caliber-mockup.html). Placeholder drawing until traced from a real watch.
-import { AREAS, type AreaSlug, type PartId } from '../data/work';
+import { PRINCIPLES, principleForPart, type PartId } from '../data/story';
 import { FULL_VIEWBOX, boundsOf, toViewBox, viewBoxFor } from '../lib/zoom';
 
-export interface Props { focus?: AreaSlug }
+export interface Props { focus?: PartId }
 const { focus } = Astro.props;
-const focusPart = focus ? AREAS.find((a) => a.slug === focus)?.part : undefined;
 
 type Shape =
   | { El: 'path'; d: string; class?: string; 'stroke-width'?: number; 'stroke-dasharray'?: string }
@@ -123,7 +122,7 @@ const CALLS: { part: PartId; anchor: [number, number]; at: [number, number] }[] 
   { part: 'barrel', anchor: [118, 400], at: [18, 340] },
   { part: 'plate', anchor: [95, 515], at: [18, 598] },
 ];
-// Zoom target per part, computed here so a work page is already zoomed on first paint and without JavaScript.
+// Zoom target per part, computed here so a principle page is already zoomed on first paint and without JavaScript.
 // shortcut: reads coordinates as absolute x,y pairs (M, L, C, Z only); H, V, A and relative commands would give wrong bounds, and Bezier control points count as bounds (the plate's box is a little loose). Upgrade if a part is drawn with those commands.
 const localPoints = (shapes: Shape[]): [number, number][] => shapes.flatMap((s): [number, number][] => {
   if (s.El === 'circle') { const { cx = 0, cy = 0, r } = s; return [[cx - r, cy - r], [cx + r, cy + r]]; }
@@ -139,10 +138,11 @@ const viewBoxOf = (p: (typeof parts)[number]) => {
   ].map(([x, y]): [number, number] => [p.x + x, p.y + y * SQ]));
   return toViewBox(viewBoxFor(b, Math.min(1.7, 560 / Math.max(b.width, b.height))));
 };
-const focused = parts.find((p) => p.id === focusPart);
+const focused = parts.find((p) => p.id === focus); // undefined for the fork until the SVG draws it (Task 4)
 
-const callouts = CALLS.map((c) => ({ ...c, area: AREAS.find((a) => a.part === c.part)! }));
-const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.number));
+const num = (slug: string) => String(PRINCIPLES.findIndex((p) => p.slug === slug) + 1).padStart(2, '0');
+const callouts = CALLS.map((c) => { const principle = principleForPart(c.part); return { ...c, principle, num: num(principle.slug) }; });
+const listed = [...callouts].sort((a, b) => a.num.localeCompare(b.num));
 ---
 <figure class="drawing">
   <div class="mv-stage" transition:persist="movement">
@@ -151,13 +151,13 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
     viewBox={focused ? viewBoxOf(focused) : toViewBox(FULL_VIEWBOX)}
     role="group"
     aria-labelledby="mv-title"
-    data-focus={focus}
+    data-focus={focused?.id}
   >
-    <title id="mv-title">Exploded view of a watch movement. Each part is labelled with an area of Diego's work.</title>
+    <title id="mv-title">Exploded view of a watch movement. Each part is labelled with one of the principles Diego works by.</title>
     <g fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
       {axes.map(([x, y1, y2]) => <line class="axis" x1={x} y1={y1} x2={x} y2={y2} />)}
       {parts.map((p) => (
-        <g class:list={['part', { focus: p.id === focusPart }]} data-part={p.id} data-viewbox={viewBoxOf(p)}>
+        <g class:list={['part', { focus: p.id === focus }]} data-part={p.id} data-viewbox={viewBoxOf(p)}>
           <g transform={`translate(${p.x} ${p.y}) scale(1 ${SQ})`}>
             {p.shapes.map(({ El, ...a }) => <El {...a} />)}
             {p.sub && (
@@ -170,22 +170,22 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
       ))}
     </g>
     <g class="callouts">
-      {callouts.map(({ part, anchor: [ax, ay], at: [lx, ly], area }) => (
-        <a class="callout" href={`/work/${area.slug}/`} data-part={part} aria-label={`${area.number} ${area.title}`}>
+      {callouts.map(({ part, anchor: [ax, ay], at: [lx, ly], principle, num }) => (
+        <a class="callout" href={`/how/${principle.slug}/`} data-part={part} aria-label={principle.sentence}>
           <path class="leader" d={`M${ax} ${ay} L${lx + 11} ${ly - 4}`} fill="none" stroke-width="1" />
           <circle class="dot" cx={ax} cy={ay} r="2.4" />
           <circle class="ring" cx={lx + 11} cy={ly - 4} r="11" stroke-width="1.1" />
-          <text class="num" x={lx + 11} y={ly} text-anchor="middle">{area.number}</text>
-          <text class="name" x={lx + 28} y={ly + 1}>{area.title}</text>
+          <text class="num" x={lx + 11} y={ly} text-anchor="middle">{num}</text>
+          <text class="name" x={lx + 28} y={ly + 1}>{principle.sentence}</text>
         </a>
       ))}
     </g>
   </svg>
   </div>
   <figcaption class="caption label">Fig. 1 · Exploded view · Placeholder drawing</figcaption>
-  <ol class="callout-list" aria-label="Work areas">
-    {listed.map(({ area }) => (
-      <li><a href={`/work/${area.slug}/`}><span class="mono">{area.number}</span>{area.title}</a></li>
+  <ol class="callout-list" aria-label="Principles">
+    {listed.map(({ principle, num }) => (
+      <li><a href={`/how/${principle.slug}/`}><span class="mono">{num}</span>{principle.sentence}</a></li>
     ))}
   </ol>
 </figure>
@@ -264,7 +264,7 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
   .part.focus { transform: translateY(-10px); }
   svg[data-focus] .part:not(.focus), svg[data-focus] .axis { opacity: .1; }
 
-  /* Zoomed into a part (a work page): the loupe clips, callouts leave the tab order too. */
+  /* Zoomed into a part (a principle page): the loupe clips, callouts leave the tab order too. */
   svg[data-focus], svg[data-zooming] { overflow: hidden; } /* data-zooming: still clipped while zooming out */
   .callouts { transition: opacity .5s var(--ease); }
   svg[data-focus] .callouts { opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility 0s .5s; }

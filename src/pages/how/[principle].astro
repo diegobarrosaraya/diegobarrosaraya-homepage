@@ -1,0 +1,15 @@
+---
+import Sheet from '../../layouts/Sheet.astro';
+import Movement from '../../components/Movement.astro';
+import PrincipleDetail from '../../components/PrincipleDetail.astro';
+import { PRINCIPLES } from '../../data/story';
+
+export const getStaticPaths = () => PRINCIPLES.map((principle) => ({ params: { principle: principle.slug }, props: { principle } }));
+const { principle } = Astro.props;
+---
+<Sheet title={`${principle.sentence} | Diego Barros Araya`} description={principle.explain} current="how">
+  <div class="hero">
+    <Movement focus={principle.part} />
+    <PrincipleDetail principle={principle} />
+  </div>
+</Sheet>

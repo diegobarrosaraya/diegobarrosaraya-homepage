@@ -1,7 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { AREAS } from '../src/data/work';
+import { CASES, PRINCIPLES } from '../src/data/story';
+import { LEGACY_REDIRECTS } from '../src/data/redirects';
+
+// Parts the SVG drawing has today. Task 4 adds the pallet fork as the sixth.
+const DRAWN = PRINCIPLES.filter((p) => p.part !== 'fork');
 
 test('home page is built HTML, not the Vite source', () => {
   const html = readFileSync('dist/index.html', 'utf8');
@@ -13,10 +17,10 @@ test('custom domain survives the build', () => {
   assert.equal(readFileSync('dist/CNAME', 'utf8').trim(), 'diegobarrosaraya.com');
 });
 
-test('home links every work area from the drawing', () => {
+test('home links every drawn part to its principle page', () => {
   const html = readFileSync('dist/index.html', 'utf8');
-  for (const s of ['integrations', 'backend', 'agents', 'open-source', 'infrastructure'])
-    assert.match(html, new RegExp(`class="callout[^"]*"[^>]*href="/work/${s}/"|href="/work/${s}/"[^>]*class="callout[^"]*"`));
+  for (const { slug } of DRAWN)
+    assert.match(html, new RegExp(`class="callout[^"]*"[^>]*href="/how/${slug}/"|href="/how/${slug}/"[^>]*class="callout[^"]*"`), slug);
 });
 test('home has the resume action without JavaScript', () => {
   assert.match(readFileSync('dist/index.html', 'utf8'), /href="\/resume\.pdf"/);
@@ -35,10 +39,14 @@ const resolvesInDist = (href: string): boolean =>
   (existsSync(`dist${href}`) && statSync(`dist${href}`).isFile()) ||
   existsSync(`dist${href}/index.html`) || existsSync(`dist${href}index.html`);
 
-test('every area and record has a built page', () => {
-  for (const a of AREAS) {
-    assert.ok(existsSync(`dist/work/${a.slug}/index.html`), a.slug);
-    for (const r of a.records) assert.ok(existsSync(`dist/work/${a.slug}/${r.slug}/index.html`), `${a.slug}/${r.slug}`);
+test('every principle and case study has a built page', () => {
+  for (const p of PRINCIPLES) assert.ok(existsSync(`dist/how/${p.slug}/index.html`), p.slug);
+  for (const c of CASES) assert.ok(existsSync(`dist/work/${c.slug}/index.html`), c.slug);
+});
+test('old shared links still land somewhere', () => {
+  for (const [from, to] of Object.entries(LEGACY_REDIRECTS)) {
+    const html = readFileSync(`dist${from}index.html`, 'utf8');
+    assert.match(html, new RegExp(`url=${to.replace(/\//g, '\\/')}`), from);
   }
 });
 test('every internal link resolves to a built file', () => {
@@ -50,13 +58,14 @@ test('every internal link resolves to a built file', () => {
 });
 
 const movementViewBox = (html: string) => html.match(/<svg[^>]*id="movement"[^>]*viewBox="([^"]+)"|<svg[^>]*viewBox="([^"]+)"[^>]*id="movement"/)?.slice(1).find(Boolean);
-test('home shows the full movement, work pages are already zoomed without JavaScript', () => {
+test('home shows the full movement, principle pages are already zoomed without JavaScript', () => {
   assert.equal(movementViewBox(readFileSync('dist/index.html', 'utf8')), '0 0 600 600');
-  for (const area of AREAS) {
-    const html = readFileSync(`dist/work/${area.slug}/index.html`, 'utf8');
+  for (const p of DRAWN) {
+    const html = readFileSync(`dist/how/${p.slug}/index.html`, 'utf8');
     const vb = movementViewBox(html)!.split(' ').map(Number);
-    assert.ok(vb[2] < 600 && vb[2] === vb[3], `${area.slug} viewBox ${vb}`);
-    assert.match(html, new RegExp(`class="part focus[^"]*" data-part="${area.part}"`));
+    assert.ok(vb[2] < 600 && vb[2] === vb[3], `${p.slug} viewBox ${vb}`);
+    assert.match(html, new RegExp(`class="part focus[^"]*" data-part="${p.part}"`));
+    assert.match(html, new RegExp(`data-focus="${p.part}"`));
   }
 });
 
@@ -71,6 +80,7 @@ test('the day job appears only on the resume', () => {
 test('every page has one h1, before any h2', () => {
   for (const file of htmlFilesUnder('dist')) {
     const html = readFileSync(file, 'utf8');
+    if (html.includes('http-equiv="refresh"')) continue; // Astro's redirect stubs have no headings
     assert.equal(html.match(/<h1[\s>]/g)?.length, 1, file);
     const h2 = html.search(/<h2[\s>]/);
     assert.ok(h2 === -1 || html.search(/<h1[\s>]/) < h2, file);

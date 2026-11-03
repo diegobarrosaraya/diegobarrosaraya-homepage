@@ -1,11 +1,10 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
-export interface Props { current?: 'work' | 'records' | 'notes' | 'resume' | 'contact' }
+export interface Props { current?: 'work' | 'how' | 'resume' | 'contact' }
 const { current } = Astro.props;
 const nav = [
   { id: 'work', label: 'Work', href: '/#work' },
-  { id: 'records', label: 'Service records', href: '/#records' },
-  { id: 'notes', label: 'Notes', href: '/#parts' },
+  { id: 'how', label: 'How I work', href: '/#how' },
   { id: 'resume', label: 'Resume', href: '/resume/' },
   { id: 'contact', label: 'Contact', href: '/contact/' },
 ] as const;

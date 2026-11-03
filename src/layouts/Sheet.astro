@@ -7,7 +7,7 @@ import Footer from '../components/Footer.astro';
 export interface Props {
   title: string;
   description: string;
-  current?: 'work' | 'records' | 'notes' | 'resume' | 'contact';
+  current?: 'work' | 'how' | 'resume' | 'contact';
 }
 const { title, description, current } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);

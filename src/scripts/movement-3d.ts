@@ -2,12 +2,13 @@
 // Throwaway spike: the movement drawn in three.js, mounted over the static SVG in its persisted stage.
 // Ported from the standalone prototype (movement-3d/index.html), without orbit controls, sliders or speed.
 import * as THREE from 'three';
-import { AREAS, areaBySlug } from '../data/work';
+import { PRINCIPLES, principleBySlug } from '../data/story';
 import { easeOutExpo } from '../lib/zoom';
 
 const root = document.documentElement;
 const css = (n: string) => getComputedStyle(root).getPropertyValue(n).trim();
-const areaSlug = () => location.pathname.match(/^\/work\/([^/]+)/)?.[1];
+// Only /how/<slug>/ focuses a part; every other page shows the whole movement.
+const focusedPrinciple = () => principleBySlug(location.pathname.match(/^\/how\/([^/]+)/)?.[1] ?? '');
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // throws without WebGL: caller leaves the SVG alone
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -80,7 +81,7 @@ P.balance = place(P.escape, 46, -1.55);
 P.fork = new THREE.Vector2((P.escape.x + P.balance.x) / 2 + 4, (P.escape.y + P.balance.y) / 2);
 { const c = new THREE.Vector2(); const ks = Object.keys(P); ks.forEach((k) => c.add(P[k])); c.divideScalar(ks.length); ks.forEach((k) => P[k].sub(c)); }
 
-// `site` is the PartId in work.ts this 3D part belongs to (train = centre, third and fourth; escape = escape wheel and fork).
+// `site` is the PartId in story.ts this 3D part belongs to (train = centre, third and fourth; escape = escape wheel and fork).
 const parts = [];
 function part(id, site, pos, baseZ, build) {
   const g = new THREE.Group(); g.position.set(pos.x, pos.y, baseZ);
@@ -162,14 +163,16 @@ function applyExplode(e = explode) {
 }
 
 // ---------- labels: real links, projected each frame ----------
-const callouts = AREAS.map((area) => {
-  const p = parts.find((q) => q.id === (area.part === 'train' ? 'center' : area.part));
+// The fork is still grouped with the escape wheel here, so it gets no label of its own yet (Task 4).
+const callouts = PRINCIPLES.filter((pr) => pr.part !== 'fork').map((principle) => {
+  const p = parts.find((q) => q.id === (principle.part === 'train' ? 'center' : principle.part));
+  const num = String(PRINCIPLES.indexOf(principle) + 1).padStart(2, '0');
   const a = document.createElement('a');
-  a.className = 'mv3d-callout'; a.href = `/work/${area.slug}/`; a.dataset.part = area.part;
-  a.setAttribute('aria-label', `${area.number} ${area.title}`);
-  a.innerHTML = `<b>${area.number}</b><span>${area.title}</span>`;
+  a.className = 'mv3d-callout'; a.href = `/how/${principle.slug}/`; a.dataset.part = principle.part;
+  a.setAttribute('aria-label', principle.sentence);
+  a.innerHTML = `<b>${num}</b><span>${principle.sentence}</span>`;
   labelsEl.appendChild(a);
-  return { area, p, a };
+  return { principle, p, a };
 });
 
 // ---------- camera ----------
@@ -208,12 +211,12 @@ function recolor() {
 }
 
 function go(animate) {
-  const slug = areaSlug();
-  focusSite = (slug && areaBySlug(slug)?.part) || null;
+  const want = focusedPrinciple()?.part;
+  focusSite = parts.some((p) => p.site === want) ? want : null; // a part with no 3D site (the fork, until Task 4) shows the whole movement
   for (const p of parts) setOpacity(p, !focusSite || p.site === focusSite ? 1 : 0.1);
   axisMat.opacity = focusSite ? 0.12 : 1;
   labelsEl.classList.toggle('focused', !!focusSite);
-  for (const c of callouts) c.a.classList.toggle('on', c.area.part === focusSite);
+  for (const c of callouts) c.a.classList.toggle('on', c.principle.part === focusSite);
   recolor();
   const toE = focusSite ? EXPLODE.focus : EXPLODE.home;
   const to = view(focusSite, toE);
