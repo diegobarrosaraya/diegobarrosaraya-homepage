@@ -3,6 +3,5 @@ dist/
 .DS_Store
 *.local
 .astro/
-resume.md
 .impeccable/questions/
 .private-terms

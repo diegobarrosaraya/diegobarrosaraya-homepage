@@ -17,9 +17,12 @@
           packages = [
             pkgs.nodejs_24
             pkgs.pnpm
+            pkgs.playwright-driver.browsers
           ];
 
           shellHook = ''
+            export PLAYWRIGHT_BROWSERS_PATH=${pkgs.playwright-driver.browsers}
+            export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
             echo "Diego's Homepage Dev Environment"
             echo "Run: pnpm dev"
             echo "Open: http://localhost:4321"

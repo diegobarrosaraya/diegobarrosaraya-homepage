@@ -17,6 +17,9 @@ const sections = [
   <header class="title">
     <h1>{r.basics.name}</h1>
     <p class="lede">{r.basics.label}</p>
+    <p class="contact">
+      <a href={`mailto:${r.basics.email}`}>{r.basics.email}</a> | <a href={r.basics.url}>{r.basics.url.replace(/^https?:\/\//, '')}</a>{r.basics.profiles.map((p: any) => <> | <a href={p.url}>{p.url.replace(/^https?:\/\//, '')}</a></>)} | {r.basics.location.city}, {r.basics.location.region}
+    </p>
   </header>
   <section class="block" aria-labelledby="spec-h">
     <h2 id="spec-h">Specification</h2>
@@ -55,6 +58,7 @@ const sections = [
   th, td { text-align: left; vertical-align: top; padding: 10px 0; border-top: 1px solid var(--hair); }
   th { font-weight: 500; width: 9.5em; padding-right: 14px; color: var(--ink-2); line-height: 1.55; }
   tr:last-child th, tr:last-child td { border-bottom: 1px solid var(--hair); }
+  .contact { display: none; margin: 4px 0 0; }
   .actions { margin: 22px 0 0; }
   ul { list-style: none; margin: 0; padding: 0; max-width: 62ch; }
   li { border-top: 1px solid var(--hair); padding: 12px 0; display: flex; justify-content: space-between; gap: 14px; }
@@ -63,5 +67,6 @@ const sections = [
   .sub { color: var(--ink-2); }
   li p { margin: 6px 0 0; }
   .when { color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  @media print { .contact { display: block; font-size: 10pt; } table, ul { max-width: none; } }
   @media (max-width: 560px) { li { flex-direction: column; gap: 4px; } }
 </style>

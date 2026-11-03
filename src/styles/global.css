@@ -80,6 +80,7 @@ section.block > :is(h1, h2) small {
   body { font-size: 11pt; line-height: 1.4; }
   .sheet { max-width: none; padding: 0; }
   header.top, .foot, .actions { display: none !important; } /* !important: component-scoped rules are more specific */
-  section.block { padding: 14px 0 16px; break-inside: avoid-page; }
-  li { break-inside: avoid; }
+  section.block { padding: 14px 0 16px; }
+  li, tr { break-inside: avoid; }
+  section.block > :is(h1, h2) { break-after: avoid; }
 }

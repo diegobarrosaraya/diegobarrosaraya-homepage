@@ -1,7 +1,7 @@
 // Prints dist/resume/ to dist/resume.pdf (A4) and writes dist/resume.pdf.json with a hash of public/resume.json.
 // Run after `astro build`. Needs Playwright's Chromium:
 //   CI (ubuntu-latest): `pnpm exec playwright install --with-deps chromium`
-//   NixOS: `nix shell nixpkgs#playwright-driver.browsers -c env PLAYWRIGHT_BROWSERS_PATH=$(nix eval --raw nixpkgs#playwright-driver.browsers) PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true pnpm build`
+//   NixOS: the flake dev shell (`nix develop`) exports PLAYWRIGHT_BROWSERS_PATH and PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS, so `pnpm build` works there.
 //   (keep the nixpkgs playwright-driver version equal to the playwright npm version.)
 import { createServer } from 'node:http';
 import { createHash } from 'node:crypto';
