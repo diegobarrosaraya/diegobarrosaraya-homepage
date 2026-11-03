@@ -3,7 +3,9 @@ import { buildInfo } from '../lib/build-info';
 const { date, commit } = buildInfo();
 ---
 <footer class="foot">
-  <span class="label">Last regulated <span class="seg">{date}</span> · build <span class="seg">{commit}</span></span>
+  <span class="label">Last regulated <span class="seg">{date}</span> · build {commit}</span>
+  <a class="label" href="/licenses/Michroma-OFL.txt">Font licences: Michroma</a>
+  <a class="label" href="/licenses/DSEG-OFL.txt">DSEG</a>
   <a class="label" href="/now/">Now</a>
 </footer>
 

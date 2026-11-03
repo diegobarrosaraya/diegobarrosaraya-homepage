@@ -17,7 +17,7 @@ const sections = [
     <p class="lede">{r.basics.label}</p>
   </header>
   <section class="block" aria-labelledby="spec-h">
-    <h2 id="spec-h"><span class="mono">01</span>Specification</h2>
+    <h2 id="spec-h">Specification</h2>
     <table aria-label="Specification">
       <tr><th class="label" scope="row">Summary</th><td>{r.basics.summary}</td></tr>
       <tr><th class="label" scope="row">Base</th><td>{r.basics.location.city}, {r.basics.location.region}</td></tr>
@@ -26,9 +26,9 @@ const sections = [
     <p class="actions"><a class="btn primary" href="/resume.pdf">Resume PDF</a></p>
   </section>
 
-  {sections.map((s, i) => (
+  {sections.map((s) => (
     <section class="block" id={s.id} aria-labelledby={`${s.id}-h`}>
-      <h2 id={`${s.id}-h`}><span class="mono">{String(i + 2).padStart(2, '0')}</span>{s.title}</h2>
+      <h2 id={`${s.id}-h`}>{s.title}</h2>
       <ul>
         {s.rows.map(([title, where, when, text]: string[]) => (
           <li><div><strong>{title}</strong>{where && <div class="sub">{where}</div>}{text && <p>{text}</p>}</div><span class="mono when">{when}</span></li>
@@ -38,7 +38,7 @@ const sections = [
   ))}
 
   <section class="block" id="skills" aria-labelledby="skills-h">
-    <h2 id="skills-h"><span class="mono">05</span>Skills</h2>
+    <h2 id="skills-h">Skills</h2>
     <table aria-label="Skills">
       {r.skills.map((s: any) => <tr><th class="label" scope="row">{s.name}</th><td>{s.keywords.join(', ')}</td></tr>)}
     </table>
@@ -51,7 +51,7 @@ const sections = [
   .lede { color: var(--ink-2); margin: 0; }
   table { width: 100%; max-width: 62ch; border-collapse: collapse; }
   th, td { text-align: left; vertical-align: top; padding: 10px 0; border-top: 1px solid var(--hair); }
-  th { width: 9.5em; padding-right: 14px; color: var(--ink-2); line-height: 1.55; }
+  th { font-weight: 500; width: 9.5em; padding-right: 14px; color: var(--ink-2); line-height: 1.55; }
   tr:last-child th, tr:last-child td { border-bottom: 1px solid var(--hair); }
   .actions { margin: 22px 0 0; }
   ul { list-style: none; margin: 0; padding: 0; max-width: 62ch; }

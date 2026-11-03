@@ -99,3 +99,10 @@ test('every page has one h1, before any h2', () => {
     assert.ok(h2 === -1 || html.search(/<h1[\s>]/) < h2, file);
   }
 });
+
+test('no numbered headings anywhere', () => {
+  for (const f of htmlFilesUnder('dist')) assert.doesNotMatch(readFileSync(f, 'utf8'), /<h[12][^>]*>\s*(<span[^>]*>)?\s*\d{2}\b/, f);
+});
+test('font licences ship with the site', () => {
+  assert.ok(existsSync('dist/licenses/Michroma-OFL.txt') && existsSync('dist/licenses/DSEG-OFL.txt'));
+});

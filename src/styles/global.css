@@ -6,7 +6,7 @@
 @import '@fontsource/jetbrains-mono/500.css';
 @import './tokens.css';
 
-/* Seven-segment digits, self-hosted from the dseg package. Used only in the footer build line. */
+/* Seven-segment digits, self-hosted from the dseg package. Used only for the footer date. */
 @font-face {
   font-family: "DSEG7 Classic"; font-style: normal; font-weight: 400; font-display: swap;
   src: url('../../node_modules/dseg/fonts/DSEG7-Classic/DSEG7Classic-Regular.woff2') format('woff2');
