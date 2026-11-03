@@ -27,7 +27,7 @@ const site = CASES.find((c) => c.slug === 'this-site')!;
   .cases li { padding: 20px 0 22px; border-top: 1px solid var(--hair); }
   .cases li:last-child { border-bottom: 1px solid var(--hair); }
   .cases a { text-decoration: none; }
-  .name { font: 400 clamp(19px, 1.8vw, 23px)/1.3 var(--font-head); }
+  .name { font: expanded var(--head-weight) clamp(19px, 1.8vw, 23px)/1.3 var(--font-head); }
   .cases a:hover .name, .site a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
   .cases svg { width: 14px; height: 14px; margin-left: 10px; vertical-align: baseline; transition: transform .25s var(--ease); }
   .cases a:hover svg { transform: translateX(3px); }
