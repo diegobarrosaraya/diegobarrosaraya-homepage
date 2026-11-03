@@ -3,19 +3,18 @@ import ThemeToggle from './ThemeToggle.astro';
 export interface Props { current?: 'work' | 'records' | 'notes' | 'resume' | 'contact' }
 const { current } = Astro.props;
 const nav = [
-  { id: 'work', n: '01', label: 'Work', href: '/#work' },
-  { id: 'records', n: '02', label: 'Service records', href: '/#records' },
-  { id: 'notes', n: '03', label: 'Notes', href: '/#parts' },
-  { id: 'resume', n: '04', label: 'Resume', href: '/resume/' },
-  { id: 'contact', n: '05', label: 'Contact', href: '/contact/' },
+  { id: 'work', label: 'Work', href: '/#work' },
+  { id: 'records', label: 'Service records', href: '/#records' },
+  { id: 'notes', label: 'Notes', href: '/#parts' },
+  { id: 'resume', label: 'Resume', href: '/resume/' },
+  { id: 'contact', label: 'Contact', href: '/contact/' },
 ] as const;
 ---
 <header class="top">
   <a class="name" href="/">Diego Barros Araya</a>
-  <span class="cal label">Cal. DBA · Technical sheet</span>
   <nav aria-label="Sections">
     {nav.map((i) => (
-      <a href={i.href} aria-current={current === i.id ? 'page' : undefined}><span class="mono">{i.n}</span>{i.label}</a>
+      <a href={i.href} aria-current={current === i.id ? 'page' : undefined}>{i.label}</a>
     ))}
   </nav>
   <ThemeToggle />
@@ -27,14 +26,12 @@ const nav = [
     padding: 22px 0 14px; border-bottom: 3px double var(--rule);
   }
   .name {
-    font: 700 22px/1 var(--font-label); letter-spacing: .04em; text-transform: uppercase;
+    font: 400 18px/1.2 var(--font-head); letter-spacing: .02em;
     color: var(--ink); text-decoration: none;
   }
-  .cal { color: var(--ink-2); }
   nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px 22px; }
   nav a { text-decoration: none; color: var(--steel); }
-  nav a .mono { color: var(--ink-2); margin-right: 6px; }
   nav a:hover { text-decoration: underline; }
-  nav a[aria-current="page"] { color: var(--active); filter: var(--glow); }
+  nav a[aria-current="page"] { color: var(--active-text); filter: var(--glow); }
   @media (max-width: 880px) { nav { margin-left: 0; width: 100%; } }
 </style>

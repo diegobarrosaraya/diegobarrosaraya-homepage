@@ -1,38 +1,36 @@
+/* Dial view (default for everyone): the G-Shock GA-B2100 dial. Red is for the active part and the primary button only. */
 :root {
-  --ground: #EDF0F2;
-  --plate: #E2E6E9;
-  --ink: #121518;
-  --ink-2: #47515A;
-  --hair: #9AA4AD;
-  --rule: #121518;
-  --steel: #1F3F8F;
-  --steel-hi: #142C69;
-  --primary: #1F3F8F;
-  --active: #A3142D;
+  color-scheme: dark;
+  --ground: #1C1B1F;
+  --plate: #2A282D;
+  --ink: #EDEAF1;
+  --ink-2: #9C9CA6;
+  --hair: #49474C;
+  --rule: #49474C;
+  --steel: #A8D0D9;
+  --steel-hi: #CDE6EC;
+  --primary: #DE2D4F;
+  --on-primary: #FFFFFF;
+  --active: #DE2D4F;
+  --active-text: #F0566F;
+  --highlight: #D8C84D;
   --glow: none;
   --btn-glow: none;
-  --sel: #1F3F8F;
-  --sel-ink: #EDF0F2;
+  --sel: #A8D0D9;
+  --sel-ink: #1C1B1F;
   --ease: cubic-bezier(.16, 1, .3, 1);
   --font-body: "Barlow", system-ui, sans-serif;
-  --font-label: "Barlow Condensed", sans-serif;
+  --font-head: "Michroma", "Barlow", sans-serif;
+  --font-label: var(--font-body);
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-seg: "DSEG7 Classic", var(--font-mono);
 }
 
-/* Lume view: follows the system unless the visitor chose light. Links are pale lume ink; the green and its glow belong to the active item and the primary button only. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --ground: #060807; --plate: #0E1210; --ink: #D5DCD2; --ink-2: #93A08F;
-    --hair: #34403A; --rule: #5B6A60; --steel: #CFE3C7; --steel-hi: #EEF7EA; --primary: #A6F58A;
-    --active: #A6F58A; --glow: drop-shadow(0 0 6px rgba(166, 245, 138, .55));
-    --btn-glow: 0 0 18px rgba(166, 245, 138, .35);
-    --sel: #A6F58A; --sel-ink: #060807;
-  }
-}
-:root[data-theme="dark"] {
-  --ground: #060807; --plate: #0E1210; --ink: #D5DCD2; --ink-2: #93A08F;
-  --hair: #34403A; --rule: #5B6A60; --steel: #CFE3C7; --steel-hi: #EEF7EA; --primary: #A6F58A;
-  --active: #A6F58A; --glow: drop-shadow(0 0 6px rgba(166, 245, 138, .55));
-  --btn-glow: 0 0 18px rgba(166, 245, 138, .35);
-  --sel: #A6F58A; --sel-ink: #060807;
+/* LCD view: the watch's grey-green display. Only an explicit choice gets here. */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ground: #C9C7B7; --plate: #BAB8A7; --ink: #141013; --ink-2: #4A4640;
+  --hair: #85826F; --rule: #85826F; --steel: #2C4550; --steel-hi: #141013;
+  --primary: #B3203D; --on-primary: #FFFFFF; --active: #B3203D; --active-text: #9A1B34;
+  --sel: #2C4550; --sel-ink: #C9C7B7;
 }

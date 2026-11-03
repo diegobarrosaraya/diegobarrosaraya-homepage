@@ -3,7 +3,7 @@ import { buildInfo } from '../lib/build-info';
 const { date, commit } = buildInfo();
 ---
 <footer class="foot">
-  <span class="label">Last regulated {date} · build {commit}</span>
+  <span class="label">Last regulated <span class="seg">{date}</span> · build <span class="seg">{commit}</span></span>
   <a class="label" href="/now/">Now</a>
 </footer>
 

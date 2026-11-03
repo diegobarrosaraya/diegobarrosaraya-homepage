@@ -228,8 +228,8 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
     -webkit-text-stroke: 4px var(--ground); paint-order: stroke fill;
     text-shadow: 0 0 3px var(--ground), 0 0 6px var(--ground);
   }
-  .mv-stage :global(.mv3d-callout:is(:hover, :focus-visible, .on)) { color: var(--active); }
-  .mv-stage :global(.mv3d-callout:is(:hover, :focus-visible, .on) b) { color: var(--active); border-color: var(--active); }
+  .mv-stage :global(.mv3d-callout:is(:hover, :focus-visible, .on)) { color: var(--active-text); }
+  .mv-stage :global(.mv3d-callout:is(:hover, :focus-visible, .on) b) { color: var(--active-text); border-color: var(--active); }
   .mv-stage :global(.mv3d-callout:focus) { outline: none; }
   .mv-stage :global(.mv3d-callout:focus-visible b) { border-width: 2.5px; }
   .mv-stage :global(.focused .mv3d-callout:not(.on)) { opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility 0s .5s; }
@@ -247,7 +247,7 @@ const listed = [...callouts].sort((a, b) => a.area.number.localeCompare(b.area.n
   .callout .ring { fill: var(--ground); stroke: currentColor; }
   .callout .dot { fill: currentColor; }
   .callout .leader { stroke: var(--hair); transition: stroke .25s; }
-  .callout:hover, .callout:focus-visible { color: var(--active); }
+  .callout:hover, .callout:focus-visible { color: var(--active-text); }
   .callout:hover .leader, .callout:focus-visible .leader { stroke: var(--active); }
   .callout:focus { outline: none; }
   .callout:focus-visible .ring { stroke: var(--steel); stroke-width: 2.5; }

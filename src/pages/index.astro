@@ -13,8 +13,8 @@ const records = AREAS.flatMap((area) => area.records.map((record, i) => ({ area,
   <div class="hero" id="work">
     <Movement />
     <div class="spec" transition:name="detail" transition:animate={fade({ duration: '450ms' })}>
-      <h1>I build systems that are safe to run, inside the constraints they come with.</h1>
-      <p class="lede">Platform and developer-tooling engineer in Santiago. Integrations, automation and backends, shipped carefully and adapted fast.</p>
+      <h1>Hard constraints, high stakes, short deadlines. That's where I do my best work.</h1>
+      <p class="lede">Senior engineer. I build and ship production apps for enterprise clients, and the harnesses that let AI agents do real work safely.</p>
       <SpecTable />
       <div class="actions">
         <a class="btn primary" href="#records">Read the service records
@@ -26,20 +26,20 @@ const records = AREAS.flatMap((area) => area.records.map((record, i) => ({ area,
   </div>
 
   <section class="block" id="records" aria-labelledby="rec-h">
-    <h2 id="rec-h"><span class="mono">02</span>Service records <small>Each one: the constraint, what kept it safe, what came out.</small></h2>
+    <h2 id="rec-h">Service records <small>Each one: the constraint, what kept it safe, what came out.</small></h2>
     <RecordsTable records={records} />
   </section>
 
   <section class="block" id="parts" aria-labelledby="parts-h">
-    <h2 id="parts-h"><span class="mono">03</span>Parts list</h2>
+    <h2 id="parts-h">Parts list</h2>
     <p class="soon">Short notes on things I learned along the way. The first ones arrive here soon.</p>
   </section>
 </Sheet>
 
 <style>
   .spec h1 {
-    font: 700 clamp(30px, 3.4vw, 44px)/1.05 var(--font-label); letter-spacing: -.005em;
-    margin: 0 0 6px; text-wrap: balance;
+    font: 400 clamp(23px, 2.5vw, 34px)/1.25 var(--font-head); letter-spacing: 0;
+    margin: 0 0 14px; text-wrap: balance;
   }
   .lede { font-size: 19px; color: var(--ink-2); margin: 0 0 22px; max-width: 46ch; text-wrap: pretty; }
   .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }

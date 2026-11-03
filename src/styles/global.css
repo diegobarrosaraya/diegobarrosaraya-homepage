@@ -1,11 +1,16 @@
 @import '@fontsource/barlow/400.css';
 @import '@fontsource/barlow/500.css';
 @import '@fontsource/barlow/600.css';
-@import '@fontsource/barlow-condensed/600.css';
-@import '@fontsource/barlow-condensed/700.css';
+@import '@fontsource/michroma/400.css';
 @import '@fontsource/jetbrains-mono/400.css';
 @import '@fontsource/jetbrains-mono/500.css';
 @import './tokens.css';
+
+/* Seven-segment digits, self-hosted from the dseg package. Used only in the footer build line. */
+@font-face {
+  font-family: "DSEG7 Classic"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url('../../node_modules/dseg/fonts/DSEG7-Classic/DSEG7Classic-Regular.woff2') format('woff2');
+}
 
 * { box-sizing: border-box; }
 html { background: var(--ground); color: var(--ink); scrollbar-color: var(--hair) var(--ground); }
@@ -20,7 +25,8 @@ a { color: var(--steel); text-decoration-thickness: 1px; text-underline-offset: 
 a:hover { color: var(--steel-hi); }
 :focus-visible { outline: 2px solid var(--steel); outline-offset: 3px; }
 .mono { font-family: var(--font-mono); font-size: .82em; letter-spacing: 0; }
-.label { font: 600 13px/1 var(--font-label); letter-spacing: .09em; text-transform: uppercase; }
+.label { font: 600 14px/1.2 var(--font-label); }
+.seg { font: 400 .9em/1 var(--font-seg); letter-spacing: .04em; }
 .sheet { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
 
 @media (max-width: 880px) { .sheet { padding: 0 16px; } }
@@ -39,7 +45,7 @@ section.block { padding: 30px 0 34px; border-bottom: 1px solid var(--rule); }
 /* The footer's double rule closes the page; no single rule stacked above it. */
 main > :last-child { border-bottom: 0; }
 section.block > :is(h1, h2) {
-  font: 700 15px/1 var(--font-label); letter-spacing: .12em; text-transform: uppercase;
+  font: 400 17px/1.3 var(--font-head); letter-spacing: .01em;
   margin: 0 0 18px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline;
 }
 section.block > :is(h1, h2) .mono { color: var(--ink-2); font-weight: 400; }
@@ -48,11 +54,12 @@ section.block > :is(h1, h2) small {
 }
 .btn {
   display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
-  font: 600 15px/1 var(--font-label); letter-spacing: .08em; text-transform: uppercase;
+  font: 600 16px/1 var(--font-label);
   padding: 14px 18px; border: 1px solid var(--steel); color: var(--steel);
   transition: background-color .2s, color .2s, box-shadow .2s;
 }
-.btn.primary { background: var(--primary); border-color: var(--primary); color: var(--ground); box-shadow: var(--btn-glow); }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: var(--on-primary); box-shadow: var(--btn-glow); }
+.btn.primary:hover { background: var(--primary); border-color: var(--primary); color: var(--on-primary); filter: brightness(1.1); }
 .btn:hover { background: var(--steel-hi); border-color: var(--steel-hi); color: var(--ground); }
 .btn svg { width: 14px; height: 14px; }
 

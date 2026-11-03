@@ -1,16 +1,16 @@
-<button class="theme" id="theme" type="button">Lume view</button>
+<button class="theme" id="theme" type="button">LCD view</button>
 
 <script>
   import { writeTheme } from '../lib/theme';
 
   const root = document.documentElement;
-  const system = matchMedia('(prefers-color-scheme: dark)');
-  const dark = () => (root.dataset.theme ? root.dataset.theme === 'dark' : system.matches);
+  // Dark (the dial) is the default for everyone; only a saved or clicked choice switches to the LCD.
+  const dark = () => root.dataset.theme !== 'light';
 
   // The label names the view the button switches to, so it follows the effective theme.
   function sync() {
     const btn = document.getElementById('theme');
-    if (btn) btn.textContent = dark() ? 'Day view' : 'Lume view';
+    if (btn) btn.textContent = dark() ? 'LCD view' : 'Dial view';
   }
   function bind() {
     const btn = document.getElementById('theme');
@@ -26,7 +26,6 @@
   function init() { bind(); sync(); }
 
   init();
-  system.addEventListener('change', sync);
   // ClientRouter replaces the root attributes on swap: carry the current theme into the new
   // document so it survives navigation even when localStorage is blocked.
   document.addEventListener('astro:before-swap', (e) => {
@@ -38,7 +37,7 @@
 
 <style>
   .theme {
-    font: 600 13px/1 var(--font-label); letter-spacing: .09em; text-transform: uppercase;
+    font: 500 14px/1 var(--font-label);
     background: none; border: 1px solid var(--hair); color: var(--ink); padding: 7px 10px; cursor: pointer;
   }
   .theme:hover { border-color: var(--steel); color: var(--steel); }

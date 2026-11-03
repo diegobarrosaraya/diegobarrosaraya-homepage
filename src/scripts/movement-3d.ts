@@ -263,7 +263,6 @@ const ro = new ResizeObserver(([e]) => {
 });
 
 new MutationObserver(recolor).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change', recolor);
 
 // Called on every page load: re-attaches to a fresh stage if the persisted one was dropped (a page without the drawing).
 export function mount(animate: boolean) {
