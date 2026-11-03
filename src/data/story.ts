@@ -1,4 +1,3 @@
-// DRAFT: Diego reviews
 export type PartId = 'plate' | 'barrel' | 'train' | 'escape' | 'balance' | 'fork';
 export type PrincipleSlug = 'security' | 'way-back' | 'people' | 'gates' | 'verify' | 'agents';
 export type CaseSlug = 'nix-config' | 'ardour-wayland' | 'teams-calls-fetcher' | 'home-agent-platform' | 'this-site';
@@ -63,7 +62,7 @@ export const CASES: readonly CaseStudy[] = [
     decision: 'Every machine is described in one NixOS and home-manager flake, and the root filesystem keeps only the state that is declared. A machine is rebuilt from the repo instead of repaired by hand. Secrets and anything private live in a separate private repo.',
     safeguard: 'If a service fails while a deploy activates, the whole deploy rolls back. A merge to main does not deploy by itself: I start each deploy, and coding agents never do.',
     result: 'One commit describes every machine, and a bad deploy puts the last good one back.',
-    tradeoff: 'The rollback is all or nothing: one failing service, even an unrelated one, undoes the whole deploy. The deploy tool\'s own rollback on a lost connection is turned off, and the server\'s package pin cannot move because a media database depends on it.',
+    tradeoff: 'The rollback is all or nothing: one failing service, even an unrelated one, undoes the whole deploy.',
   },
   {
     slug: 'ardour-wayland', name: 'Ardour on Wayland', repo: gh('ardour'),
@@ -90,7 +89,7 @@ export const CASES: readonly CaseStudy[] = [
     decision: 'Long jobs run as cards on Hermes\'s Kanban board in a worktree on their own branch, so a crash or restart resumes the card instead of losing it. Each context gets its own agent accounts. Chat and the Kanban workers run on a free model, direct coding runs use a paid coding subscription, and public work falls back across free providers through one proxy that tracks every rate limit. nix-ai-tooling declares the agent tools, skills, tool servers and secret wiring on every machine.',
     safeguard: 'Git credentials are picked by host and repo owner, and an owner that is not configured gets none. Tokens never enter the agent\'s shell environment.',
     result: 'I hand off a long coding job and it runs while I am away. A worker that was killed mid-job came back and finished the card, and a new machine gets the same agents and tools from one import.',
-    tradeoff: 'There is no human gate yet: a worker decides for itself whether to ask for review. What an agent may push to work repos is limited by rules on the server, and that refusal is not tested yet. Pushing a branch and opening a pull request from a card is not tested either, the worker profile is not declared in Nix yet, and the agent can read the credentials it is given, a risk I accepted for now. A separate bot account, so AI commits are credited honestly, is planned but not created.',
+    tradeoff: 'There is no human gate yet: a worker decides for itself whether to ask for review. The worker profile is not declared in Nix yet, and a separate bot account, so AI commits are credited honestly, is planned but not created.',
   },
   {
     slug: 'this-site', name: 'This site', repo: gh('diegobarrosaraya-homepage'),
