@@ -5,7 +5,13 @@ const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim
 
 export function parseNote(raw: string, relPath: string): { note?: ParsedNote; problems: Problem[] } {
   const m = raw.replace(/^﻿/, '').match(/^---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/);
-  const fm = (m ? parse(m[1]) : null) ?? {};
+  let fm: Record<string, unknown>;
+  try {
+    fm = (m ? parse(m[1]) : null) ?? {};
+  } catch {
+    // The YAML error text can quote note content, so report only the path.
+    return { problems: [{ rule: 'bad-frontmatter', where: relPath }] };
+  }
   const body = m ? raw.slice(raw.indexOf(m[0]) + m[0].length) : raw;
   const problems: Problem[] = [];
 

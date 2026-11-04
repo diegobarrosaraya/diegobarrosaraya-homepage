@@ -48,3 +48,10 @@ test('slugify', () => {
   assert.equal(slugify('Guía de Terminal: Cómo Empezar'), 'guia-de-terminal-como-empezar');
   assert.equal(slugify('???'), '');
 });
+test('malformed or duplicate-key frontmatter is reported, not thrown', () => {
+  for (const fm of ['title: [a', 'title: a\ntitle: b']) {
+    const r = parseNote(doc(fm), 'x.md');
+    assert.equal(r.note, undefined);
+    assert.deepEqual(r.problems, [{ rule: 'bad-frontmatter', where: 'x.md' }]);
+  }
+});
