@@ -92,3 +92,37 @@ test('deny paths ignore backslashes and a leading ./', () => {
   assert.deepEqual(checkNote(note({ relPath: 'Private/x.md' }), '', { denyPaths: ['.\\Private\\'], privateTerms: ['acme-example'] }).map(p => p.rule), ['deny-path']);
   assert.deepEqual(check(note({ relPath: 'PrivateStuff/x.md' })), []);
 });
+
+test('an allowed phrase is masked before the private-term check only', () => {
+  const allow: Rules = { ...rules, allowedPhrases: ['acme-example-cli', 'the acme-example driver'] };
+  const run = (body: string, n = note({ body })) => checkNote(n, body, allow);
+  assert.deepEqual(run('Run acme-example-cli, then update the acme-example driver.\n'), []);
+  assert.deepEqual(run('Run acme-example-cli.\nAsk acme-example.\n'),
+    [{ rule: 'private-term', where: 'Guides/Clean.md: body', line: 2 }]);
+  assert.deepEqual(run('acme-example-cli-extra acme-example\n'),
+    [{ rule: 'private-term', where: 'Guides/Clean.md: body', line: 1 }]);
+  assert.deepEqual(checkNote(note({ title: 'Using acme-example-cli' }), '', allow), []);
+});
+
+test('case and NFKC variants of an allowed phrase are allowed', () => {
+  const allow: Rules = { ...rules, allowedPhrases: ['the acme-example driver'] };
+  const md = 'Install THE ＡＣＭＥ-Example Driver now.\nThe acme​-example driver.\n';
+  assert.deepEqual(checkNote(note({ body: md }), md, allow), []);
+});
+
+test('allowed phrases do not hide day-job words', () => {
+  const allow: Rules = { ...rules, allowedPhrases: ['acme-example-cli', 'jira cli tool'] };
+  const md = 'Run acme-example-cli with the jira cli tool.\n';
+  assert.deepEqual(checkNote(note({ body: md }), md, allow),
+    [{ rule: 'day-job-word', where: 'Guides/Clean.md: body', line: 1 }]);
+});
+
+test('assertUsableRules rejects a blank or short allowed phrase without naming it', () => {
+  const ok: Rules = { denyPaths: ['Private/'], privateTerms: ['acme-example'] };
+  assert.doesNotThrow(() => assertUsableRules({ ...ok, allowedPhrases: [] }));
+  assert.doesNotThrow(() => assertUsableRules({ ...ok, allowedPhrases: ['acme-example-cli'] }));
+  for (const bad of ['', '   ', 'acme-', ' ＡＢＣ　 ', 'ab​cde']) {
+    assert.throws(() => assertUsableRules({ ...ok, allowedPhrases: ['acme-example-cli', bad] }), (e: Error) =>
+      e.message.includes('allowPhrases') && (!bad.trim() || !e.message.includes(bad.trim())));
+  }
+});

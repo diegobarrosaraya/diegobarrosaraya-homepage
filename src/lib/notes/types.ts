@@ -3,7 +3,7 @@ export interface Problem {
       | 'extra-h1' | 'missing-field' | 'missing-date' | 'slug' | 'image-missing' | 'bad-frontmatter'
       | 'indented-code' | 'image-collision' | 'ambiguous-link';
   where: string;       // note path, plus field name for frontmatter fields
-  line?: number;       // 1-based line in the body when known
+  line?: number;       // 1-based; the body line from transformBody, the vault-file line from syncVault
 }
 
 export interface ParsedNote {

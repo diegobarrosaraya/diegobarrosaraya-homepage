@@ -161,7 +161,7 @@ test('a local markdown image the transform leaves in place gives image-missing w
   const r = assertFailsAndWritesNothing({
     'Guides/Pics.md': flagged('Pics', 'one\n![a](my image.png)\n![a](<my image.png>)\n![a](diagram.png "title")\n'),
   }, ['image-missing', 'image-missing', 'image-missing']);
-  assert.deepEqual(r.problems.map((p) => p.line), [2, 3, 4]);
+  assert.deepEqual(r.problems.map((p) => p.line), [8, 9, 10]);
 });
 
 test('image syntax inside code and remote images are left alone', () => {
@@ -264,7 +264,7 @@ test('a basename shared by two published notes fails only where a link uses it',
     'Guides/Linker.md': flagged('Linker', 'See [[Guide]].\nAnd [[A/Guide#Part|this]].\n`[[Guide]]`\n'),
   };
   const r = assertFailsAndWritesNothing(extra, ['ambiguous-link', 'ambiguous-link']);
-  assert.deepEqual(r.problems.map((p) => [p.where, p.line]), [['Guides/Linker.md', 1], ['Guides/Linker.md', 2]]);
+  assert.deepEqual(r.problems.map((p) => [p.where, p.line]), [['Guides/Linker.md', 7], ['Guides/Linker.md', 8]]);
 
   const { run } = setup({ 'A/Guide.md': flagged('Guide A'), 'B/Guide.md': flagged('Guide B') });
   assert.deepEqual(run().problems, []);
@@ -280,4 +280,35 @@ test('a file basename wins over a title, so a link to an unpublished file stays 
   assert.deepEqual(run().problems, []);
   const linker = readFileSync(join(out, 'linker.md'), 'utf8');
   assert.ok(linker.includes('See Foo and [Long Title](/notes/long-title/) and [short-name](/notes/long-title/).'));
+});
+
+// Lines 1-6 are frontmatter and line 7 is the title heading, so body problems start at line 9.
+const LINES_NOTE = [
+  '---', 'title: Lines', 'description: How Lines reads.', 'updated: 2026-01-01', 'publish: true', '---',
+  '# Lines', '', 'We use Jira here.', 'About acme-example.', '![[Some note]]', '# Second', '    [[x]]',
+  'See [[Guide]].', '![a](my image.png)', '',
+].join('\n');
+const LINES_EXPECTED = [
+  ['day-job-word', 9], ['private-term', 10], ['embed', 11], ['extra-h1', 12], ['indented-code', 13],
+  ['ambiguous-link', 14], ['image-missing', 15],
+];
+const lineProblems = (text: string) => {
+  const { run } = setup({ 'Guides/Lines.md': text, 'A/Guide.md': flagged('Guide A'), 'B/Guide.md': flagged('Guide B') });
+  return run().problems.map((p) => [p.rule, p.line]).sort((a, b) => Number(a[1]) - Number(b[1]));
+};
+
+test('problems report the line in the vault file, counting frontmatter and the title heading', () => {
+  assert.deepEqual(lineProblems(LINES_NOTE), LINES_EXPECTED);
+});
+
+test('CRLF notes report the same vault-file lines as LF', () => {
+  assert.deepEqual(lineProblems(LINES_NOTE.replace(/\n/g, '\r\n')), LINES_EXPECTED);
+});
+
+test('allowed phrases pass through the sync for private terms only', () => {
+  const allow: Rules = { ...rules, allowedPhrases: ['acme-example-cli'] };
+  const { run } = setup({ 'Guides/Tool.md': flagged('Tool', 'Run acme-example-cli.\n') });
+  assert.deepEqual(run(allow).problems, []);
+  assert.deepEqual(rulesOf(run()), ['private-term']);
+  assert.throws(() => run({ ...rules, allowedPhrases: ['cli'] }), /allowPhrases/);
 });

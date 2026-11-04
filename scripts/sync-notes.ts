@@ -1,6 +1,8 @@
 // Publishes flagged vault notes into src/content/notes and their images into public/notes.
 // Reads the vault path and deny paths from .notes-sync.json and the private terms from
-// .private-terms (both gitignored). Writes files only; Diego reviews the diff and commits.
+// .private-terms (both gitignored). The optional "allowPhrases" in .notes-sync.json lists exact
+// phrases that may contain a private term, such as a tool name.
+// Writes files only; Diego reviews the diff and commits.
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { SyncConfigError, syncVault } from '../src/lib/notes/sync';
 
@@ -9,19 +11,24 @@ function fail(message: string): never {
   process.exit(1);
 }
 
-if (!existsSync('.notes-sync.json')) fail('missing .notes-sync.json in the repo root ({ "vault": string, "denyPaths": string[] })');
+if (!existsSync('.notes-sync.json')) {
+  fail('missing .notes-sync.json in the repo root ({ "vault": string, "denyPaths": string[], "allowPhrases"?: string[] })');
+}
 if (!existsSync('.private-terms')) fail('missing .private-terms in the repo root (one term per line)');
 
-let config: { vault?: unknown; denyPaths?: unknown };
+let config: { vault?: unknown; denyPaths?: unknown; allowPhrases?: unknown };
 try {
   config = JSON.parse(readFileSync('.notes-sync.json', 'utf8'));
 } catch {
   fail('.notes-sync.json is not valid JSON');
 }
-const { vault, denyPaths } = config ?? {};
+const { vault, denyPaths, allowPhrases = [] } = config ?? {};
 if (typeof vault !== 'string' || !vault.trim()) fail('.notes-sync.json needs "vault" as a string');
 if (!Array.isArray(denyPaths) || !denyPaths.every((p) => typeof p === 'string')) {
   fail('.notes-sync.json needs "denyPaths" as an array of strings');
+}
+if (!Array.isArray(allowPhrases) || !allowPhrases.every((p) => typeof p === 'string')) {
+  fail('.notes-sync.json needs "allowPhrases" as an array of strings when it is set');
 }
 if (!existsSync(vault) || !statSync(vault).isDirectory()) fail('the vault in .notes-sync.json is not a folder');
 
@@ -29,13 +36,13 @@ const privateTerms = readFileSync('.private-terms', 'utf8').split('\n').map((s) 
 
 let result;
 try {
-  result = syncVault({ vault, out: 'src/content/notes', publicDir: 'public/notes', rules: { denyPaths, privateTerms } });
+  result = syncVault({ vault, out: 'src/content/notes', publicDir: 'public/notes', rules: { denyPaths, privateTerms, allowedPhrases: allowPhrases } });
 } catch (e) {
   // Config errors name a list or a folder, never a term. Anything else may have come mid-write.
   if (!(e instanceof SyncConfigError)) fail('notes sync stopped partway, check git status');
   const { message } = e;
   const file = message.startsWith('privateTerms') ? '.private-terms: '
-    : message.startsWith('denyPaths') || message.startsWith('vault') ? '.notes-sync.json: ' : '';
+    : /^(denyPaths|allowPhrases|vault)/.test(message) ? '.notes-sync.json: ' : '';
   fail(`notes sync refused to run: ${file}${message}`);
 }
 

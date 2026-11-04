@@ -146,3 +146,10 @@ test('maskCode blanks fenced blocks and inline code and keeps the line count', (
   assert.ok(!masked.includes('y.png'));
   assert.equal(masked.split('\n')[4], '![z](w.png)');
 });
+
+test('lineMap gives the body line of each output line, skipping the removed title heading', () => {
+  const r = run('\n# Acme Guide\nBody.\n```\ncode\n```\n');
+  assert.equal(r.markdown, '\nBody.\n```\ncode\n```\n');
+  assert.deepEqual(r.lineMap, [1, 3, 4, 5, 6, 7]);
+  assert.equal(r.lineMap.length, r.markdown.split('\n').length);
+});

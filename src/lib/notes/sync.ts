@@ -17,6 +17,12 @@ const ANY_MD_IMAGE = /!\[[^\]]*\]\(\s*(<[^>]*>|[^)\s]*)[^)]*\)/g;
 
 const baseName = (p: string) => p.slice(p.lastIndexOf('/') + 1);
 
+// Lines before the body: the frontmatter block, counted the way parseNote cuts it off.
+function frontmatterLines(raw: string): number {
+  const m = raw.replace(/^﻿/, '').match(FRONTMATTER);
+  return m ? m[0].split('\n').length - 1 : 0;
+}
+
 // Vault-relative posix paths of every file, skipping dot folders such as .obsidian and .git.
 function walk(root: string, rel = ''): string[] {
   return readdirSync(join(root, rel), { withFileTypes: true }).flatMap((e) => {
@@ -120,12 +126,13 @@ export function syncVault(opts: SyncOptions): SyncResult {
   const problems: Problem[] = [];
 
   const notes: ParsedNote[] = [];
+  const bodyOffset = new Map<string, number>();  // note path -> frontmatter line count
   for (const relPath of files.filter((f) => f.toLowerCase().endsWith('.md'))) {
     const raw = readFileSync(join(vault, relPath), 'utf8');
     if (!isFlagged(raw)) continue;
     const parsed = parseNote(raw, relPath);
     problems.push(...parsed.problems);
-    if (parsed.note) notes.push(parsed.note);
+    if (parsed.note) { notes.push(parsed.note); bodyOffset.set(relPath, frontmatterLines(raw)); }
   }
 
   const slugs = notes.map((n) => slugify(n.title));
@@ -139,14 +146,20 @@ export function syncVault(opts: SyncOptions): SyncResult {
     const slug = slugs[i];
     const where = note.relPath;
     const t = transformBody(note.body, { title: note.title, slug, published });
+    // Problems report the line in the vault file: body lines move down past the frontmatter,
+    // and lines of the transformed markdown map back through lineMap first.
+    const offset = bodyOffset.get(where)!;
+    const fromBody = (line: number) => offset + line;
+    const fromMarkdown = (line: number) => offset + t.lineMap[line - 1];
     // Transform problems carry the title; report the path, like every other check.
-    problems.push(...t.problems.map((p) => ({ ...p, where })));
-    problems.push(...checkNote(note, t.markdown, rules));
+    problems.push(...t.problems.map((p) => ({ ...p, where, ...(p.line === undefined ? {} : { line: fromBody(p.line) }) })));
+    problems.push(...checkNote(note, t.markdown, rules)
+      .map((p) => (p.line === undefined ? p : { ...p, line: fromMarkdown(p.line) })));
 
     // A link whose target names two notes would be guessed, so it fails instead.
     maskCode(note.body).split('\n').forEach((text, line) => {
       for (const m of text.matchAll(WIKILINK)) {
-        if (ambiguous.has(noteKey(m[1].split(/\\?\|/)[0]))) problems.push({ rule: 'ambiguous-link', where, line: line + 1 });
+        if (ambiguous.has(noteKey(m[1].split(/\\?\|/)[0]))) problems.push({ rule: 'ambiguous-link', where, line: fromBody(line + 1) });
       }
     });
 
@@ -170,7 +183,7 @@ export function syncVault(opts: SyncOptions): SyncResult {
         let rest = target.slice(prefix.length);
         try { rest = decodeURI(rest); } catch { /* compared as written */ }
         if (target.startsWith(prefix) && written.has(rest)) continue;
-        problems.push({ rule: 'image-missing', where, line: line + 1 });
+        problems.push({ rule: 'image-missing', where, line: fromMarkdown(line + 1) });
       }
     });
 

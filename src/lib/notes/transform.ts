@@ -41,8 +41,9 @@ export function maskCode(markdown: string): string {
   }).join('\n');
 }
 
+// lineMap[i] is the 1-based body line that output line i came from (the title heading leaves a gap).
 export function transformBody(body: string, ctx: TransformContext):
-  { markdown: string; images: string[]; problems: Problem[] } {
+  { markdown: string; images: string[]; problems: Problem[]; lineMap: number[] } {
   const images: string[] = [];
   const problems: Problem[] = [];
   const problem = (rule: Problem['rule'], line: number) => problems.push({ rule, where: ctx.title, line });
@@ -87,6 +88,8 @@ export function transformBody(body: string, ctx: TransformContext):
 
   const lines = body.replace(/\r\n?/g, '\n').split('\n');
   const out: string[] = [];
+  const lineMap: number[] = [];
+  const keep = (text: string, n: number) => { out.push(text); lineMap.push(n); };
   let fence: Fence;
   let seenText = false;
   lines.forEach((line, i) => {
@@ -98,14 +101,14 @@ export function transformBody(body: string, ctx: TransformContext):
         if (PLUGIN_LANGS.has(step.info.trim().split(/\s/)[0].toLowerCase())) problem('plugin-block', n);
         seenText = true;
       }
-      out.push(line);
+      keep(line, n);
       return;
     }
     // Indented code may hold bash brackets; fail closed instead of guessing.
     if (/^( {4}|\t)/.test(line) && line.includes('[[')) {
       problem('indented-code', n);
       seenText = true;
-      out.push(line);
+      keep(line, n);
       return;
     }
     const h1 = /^ {0,3}#(?:[ \t]+(.*?))?[ \t#]*$/.exec(line);
@@ -115,7 +118,7 @@ export function transformBody(body: string, ctx: TransformContext):
       problem('extra-h1', n);
     }
     if (line.trim()) seenText = true;
-    out.push(rewriteLine(line, n));
+    keep(rewriteLine(line, n), n);
   });
-  return { markdown: out.join('\n'), images, problems };
+  return { markdown: out.join('\n'), images, problems, lineMap };
 }
