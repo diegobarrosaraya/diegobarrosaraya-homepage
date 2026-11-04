@@ -1,13 +1,16 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
-export interface Props { current?: 'work' | 'how' | 'resume' | 'contact' }
+import { noteFileCount } from '../lib/notes/note-files';
+export interface Props { current?: 'work' | 'how' | 'notes' | 'resume' | 'contact' }
 const { current } = Astro.props;
+// The Notes item shows only when the build has notes, the same count the sitemap uses.
 const nav = [
   { id: 'work', label: 'Work', href: '/#work' },
   { id: 'how', label: 'How I work', href: '/#how' },
+  ...(noteFileCount() > 0 ? [{ id: 'notes', label: 'Notes', href: '/notes/' }] : []),
   { id: 'resume', label: 'Resume', href: '/resume/' },
   { id: 'contact', label: 'Contact', href: '/contact/' },
-] as const;
+];
 ---
 <header class="top">
   <a class="name" href="/">Diego Barros Araya</a>
@@ -32,6 +35,8 @@ const nav = [
   nav a { text-decoration: none; color: var(--steel); }
   nav a:hover { text-decoration: underline; }
   nav a[aria-current="page"] { color: var(--active-text); filter: var(--glow); }
+  /* Small phones: tighter gaps keep five items on one line. */
+  @media (max-width: 560px) { nav { column-gap: 14px; } }
   /* Phones: the toggle shares the name line, the nav takes the row below. */
   @media (max-width: 880px) {
     nav { margin-left: 0; width: 100%; order: 1; }

@@ -11,7 +11,7 @@ const groups = tags.map((tag) => ({ tag, notes: notes.filter((n) => n.tags.inclu
 const anchors = tagAnchors(tags);
 const untagged = notes.filter((n) => n.tags.length === 0);
 ---
-<Sheet title="Notes | Diego Barros Araya" description="Notes and guides from my own work, grouped by topic.">
+<Sheet current="notes" title="Notes | Diego Barros Araya" description="Notes and guides from my own work, grouped by topic.">
   <Fragment slot="head">
     {notes.length === 0 && <meta name="robots" content="noindex" />}
     <link rel="alternate" type="application/rss+xml" title="Notes" href="/notes/rss.xml" />

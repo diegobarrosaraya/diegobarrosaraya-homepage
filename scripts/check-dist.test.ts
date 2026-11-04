@@ -184,3 +184,49 @@ test('tag ids on /notes/ are unique and every tag link on a note page points at 
     for (const [, id] of html.matchAll(/href="\/notes\/#([^"]*)"/g)) assert.ok(ids.includes(id), `${slug} -> #${id}`);
   }
 });
+
+// Notes in the header, the home list and the teams line.
+const textOf = (html: string) => html.replace(/<[^>]*>/g, '').replace(/&#39;|&apos;/g, "'").replace(/&amp;/g, '&');
+const noteUpdated = (slug: string) => unquote(noteFrontmatter(slug).match(/^updated:\s*(.+)$/m)?.[1] ?? '');
+const NOTES_NAV = /<a href="\/notes\/"[^>]*>Notes<\/a>/;
+
+test('with no notes, no built page links to /notes/ and the teams line is plain text', (t) => {
+  if (noteSlugs.length > 0) return t.skip('notes present');
+  for (const f of htmlFilesUnder('dist')) assert.doesNotMatch(readFileSync(f, 'utf8'), /href="\/notes\/"/, f);
+  const home = readFileSync('dist/index.html', 'utf8');
+  assert.doesNotMatch(home, /Latest notes/);
+  const start = home.lastIndexOf('<p', home.indexOf('I write the '));
+  assert.equal(textOf(home.slice(start, home.indexOf('</p>', start))), HOME.team[1], 'teams line changed');
+});
+test('with notes, every page with a header has a Notes link, in order, and the nav marks /notes/ as current there', (t) => {
+  if (noteSlugs.length === 0) return t.skip('no notes');
+  for (const f of htmlFilesUnder('dist')) {
+    const html = readFileSync(f, 'utf8');
+    if (!html.includes('<header class="top"')) continue;
+    assert.match(html, NOTES_NAV, f);
+    const nav = html.slice(html.indexOf('<nav'), html.indexOf('</nav>'));
+    assert.ok(nav.indexOf('>How I work<') < nav.indexOf('>Notes<') && nav.indexOf('>Notes<') < nav.indexOf('>Resume<'), `${f}: nav order`);
+  }
+  const index = readFileSync('dist/notes/index.html', 'utf8');
+  assert.match(index, /<a href="\/notes\/" aria-current="page"[^>]*>Notes<\/a>/);
+  const page = readFileSync(`dist/notes/${noteSlugs[0]}/index.html`, 'utf8');
+  assert.match(page, /<a href="\/notes\/" aria-current="page"[^>]*>Notes<\/a>/);
+});
+test('with notes, the home page lists the three newest after How I work, and "guides" links to /notes/', (t) => {
+  if (noteSlugs.length === 0) return t.skip('no notes');
+  const home = readFileSync('dist/index.html', 'utf8');
+  const how = home.indexOf('id="how"');
+  const latest = home.search(/<h2[^>]*>Latest notes<\/h2>/);
+  assert.ok(how !== -1 && latest > how, 'Latest notes comes after How I work');
+  const section = home.slice(home.lastIndexOf('<section', latest), home.indexOf('</section>', latest));
+  assert.match(section, /id="notes"/);
+  const newest = [...noteSlugs].sort((a, b) => noteUpdated(b).localeCompare(noteUpdated(a)) || a.localeCompare(b)).slice(0, 3);
+  const links = [...section.matchAll(/href="\/notes\/([^"/#?]+)\/"/g)].map((m) => m[1]);
+  assert.equal(links.length, Math.min(3, noteSlugs.length));
+  assert.deepEqual(new Set(links), new Set(newest));
+  assert.match(section, /<a href="\/notes\/"[^>]*>All notes/);
+  const start = home.lastIndexOf('<p', home.indexOf('I write the '));
+  const line = home.slice(start, home.indexOf('</p>', start));
+  assert.match(line, /<a href="\/notes\/"[^>]*>guides<\/a>/);
+  assert.equal(textOf(line), HOME.team[1]);
+});

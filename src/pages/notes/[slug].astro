@@ -14,7 +14,7 @@ const { Content } = await render(entry);
 // Ids are computed over every note's tags, the same way /notes/ computes them.
 const anchors = tagAnchors((await allNotes()).flatMap((n) => n.tags));
 ---
-<Sheet title={`${title} | Diego Barros Araya`} description={description}>
+<Sheet current="notes" title={`${title} | Diego Barros Araya`} description={description}>
   <Fragment slot="head">
     <link rel="alternate" type="application/rss+xml" title="Notes" href="/notes/rss.xml" />
   </Fragment>
