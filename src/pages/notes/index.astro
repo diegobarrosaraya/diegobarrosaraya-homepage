@@ -2,16 +2,10 @@
 import Sheet from '../../layouts/Sheet.astro';
 import NoteList from '../../components/NoteList.astro';
 import { allNotes } from '../../lib/notes/collection';
-import { tagAnchors } from '../../lib/notes/tags';
 
 const notes = await allNotes();
-// One group per tag, tags in alphabetical order; a note with several tags shows in each group.
-const tags = [...new Set(notes.flatMap((n) => n.tags))].sort((a, b) => a.localeCompare(b));
-const groups = tags.map((tag) => ({ tag, notes: notes.filter((n) => n.tags.includes(tag)) }));
-const anchors = tagAnchors(tags);
-const untagged = notes.filter((n) => n.tags.length === 0);
 ---
-<Sheet current="notes" title="Notes | Diego Barros Araya" description="Notes and guides from my own work, grouped by topic.">
+<Sheet current="notes" title="Notes | Diego Barros Araya" description="Notes and guides from my own work, newest first.">
   <Fragment slot="head">
     {notes.length === 0 && <meta name="robots" content="noindex" />}
     <link rel="alternate" type="application/rss+xml" title="Notes" href="/notes/rss.xml" />
@@ -21,31 +15,20 @@ const untagged = notes.filter((n) => n.tags.length === 0);
     {notes.length === 0 ? (
       <p class="lede">No notes yet.</p>
     ) : (
-      <p class="lede">Notes and guides from my own work, grouped by topic. Also as an <a href="/notes/rss.xml">RSS feed</a>.</p>
+      <p class="lede">Notes and guides from my own work, newest first. Also as an <a href="/notes/rss.xml">RSS feed</a>.</p>
     )}
   </div>
-  {groups.map(({ tag, notes }) => (
-    <section class="block" id={anchors.get(tag)} data-tag={tag} aria-label={tag}>
-      <h2>{tag}</h2>
+  {notes.length > 0 && (
+    <section class="block" aria-label="All notes">
       <NoteList notes={notes} />
-    </section>
-  ))}
-  {untagged.length > 0 && (
-    <section class="block" data-tag="" aria-label="Other notes">
-      <h2>Other</h2>
-      <NoteList notes={untagged} />
     </section>
   )}
 </Sheet>
 
 <style>
   .intro { padding: 34px 0 30px; border-bottom: 1px solid var(--rule); }
+  .intro:has(+ .block) { border-bottom: 0; } /* the list draws its own top rule */
   .intro:last-child { border-bottom: 0; } /* no notes: the footer rule closes the page */
   h1 { font: expanded var(--head-weight) clamp(23px, 2.5vw, 34px)/1.25 var(--font-head); margin: 0 0 10px; text-wrap: balance; }
   .lede { font-size: 19px; color: var(--ink-2); margin: 0; max-width: 52ch; text-wrap: pretty; }
-  /* Wide screens: tag in the label column, its notes across the rest, like the home sections. */
-  @media (min-width: 881px) {
-    .block { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); column-gap: 40px; align-items: start; }
-    .block > h2 { margin: 0; padding-top: 4px; }
-  }
 </style>

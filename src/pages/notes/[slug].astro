@@ -1,8 +1,7 @@
 ---
 import { render } from 'astro:content';
 import Sheet from '../../layouts/Sheet.astro';
-import { allNotes, noteEntries } from '../../lib/notes/collection';
-import { tagAnchors } from '../../lib/notes/tags';
+import { noteEntries } from '../../lib/notes/collection';
 
 export async function getStaticPaths() {
   const entries = await noteEntries();
@@ -11,8 +10,6 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { title, description, tags, created, updated } = entry.data;
 const { Content } = await render(entry);
-// Ids are computed over every note's tags, the same way /notes/ computes them.
-const anchors = tagAnchors((await allNotes()).flatMap((n) => n.tags));
 ---
 <Sheet current="notes" title={`${title} | Diego Barros Araya`} description={description}>
   <Fragment slot="head">
@@ -27,7 +24,7 @@ const anchors = tagAnchors((await allNotes()).flatMap((n) => n.tags));
     <p class="meta">
       Updated <time datetime={updated}>{updated}</time>
       {created && created !== updated && <>, first written <time datetime={created}>{created}</time></>}
-      {tags.length > 0 && <> · {tags.map((t, i) => <>{i > 0 && ', '}<a href={`/notes/#${anchors.get(t)}`}>{t}</a></>)}</>}
+      {tags.length > 0 && <> · {tags.map((t, i) => <>{i > 0 && ', '}{t}</>)}</>}
     </p>
     <div class="prose"><Content /></div>
   </article>
@@ -77,7 +74,16 @@ const anchors = tagAnchors((await allNotes()).flatMap((n) => n.tags));
 
   /* Mermaid diagrams arrive as inline SVG with fixed colours; repaint them from the tokens so they read in both views. */
   /* A diagram may use the full sheet width and scrolls sideways on a phone (see rehype-diagram-frame.ts). */
-  .prose :global(.diagram) { overflow-x: auto; }
+  /* Edge shadows appear only while there is more to scroll to, so a cut-off diagram reads as scrollable. */
+  .prose :global(.diagram) {
+    overflow-x: auto; margin: 0;
+    background:
+      linear-gradient(to right, var(--ground) 30%, transparent) left center / 36px 100% no-repeat local,
+      linear-gradient(to left, var(--ground) 30%, transparent) right center / 36px 100% no-repeat local,
+      linear-gradient(to right, color-mix(in srgb, var(--ink) 28%, transparent), transparent) left center / 14px 100% no-repeat scroll,
+      linear-gradient(to left, color-mix(in srgb, var(--ink) 28%, transparent), transparent) right center / 14px 100% no-repeat scroll;
+  }
+  .prose :global(.diagram:focus-visible) { outline: 2px solid var(--steel); outline-offset: 2px; }
   .prose :global(.diagram > svg) { display: block; height: auto; }
   .prose :global(svg[id^="mermaid"] :is(text, tspan)) { fill: var(--ink) !important; font-family: var(--font-body) !important; }
   .prose :global(svg[id^="mermaid"] :is(foreignObject div, foreignObject span, foreignObject p)) { color: var(--ink) !important; font-family: var(--font-body) !important; }

@@ -11,7 +11,7 @@ export function rehypeDiagramFrame(): (tree: HastRoot) => void {
       if (!isDiagram(n)) return n;
       const natural = String(n.properties.style ?? '').match(/max-width:\s*([\d.]+px)/)?.[1];
       if (natural) n.properties.style = `max-width: none; width: ${natural};`;
-      return { type: 'element', tagName: 'figure', properties: { className: ['diagram'] }, children: [n] };
+      return { type: 'element', tagName: 'figure', properties: { className: ['diagram'], tabIndex: 0, role: 'group', ariaLabel: 'Diagram, scrolls sideways when wider than the screen' }, children: [n] };
     });
   };
 }
