@@ -53,6 +53,30 @@ test('a longer fence is not closed by a shorter one', () => {
   const body = '````md\n```\n[[ -f "$x" ]]\n```\n````\n';
   assert.equal(run(body).markdown, body);
 });
+test('an indented line with brackets is kept and gives indented-code', () => {
+  const body = 'Text\n\n    if [[ -f "$x" ]]; then\n';
+  const r = run(body);
+  assert.equal(r.markdown, body);
+  assert.deepEqual(r.problems, [{ rule: 'indented-code', where: 'Acme Guide', line: 3 }]);
+});
+test('a fence nested four spaces under a list item is untouched', () => {
+  const body = '- Step one\n\n    ```bash\n    # c\n    [[ -f x ]]\n    ```\n';
+  const r = run(body);
+  assert.equal(r.markdown, body);
+  assert.deepEqual(r.problems, []);
+});
+test('a fence nested two spaces under a list item is untouched', () => {
+  const body = '- Step one\n  ```bash\n  # c\n  [[ -f x ]]\n  ```\n';
+  const r = run(body);
+  assert.equal(r.markdown, body);
+  assert.deepEqual(r.problems, []);
+});
+test('a CRLF body gives the same result as LF', () => {
+  const lf = '# Acme Guide\nSee [[Other note]].\n```bash\n# c\n[[ -f x ]]\n```\n';
+  assert.deepEqual(run(lf.replace(/\n/g, '\r\n')), run(lf));
+  assert.equal(run(lf.replace(/\n/g, '\r\n')).markdown,
+    'See [Other note](/notes/other-note/).\n```bash\n# c\n[[ -f x ]]\n```\n');
+});
 test('a link next to inline code is still converted', () => {
   assert.equal(run('`[[x]]` and [[Other note]]\n').markdown, '`[[x]]` and [Other note](/notes/other-note/)\n');
 });

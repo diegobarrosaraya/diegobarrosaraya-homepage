@@ -7,8 +7,8 @@ export interface TransformContext {
 
 const PLUGIN_LANGS = new Set(['dataview', 'dataviewjs', 'query', 'tasks']);
 const IMAGE_EXT = /\.(png|jpe?g|gif|svg|webp|avif)$/i;
-// Optional blockquote/callout prefix, then a fence of 3+ backticks or tildes.
-const FENCE = /^((?:\s*>)*)\s{0,3}(`{3,}|~{3,})(.*)$/;
+// Optional blockquote/callout prefix, any indent (fences nest under list items), then 3+ backticks or tildes.
+const FENCE = /^((?:\s*>)*)\s*(`{3,}|~{3,})(.*)$/;
 const CODE_SPAN = /(?<!`)(`+)(?!`)[\s\S]*?(?<!`)\1(?!`)/g;
 const WIKI = /(!?)\[\[([^[\]]+?)\]\]/g;
 const MD_IMAGE = /!\[([^\]]*)\]\(([^)\s]+)\)/g;
@@ -59,7 +59,7 @@ export function transformBody(body: string, ctx: TransformContext):
     return out + rewrite(line.slice(last), n);
   };
 
-  const lines = body.split('\n');
+  const lines = body.replace(/\r\n?/g, '\n').split('\n');
   const out: string[] = [];
   let fence: { char: string; len: number } | undefined;
   let seenText = false;
@@ -74,6 +74,13 @@ export function transformBody(body: string, ctx: TransformContext):
     if (f && !(f[2][0] === '`' && f[3].includes('`'))) {
       fence = { char: f[2][0], len: f[2].length };
       if (PLUGIN_LANGS.has(f[3].trim().split(/\s/)[0].toLowerCase())) problem('plugin-block', n);
+      seenText = true;
+      out.push(line);
+      return;
+    }
+    // Indented code may hold bash brackets; fail closed instead of guessing.
+    if (/^( {4}|\t)/.test(line) && line.includes('[[')) {
+      problem('indented-code', n);
       seenText = true;
       out.push(line);
       return;
