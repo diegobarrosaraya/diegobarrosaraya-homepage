@@ -4,7 +4,7 @@ import {
 import { basename, dirname, join, posix, resolve, sep } from 'node:path';
 import { parse, stringify } from 'yaml';
 import { FRONTMATTER, parseNote, slugify } from './parse';
-import { assertUsableRules, checkNote, type Rules } from './rules';
+import { assertUsableRules, checkNote, underDenyPath, type Rules } from './rules';
 import { maskCode, transformBody } from './transform';
 import type { ParsedNote, Problem } from './types';
 
@@ -151,22 +151,25 @@ export function syncVault(opts: SyncOptions): SyncResult {
     const offset = bodyOffset.get(where)!;
     const fromBody = (line: number) => offset + line;
     const fromMarkdown = (line: number) => offset + t.lineMap[line - 1];
+    // A link whose target names two notes would be guessed, so it fails instead (and is not also called unpublished).
+    const ambiguousLines = new Set<number>();
+    maskCode(note.body).split('\n').forEach((text, line) => {
+      for (const m of text.matchAll(WIKILINK)) {
+        if (ambiguous.has(noteKey(m[1].split(/\\?\|/)[0]))) ambiguousLines.add(line + 1);
+      }
+    });
     // Transform problems carry the title; report the path, like every other check.
-    problems.push(...t.problems.map((p) => ({ ...p, where, ...(p.line === undefined ? {} : { line: fromBody(p.line) }) })));
+    problems.push(...t.problems.filter((p) => !(p.rule === 'unpublished-link' && ambiguousLines.has(p.line!))).map((p) => ({ ...p, where, ...(p.line === undefined ? {} : { line: fromBody(p.line) }) })));
     problems.push(...checkNote(note, t.markdown, rules)
       .map((p) => (p.line === undefined ? p : { ...p, line: fromMarkdown(p.line) })));
 
-    // A link whose target names two notes would be guessed, so it fails instead.
-    maskCode(note.body).split('\n').forEach((text, line) => {
-      for (const m of text.matchAll(WIKILINK)) {
-        if (ambiguous.has(noteKey(m[1].split(/\\?\|/)[0]))) problems.push({ rule: 'ambiguous-link', where, line: fromBody(line + 1) });
-      }
-    });
+    ambiguousLines.forEach((line) => problems.push({ rule: 'ambiguous-link', where, line: fromBody(line) }));
 
     const images = new Map<string, string>();
     for (const name of t.images) {
       const found = findImage(name, note.relPath, vaultImages);
       if (!found.length) { problems.push({ rule: 'image-missing', where }); continue; }
+      if (found.some((f) => underDenyPath(f, rules))) { problems.push({ rule: 'image-denied', where }); continue; }
       const file = baseName(name);
       const prior = images.get(file);
       if (found.length > 1 || (prior && prior !== found[0])) problems.push({ rule: 'image-collision', where });

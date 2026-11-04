@@ -2,7 +2,6 @@
 title: PowerToys and winget
 description: Guide to building a fast, reproducible Windows power-user setup with winget (package management) and Microsoft PowerToys (window management, launcher, OCR, batch rename).
 tags:
-  - mentorship
   - windows
   - tooling
 created: 2026-08-07
@@ -74,7 +73,6 @@ flowchart TD
 
 - [WSL2 Setup on Windows](/notes/wsl2-setup-on-windows/)
 - [Linux vs Windows for AI, Scripts, and Automation](/notes/linux-vs-windows-for-ai-scripts-and-automation/)
-- Mentorship Hub chat
 
 ## Sources
 

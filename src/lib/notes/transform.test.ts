@@ -21,11 +21,17 @@ test('an escaped alias pipe inside a table cell works', () => {
 test('a wikilink with a heading or folder still resolves the note', () => {
   assert.equal(run('[[folder/Other note#Part]]\n').markdown, '[Other note](/notes/other-note/)\n');
 });
-test('a wikilink to an unpublished note becomes plain text', () => {
-  const r = run('See [[Hidden note]] and [[Hidden note|that one]].\n');
-  assert.equal(r.markdown, 'See Hidden note and that one.\n');
-  assert.ok(!r.markdown.includes(']('));
+test('an aliased wikilink to an unpublished note becomes the alias as plain text', () => {
+  const r = run('See [[Hidden note|that one]].\n');
+  assert.equal(r.markdown, 'See that one.\n');
   assert.deepEqual(r.problems, []);
+});
+test('a bare wikilink to an unpublished note is a problem, since it would print the note name', () => {
+  const r = run('x\nSee [[Hidden note]] here.\n');
+  assert.deepEqual(r.problems.map((p) => [p.rule, p.line]), [['unpublished-link', 2]]);
+});
+test('a heading-only wikilink is not an unpublished link', () => {
+  assert.deepEqual(run('Jump to [[#Part]].\n').problems, []);
 });
 
 test('bash test brackets in a fence and in inline code are untouched', () => {

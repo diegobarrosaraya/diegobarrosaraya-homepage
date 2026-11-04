@@ -2,7 +2,6 @@
 title: Automation and Dev Tooling
 description: "2026 best practices for cutting manual toil: shell/Python scripts, CI pipeline structure (GitHub Actions/GitLab CI), and using AI coding assistants in dev workflows and CI."
 tags:
-  - mentorship
   - automation
   - ci
   - ai-tooling
@@ -61,7 +60,6 @@ flowchart TD
 
 - [Linux Terminal and Shell Scripting](/notes/linux-terminal-and-shell-scripting/)
 - [Integrations for Process Efficiency](/notes/integrations-for-process-efficiency/)
-- Mentorship Hub chat
 
 ## Sources
 

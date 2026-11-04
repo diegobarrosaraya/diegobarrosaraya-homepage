@@ -2,7 +2,6 @@
 title: Antigravity CLI, Subagents, and Dev Harnesses
 description: Using Google Antigravity's Gemini CLI from the terminal, delegating work to subagents instead of one long-running agent, and building lightweight harnesses that drive an agent through a repeatable dev/work loop.
 tags:
-  - mentorship
   - ai-tooling
   - cli
   - agents
@@ -18,7 +17,7 @@ Antigravity ships a browser-based agent manager, but the same agent runs headles
 
 ```mermaid
 flowchart TD
-    A["Install the CLI\n(npm i -g @google/gemini-cli\nor antigravity's bundled binary)"] --> B["Auth once\n(gemini auth login)"]
+    A["Install the CLI\n(npm i -g @google/gemini-cli\nor antigravity's bundled binary)"] --> B["Auth once\n(run gemini, choose Login with Google)"]
     B --> C["Run one-shot tasks\ngemini -p 'prompt' --yolo for CI/scripts"]
     C --> D["Split big tasks into\nindependent subagent calls"]
     D --> E["Fan out subagents in parallel\nwhen tasks don't share state"]
@@ -29,7 +28,7 @@ flowchart TD
 
 ## Steps
 
-1. **Install and auth once.** `npm install -g @google/gemini-cli` (or the Antigravity-bundled binary), then `gemini auth login`. Same OAuth identity as the Antigravity IDE/browser agent, no separate API key management for personal use.
+1. **Install and auth once.** `npm install -g @google/gemini-cli` (or the Antigravity-bundled binary), then run `gemini` and choose Login with Google in the prompt. Same OAuth identity as the Antigravity IDE/browser agent, no separate API key management for personal use.
 2. **Use one-shot mode for anything scriptable.** `gemini -p "<prompt>"` runs non-interactively and exits; add `--yolo` (or the CLI's equivalent auto-approve flag) to skip confirmation prompts in CI, cron, or git hooks. Never `--yolo` against a shared/production environment without a human-reviewed diff downstream.
 3. **Split before you scale.** A single agent session degrades on long, multi-part tasks, context drifts, earlier instructions get deprioritized. Break the task into independent units (one file, one endpoint, one test suite) *before* reaching for more agent calls.
 4. **Fan out subagents only when units are truly independent.** If task B needs task A's output, that's a pipeline, not parallel subagents, run them sequentially. If five files need the same mechanical edit with zero shared state, that's parallel.
@@ -58,4 +57,3 @@ flowchart TD
 
 - [Automation and Dev Tooling](/notes/automation-and-dev-tooling/)
 - [Linux Terminal and Shell Scripting](/notes/linux-terminal-and-shell-scripting/)
-- Mentorship Hub chat

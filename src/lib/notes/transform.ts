@@ -72,7 +72,10 @@ export function transformBody(body: string, ctx: TransformContext):
       const note = baseName(target.split('#')[0]).replace(/\.md$/i, '');
       const text = alias || note || target.replace(/^#/, '');
       const slug = ctx.published.get(note.toLowerCase());
-      return slug ? `[${text}](/notes/${slug}/)` : text;
+      if (slug) return `[${text}](/notes/${slug}/)`;
+      // A bare link to an unpublished note would print that note's name; an alias is the author's own wording.
+      if (!alias && note) problem('unpublished-link', line);
+      return text;
     });
 
   // Splits on inline code spans so only the text between them is rewritten.

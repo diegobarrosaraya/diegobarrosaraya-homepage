@@ -2,7 +2,6 @@
 title: WSL2 Setup on Windows
 description: "Guide to setting up and tuning WSL2 on Windows 11 for development: install, .wslconfig resource limits, Windows Terminal/VS Code integration, and GPU passthrough."
 tags:
-  - mentorship
   - windows
   - wsl
   - linux
@@ -75,7 +74,6 @@ flowchart TD
 
 - [Linux vs Windows for AI, Scripts, and Automation](/notes/linux-vs-windows-for-ai-scripts-and-automation/)
 - [Linux Terminal and Shell Scripting](/notes/linux-terminal-and-shell-scripting/)
-- Mentorship Hub chat
 
 ## Sources
 

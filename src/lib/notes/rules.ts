@@ -49,14 +49,17 @@ export function maskAllowedPhrases(text: string, rules: Rules): string {
   return allowed ? folded.replace(allowed, " ") : folded;
 }
 
+// True when a vault path sits under any denied folder; notes and the images they embed use the same test.
+export const underDenyPath = (relPath: string, rules: Rules): boolean => {
+  const path = normPath(relPath);
+  return usableDenyPaths(rules).some((p) => path.startsWith(p.endsWith('/') ? p : `${p}/`));
+};
+
 // Reports rule names and locations only, never the matched text.
 export function checkNote(note: ParsedNote, markdown: string, rules: Rules): Problem[] {
   const problems: Problem[] = [];
   const { relPath } = note;
-  const path = normPath(relPath);
-  if (usableDenyPaths(rules).some((p) => path.startsWith(p.endsWith('/') ? p : `${p}/`))) {
-    problems.push({ rule: 'deny-path', where: relPath });
-  }
+  if (underDenyPath(relPath, rules)) problems.push({ rule: 'deny-path', where: relPath });
   const terms = usableTerms(rules);
   // Unusable phrases are dropped here too, so checkNote never masks more than assertUsableRules accepts.
   const allowed = allowedPattern(foldedAllowed(rules).filter((p) => usableAllowed(p, terms)));

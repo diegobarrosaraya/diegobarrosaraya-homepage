@@ -2,7 +2,6 @@
 title: Linux Terminal and Shell Scripting
 description: "On-ramp to the Linux terminal for Windows-comfortable engineers: navigation, shell config, dotfiles management, tmux, and safe shell scripting."
 tags:
-  - mentorship
   - linux
   - shell
 created: 2026-08-07
@@ -69,7 +68,6 @@ flowchart TD
 - [WSL2 Setup on Windows](/notes/wsl2-setup-on-windows/)
 - [Linux vs Windows for AI, Scripts, and Automation](/notes/linux-vs-windows-for-ai-scripts-and-automation/)
 - [Automation and Dev Tooling](/notes/automation-and-dev-tooling/)
-- Mentorship Hub chat
 
 ## Sources
 

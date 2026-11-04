@@ -2,7 +2,6 @@
 title: Capturing Meetings into Obsidian
 description: "Workflows for getting meeting notes/transcripts into an Obsidian vault with minimal manual effort: calendar sync, transcript sources, and Templater/QuickAdd automation."
 tags:
-  - mentorship
   - obsidian
   - meetings
 created: 2026-08-07
@@ -60,9 +59,6 @@ flowchart TD
 
 ## Related
 
-- session-handoff skill
-- Meetings bundle
-- Mentorship Hub chat
 
 ## Sources
 

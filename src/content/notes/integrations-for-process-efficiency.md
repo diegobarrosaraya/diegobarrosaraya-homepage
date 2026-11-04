@@ -2,7 +2,6 @@
 title: Integrations for Process Efficiency
 description: How engineering teams decide build-vs-buy for integrations and pick between native automation, low-code platforms (Zapier/Make/n8n), and custom code.
 tags:
-  - mentorship
   - automation
   - integrations
 created: 2026-08-07
@@ -62,8 +61,6 @@ flowchart TD
 ## Related
 
 - [Automation and Dev Tooling](/notes/automation-and-dev-tooling/)
-- Finding Undocumented API Endpoints
-- Mentorship Hub chat
 
 ## Sources
 

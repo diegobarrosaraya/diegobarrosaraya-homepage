@@ -2,7 +2,6 @@
 title: Linux vs Windows for AI, Scripts, and Automation
 description: "Practical tradeoffs between native Linux and Windows+WSL2 for AI/ML development, scripting, and automation: GPU support, filesystem performance, and packaging."
 tags:
-  - mentorship
   - linux
   - windows
   - ai
@@ -61,7 +60,6 @@ flowchart TD
 - [WSL2 Setup on Windows](/notes/wsl2-setup-on-windows/)
 - [PowerToys and winget](/notes/powertoys-and-winget/)
 - [Linux Terminal and Shell Scripting](/notes/linux-terminal-and-shell-scripting/)
-- Mentorship Hub chat
 
 ## Sources
 

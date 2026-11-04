@@ -72,7 +72,7 @@ test('unflagged, draft and dot-folder notes are not written', () => {
   }
 });
 
-test('a wikilink between two published notes becomes a link, one to an unpublished note stays text', () => {
+test('a wikilink between two published notes becomes a link, an aliased one to an unpublished note stays text', () => {
   const { out, run } = setup();
   run();
   const acme = readFileSync(join(out, 'acme-guide.md'), 'utf8');
@@ -270,11 +270,11 @@ test('a basename shared by two published notes fails only where a link uses it',
   assert.deepEqual(run().problems, []);
 });
 
-test('a file basename wins over a title, so a link to an unpublished file stays text', () => {
+test('a file basename wins over a title, so a link to an unpublished file stays unlinked', () => {
   const { out, run } = setup({
     'Guides/Foo.md': note('title: Real Foo File\ndescription: How it reads.\nupdated: 2026-01-01'),
     'Guides/x.md': flagged('Foo'),
-    'Guides/Linker.md': flagged('Linker', 'See [[Foo]] and [[Long Title]] and [[short-name]].\n'),
+    'Guides/Linker.md': flagged('Linker', 'See [[Foo|Foo]] and [[Long Title]] and [[short-name]].\n'),
     'Guides/short-name.md': flagged('Long Title'),
   });
   assert.deepEqual(run().problems, []);
@@ -311,4 +311,9 @@ test('allowed phrases pass through the sync for private terms only', () => {
   assert.deepEqual(run(allow).problems, []);
   assert.deepEqual(rulesOf(run()), ['private-term']);
   assert.throws(() => run({ ...rules, allowedPhrases: ['cli'] }), /allowPhrases/);
+});
+
+test('an image that lives under a denied path is refused, even when a published note embeds it', () => {
+  assertFailsAndWritesNothing(
+    { 'Private/secret-shot.png': PNG, 'Guides/Pic.md': flagged('Pic', '![[secret-shot.png]]\n') }, ['image-denied']);
 });
