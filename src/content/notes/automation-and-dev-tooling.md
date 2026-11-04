@@ -45,7 +45,7 @@ flowchart TD
 - Matrix builds catch environment-specific bugs with almost no extra pipeline code.
 - Treat "DevSecOps as code": scanners emit raw JSON → a script normalizes it to Markdown with a clear pass/fail → CI enforces the policy → exceptions route to a human for judgment calls only.
 - Use Copilot and Claude Code for different jobs rather than swapping between them randomly: Copilot for fast, local completions; Claude Code when the change spans the repo.
-- It's normal to run more than one CI system at once (GitHub Actions for new services, Jenkins for legacy), don't force a forced consolidation just for tidiness.
+- It's normal to run more than one CI system at once (GitHub Actions for new services, Jenkins for legacy), don't force a consolidation just for tidiness.
 
 ## Common pitfalls
 

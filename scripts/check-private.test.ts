@@ -13,7 +13,7 @@ test('no private term appears in the built site', (t) => {
   if (!existsSync('.private-terms')) return t.skip('no local .private-terms list');
   const terms = readFileSync('.private-terms', 'utf8').split('\n').map(s => s.trim().toLowerCase()).filter(Boolean);
   assert.ok(terms.length > 0, '.private-terms exists but has no terms');
-  // The same allow-list the sync uses (phrases like a GPU maker's tool name), read from the local config.
+  // The same allow-list the sync uses (phrases such as a tool name), read from the local config.
   const allowedPhrases: string[] = existsSync(".notes-sync.json") ? (JSON.parse(readFileSync(".notes-sync.json", "utf8")).allowPhrases ?? []) : [];
   for (const f of filesUnder('dist')) {
     const html = readFileSync(f, "utf8");
