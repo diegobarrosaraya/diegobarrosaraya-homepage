@@ -84,7 +84,7 @@ const { Content } = await render(entry);
       linear-gradient(to left, color-mix(in srgb, var(--ink) 28%, transparent), transparent) right center / 14px 100% no-repeat scroll;
   }
   .prose :global(.diagram:focus-visible) { outline: 2px solid var(--steel); outline-offset: 2px; }
-  .prose :global(.diagram > svg) { display: block; height: auto; }
+  .prose :global(.diagram > svg) { display: block; height: auto; margin-inline: auto; }
   .prose :global(svg[id^="mermaid"] :is(text, tspan)) { fill: var(--ink) !important; font-family: var(--font-body) !important; }
   .prose :global(svg[id^="mermaid"] :is(foreignObject div, foreignObject span, foreignObject p)) { color: var(--ink) !important; font-family: var(--font-body) !important; }
   /* Shapes: inside a flowchart or class node, or the shape itself carries the class (sequence actors, notes, loop labels). */
