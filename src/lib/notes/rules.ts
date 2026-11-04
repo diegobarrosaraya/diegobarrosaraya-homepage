@@ -41,6 +41,14 @@ export function assertUsableRules(rules: Rules): void {
   }
 }
 
+// Folded text with the allowed phrases blanked out; the post-build check reuses it on built HTML.
+export function maskAllowedPhrases(text: string, rules: Rules): string {
+  const terms = usableTerms(rules);
+  const allowed = allowedPattern(foldedAllowed(rules).filter((p) => usableAllowed(p, terms)));
+  const folded = fold(text);
+  return allowed ? folded.replace(allowed, " ") : folded;
+}
+
 // Reports rule names and locations only, never the matched text.
 export function checkNote(note: ParsedNote, markdown: string, rules: Rules): Problem[] {
   const problems: Problem[] = [];

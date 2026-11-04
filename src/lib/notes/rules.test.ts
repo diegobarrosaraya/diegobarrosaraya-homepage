@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { assertUsableRules, checkNote, DAY_JOB_PATTERN, type Rules } from './rules';
+import { assertUsableRules, checkNote, DAY_JOB_PATTERN, maskAllowedPhrases, type Rules } from './rules';
 import type { ParsedNote } from './types';
 
 const rules: Rules = { denyPaths: ['Private/'], privateTerms: ['acme-example'] };
@@ -185,4 +185,11 @@ test('invisible operator characters do not hide a term', () => {
   for (const md of ['acme\u2061-example', 'acme\u2062-example', 'acme\u2063-example', 'acme\u2064-example']) {
     assert.deepEqual(check(note({ body: md }), md).map((p) => p.rule), ['private-term'], JSON.stringify(md));
   }
+});
+
+test('maskAllowedPhrases blanks a whole allowed phrase and leaves a bare term', () => {
+  const r: Rules = { ...rules, allowedPhrases: ['acme-example-cli'] };
+  assert.ok(!maskAllowedPhrases('Run Acme-Example-CLI now', r).includes('acme-example'));
+  assert.ok(maskAllowedPhrases('Run acme-example-clix now', r).includes('acme-example'));
+  assert.ok(maskAllowedPhrases('Run acme-example now', r).includes('acme-example'));
 });
