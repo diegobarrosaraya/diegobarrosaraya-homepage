@@ -3,8 +3,11 @@ import type { ParsedNote, Problem } from './types';
 
 const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() ? v.trim() : undefined);
 
+// Group 1 is the YAML text between the delimiters.
+export const FRONTMATTER = /^---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/;
+
 export function parseNote(raw: string, relPath: string): { note?: ParsedNote; problems: Problem[] } {
-  const m = raw.replace(/^﻿/, '').match(/^---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/);
+  const m = raw.replace(/^﻿/, '').match(FRONTMATTER);
   let fm: Record<string, unknown>;
   try {
     fm = (m ? parse(m[1]) : null) ?? {};

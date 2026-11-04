@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { transformBody, type TransformContext } from './transform';
+import { maskCode, transformBody, type TransformContext } from './transform';
 
 const ctx: TransformContext = {
   title: 'Acme Guide', slug: 'acme-guide',
@@ -137,4 +137,12 @@ test('a hash comment in a bash fence is not a heading', () => {
   const r = run(body);
   assert.deepEqual(r.problems, []);
   assert.equal(r.markdown, '```bash\n# install\nmake\n```\n## Section\n');
+});
+
+test('maskCode blanks fenced blocks and inline code and keeps the line count', () => {
+  const body = 'a `![x](y.png)` b\n```\n![x](y.png)\n```\n![z](w.png)\n';
+  const masked = maskCode(body);
+  assert.equal(masked.split('\n').length, body.split('\n').length);
+  assert.ok(!masked.includes('y.png'));
+  assert.equal(masked.split('\n')[4], '![z](w.png)');
 });

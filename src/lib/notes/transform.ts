@@ -15,6 +15,32 @@ const MD_IMAGE = /!\[([^\]]*)\]\(([^)\s]+)\)/g;
 
 const baseName = (p: string) => p.slice(p.lastIndexOf('/') + 1);
 
+type Fence = { char: string; len: number } | undefined;
+
+// Moves the fence state past one line. `code` is true for fence lines and lines inside a fence;
+// `info` is the info string when the line opens a fence.
+function stepFence(fence: Fence, line: string): { fence: Fence; code: boolean; info?: string } {
+  const f = FENCE.exec(line);
+  if (fence) {
+    const closes = f && f[2][0] === fence.char && f[2].length >= fence.len && !f[3].trim();
+    return { fence: closes ? undefined : fence, code: true };
+  }
+  if (f && !(f[2][0] === '`' && f[3].includes('`'))) {
+    return { fence: { char: f[2][0], len: f[2].length }, code: true, info: f[3] };
+  }
+  return { fence: undefined, code: false };
+}
+
+// Blanks fenced blocks and inline code spans, keeping the line count, so later scans see prose only.
+export function maskCode(markdown: string): string {
+  let fence: Fence;
+  return markdown.replace(/\r\n?/g, '\n').split('\n').map((line) => {
+    const step = stepFence(fence, line);
+    fence = step.fence;
+    return step.code ? '' : line.replace(CODE_SPAN, (m) => ' '.repeat(m.length));
+  }).join('\n');
+}
+
 export function transformBody(body: string, ctx: TransformContext):
   { markdown: string; images: string[]; problems: Problem[] } {
   const images: string[] = [];
@@ -61,20 +87,17 @@ export function transformBody(body: string, ctx: TransformContext):
 
   const lines = body.replace(/\r\n?/g, '\n').split('\n');
   const out: string[] = [];
-  let fence: { char: string; len: number } | undefined;
+  let fence: Fence;
   let seenText = false;
   lines.forEach((line, i) => {
     const n = i + 1;
-    const f = FENCE.exec(line);
-    if (fence) {
-      if (f && f[2][0] === fence.char && f[2].length >= fence.len && !f[3].trim()) fence = undefined;
-      out.push(line);
-      return;
-    }
-    if (f && !(f[2][0] === '`' && f[3].includes('`'))) {
-      fence = { char: f[2][0], len: f[2].length };
-      if (PLUGIN_LANGS.has(f[3].trim().split(/\s/)[0].toLowerCase())) problem('plugin-block', n);
-      seenText = true;
+    const step = stepFence(fence, line);
+    fence = step.fence;
+    if (step.code) {
+      if (step.info !== undefined) {
+        if (PLUGIN_LANGS.has(step.info.trim().split(/\s/)[0].toLowerCase())) problem('plugin-block', n);
+        seenText = true;
+      }
       out.push(line);
       return;
     }

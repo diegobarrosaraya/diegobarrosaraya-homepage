@@ -8,6 +8,7 @@
     "build": "astro build && tsx scripts/print-resume.ts",
     "preview": "astro preview",
     "test": "node --import tsx --test \"src/**/*.test.ts\"",
+    "sync-notes": "tsx scripts/sync-notes.ts",
     "test:dist": "node --import tsx --test scripts/check-dist.test.ts scripts/check-private.test.ts"
   },
   "devDependencies": {
