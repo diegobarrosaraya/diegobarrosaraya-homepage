@@ -3,7 +3,14 @@ import { fade } from 'astro:transitions';
 import Sheet from '../layouts/Sheet.astro';
 import Movement from '../components/Movement.astro';
 import CaseStudyList from '../components/CaseStudyList.astro';
+import NoteList from '../components/NoteList.astro';
+import { allNotes } from '../lib/notes/collection';
 import { HOME, PRINCIPLES } from '../data/story';
+
+// The newest three notes. With no notes, the section, the header item and the link in the teams line all drop out.
+const notes = await allNotes();
+const latest = notes.slice(0, 3);
+const linkWord = 'guides';
 
 const contact = [
   ['Email', 'mailto:contact@diegobarrosaraya.com', 'contact@diegobarrosaraya.com'],
@@ -34,7 +41,13 @@ const contact = [
 
   <section class="block" id="team" aria-labelledby="team-h">
     <h2 id="team-h">Working with teams</h2>
-    {HOME.team.map((line) => <p class="line">{line}</p>)}
+    {HOME.team.map((line) => {
+      // The word "guides" links to the notes; the text of the line is the same either way.
+      const at = notes.length > 0 ? line.indexOf(linkWord) : -1;
+      return at === -1
+        ? <p class="line">{line}</p>
+        : <p class="line">{line.slice(0, at)}<a href="/notes/">{linkWord}</a>{line.slice(at + linkWord.length)}</p>;
+    })}
     <p class="close">{HOME.teamClose}</p>
   </section>
 
@@ -55,7 +68,15 @@ const contact = [
     </ul>
   </section>
 
-  <section class="block" id="contact" aria-labelledby="contact-h">
+  {latest.length > 0 && (
+    <section class="block" id="notes" aria-labelledby="notes-h">
+      <h2 id="notes-h">Latest notes</h2>
+      <NoteList notes={latest} />
+      <p class="all"><a href="/notes/">All notes</a></p>
+    </section>
+  )}
+
+  <section class="block" id="contact"aria-labelledby="contact-h">
     <h2 id="contact-h">Contact</h2>
     <dl class="contact">
       {contact.map(([k, href, text]) => <div><dt>{k}</dt><dd><a href={href}>{text}</a></dd></div>)}
@@ -82,6 +103,8 @@ const contact = [
   .principles li:last-child { border-bottom: 1px solid var(--hair); }
   .principles a { display: block; padding: 14px 0; font-size: 19px; text-decoration: none; }
   .principles a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+
+  .all { margin: 14px 0 0; font-size: 19px; }
 
   .contact { margin: 0; max-width: 62ch; }
   .contact div { display: grid; grid-template-columns: 7em 1fr; gap: 14px; padding: 10px 0; border-top: 1px solid var(--hair); }

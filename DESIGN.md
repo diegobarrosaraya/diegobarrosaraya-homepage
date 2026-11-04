@@ -266,6 +266,9 @@ Back link, heading, lede (max 46ch), "Where it shows" with hairline rows of link
 ### Spec rows
 Definition rows in the contact list and the resume table: Dial Grey label column (7em or 9.5em), value in ink, hairline above each row and closing the list.
 
+### Notes list and note page
+`/notes/` is a flat list, newest first: hairline-separated rows with the title in Item title type and steel, the description in Dial Grey, and an "Updated" date. No tag groups. The Notes item, the home "Latest notes" list and the "guides" link in the teams line appear only when at least one note exists. A note page has a back link, heading, lede, a meta line (dates and tags as plain text) and one reading column of 68ch in Archivo headings and Barlow body. Callouts are styled asides. Mermaid diagrams are repainted from the theme tokens, drawn at natural width and scroll sideways inside a focusable figure, with edge shadows that show only while there is more to scroll to.
+
 ### Footer date panel
 "Last regulated" followed by the build date in DSEG7 on a Case Plate panel with a 1px hairline border, unlit segments ghosted behind. Then the build id, font licence links and a Now link, under a 3px double rule.
 

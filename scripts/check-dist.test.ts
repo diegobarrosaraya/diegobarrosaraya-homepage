@@ -4,6 +4,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { CASES, HOME, PRINCIPLES } from '../src/data/story';
 import { LEGACY_REDIRECTS } from '../src/data/redirects';
+import { DAY_JOB_PATTERN } from '../src/lib/notes/rules';
 
 test('home page is built HTML, not the Vite source', () => {
   const html = readFileSync('dist/index.html', 'utf8');
@@ -88,7 +89,7 @@ test('resume, contact, now and 404 are built', () => {
 });
 test('the day job, including Forge, appears only on the resume', () => {
   for (const f of htmlFilesUnder('dist').filter(f => !f.startsWith('dist/resume/')))
-    assert.doesNotMatch(readFileSync(f, 'utf8'), /atlassian|jira|confluence|servicerocket|forge/i, f);
+    assert.doesNotMatch(readFileSync(f, 'utf8'), DAY_JOB_PATTERN, f);
   assert.match(readFileSync('dist/resume/index.html', 'utf8'), /Built 8 Forge apps that run in production for an enterprise Jira Cloud site with 30,000\+ users\./);
 });
 test('every page has one h1, before any h2', () => {
@@ -117,4 +118,93 @@ test('resume.pdf is a PDF printed from the current resume.json', async () => {
   assert.ok(pdf.length > 10 * 1024, `${pdf.length} bytes`);
   const meta = JSON.parse(readFileSync('dist/resume.pdf.json', 'utf8'));
   assert.equal(meta.sha256, createHash('sha256').update(readFileSync('public/resume.json')).digest('hex'));
+});
+
+// Notes: the checks follow whatever src/content/notes holds at test time, so they hold with zero notes too.
+const noteSlugs = readdirSync('src/content/notes').filter((f) => f.endsWith('.md')).map((f) => f.slice(0, -3));
+const noteFrontmatter = (slug: string) => readFileSync(`src/content/notes/${slug}.md`, 'utf8').split(/^---$/m)[1] ?? '';
+const unquote = (s: string) => s.trim().replace(/^["']|["']$/g, '');
+const noteUpdated = (slug: string) => unquote(noteFrontmatter(slug).match(/^updated:\s*(.+)$/m)?.[1] ?? '');
+const NOTE_LINK = /href="\/notes\/[^"/#?]+\/"/;
+const sitemap = () => readdirSync('dist').filter((f) => /^sitemap-\d+\.xml$/.test(f)).map((f) => readFileSync(`dist/${f}`, 'utf8')).join('\n');
+
+test('with no notes, nothing links to a note page and the notes index is not indexed', (t) => {
+  if (noteSlugs.length > 0) return t.skip('notes present');
+  for (const f of htmlFilesUnder('dist')) assert.doesNotMatch(readFileSync(f, 'utf8'), NOTE_LINK, f);
+  const index = readFileSync('dist/notes/index.html', 'utf8');
+  assert.match(index, /<meta name="robots" content="noindex">/);
+  assert.match(index, /No notes yet\./);
+  const feed = readFileSync('dist/notes/rss.xml', 'utf8');
+  assert.ok(feed.startsWith('<?xml'));
+  assert.doesNotMatch(feed, /<item>/);
+  assert.ok(!sitemap().includes('/notes/'), 'sitemap lists /notes/');
+});
+test('every note has a page with one h1, is listed once on /notes/, and is in the feed and sitemap', (t) => {
+  if (noteSlugs.length === 0) return t.skip('no notes');
+  const index = readFileSync('dist/notes/index.html', 'utf8');
+  assert.doesNotMatch(index, /name="robots"/);
+  const feed = readFileSync('dist/notes/rss.xml', 'utf8');
+  assert.ok(feed.startsWith('<?xml'));
+  const map = sitemap();
+  assert.ok(map.includes('/notes/</loc>'), 'sitemap lacks /notes/');
+  for (const slug of noteSlugs) {
+    const html = readFileSync(`dist/notes/${slug}/index.html`, 'utf8');
+    assert.equal(html.match(/<h1[\s>]/g)?.length, 1, slug);
+    assert.equal(index.split(`href="/notes/${slug}/"`).length - 1, 1, `${slug} listed once`);
+    assert.ok(feed.includes(`/notes/${slug}/`), `${slug} in feed`);
+    assert.ok(map.includes(`/notes/${slug}/</loc>`), `${slug} in sitemap`);
+  }
+});
+test('/notes/ lists notes newest first and nothing links to a tag anchor', (t) => {
+  if (noteSlugs.length === 0) return t.skip('no notes');
+  const index = readFileSync('dist/notes/index.html', 'utf8');
+  const order = [...index.matchAll(/href="\/notes\/([^"\/#?]+)\/"/g)].map((m) => m[1]).filter((v, i, a) => a.indexOf(v) === i);
+  const dates = order.map((slug) => noteUpdated(slug));
+  assert.deepEqual(dates, [...dates].sort().reverse(), 'not newest first');
+  for (const f of htmlFilesUnder('dist')) assert.doesNotMatch(readFileSync(f, 'utf8'), /href="\/notes\/#/, f);
+});
+
+// Notes in the header, the home list and the teams line.
+const textOf = (html: string) => html.replace(/<[^>]*>/g, '').replace(/&#39;|&apos;/g, "'").replace(/&amp;/g, '&');
+const NOTES_NAV = /<a href="\/notes\/"[^>]*>Notes<\/a>/;
+
+test('with no notes, no built page links to /notes/ and the teams line is plain text', (t) => {
+  if (noteSlugs.length > 0) return t.skip('notes present');
+  for (const f of htmlFilesUnder('dist')) assert.doesNotMatch(readFileSync(f, 'utf8'), /href="\/notes\/"/, f);
+  const home = readFileSync('dist/index.html', 'utf8');
+  assert.doesNotMatch(home, /Latest notes/);
+  const start = home.lastIndexOf('<p', home.indexOf('I write the '));
+  assert.equal(textOf(home.slice(start, home.indexOf('</p>', start))), HOME.team[1], 'teams line changed');
+});
+test('with notes, every page with a header has a Notes link, in order, and the nav marks /notes/ as current there', (t) => {
+  if (noteSlugs.length === 0) return t.skip('no notes');
+  for (const f of htmlFilesUnder('dist')) {
+    const html = readFileSync(f, 'utf8');
+    if (!html.includes('<header class="top"')) continue;
+    assert.match(html, NOTES_NAV, f);
+    const nav = html.slice(html.indexOf('<nav'), html.indexOf('</nav>'));
+    assert.ok(nav.indexOf('>How I work<') < nav.indexOf('>Notes<') && nav.indexOf('>Notes<') < nav.indexOf('>Resume<'), `${f}: nav order`);
+  }
+  const index = readFileSync('dist/notes/index.html', 'utf8');
+  assert.match(index, /<a href="\/notes\/" aria-current="page"[^>]*>Notes<\/a>/);
+  const page = readFileSync(`dist/notes/${noteSlugs[0]}/index.html`, 'utf8');
+  assert.match(page, /<a href="\/notes\/" aria-current="page"[^>]*>Notes<\/a>/);
+});
+test('with notes, the home page lists the three newest after How I work, and "guides" links to /notes/', (t) => {
+  if (noteSlugs.length === 0) return t.skip('no notes');
+  const home = readFileSync('dist/index.html', 'utf8');
+  const how = home.indexOf('id="how"');
+  const latest = home.search(/<h2[^>]*>Latest notes<\/h2>/);
+  assert.ok(how !== -1 && latest > how, 'Latest notes comes after How I work');
+  const section = home.slice(home.lastIndexOf('<section', latest), home.indexOf('</section>', latest));
+  assert.match(section, /id="notes"/);
+  const newest = [...noteSlugs].sort((a, b) => noteUpdated(b).localeCompare(noteUpdated(a)) || a.localeCompare(b)).slice(0, 3);
+  const links = [...section.matchAll(/href="\/notes\/([^"/#?]+)\/"/g)].map((m) => m[1]);
+  assert.equal(links.length, Math.min(3, noteSlugs.length));
+  assert.deepEqual(new Set(links), new Set(newest));
+  assert.match(section, /<a href="\/notes\/"[^>]*>All notes/);
+  const start = home.lastIndexOf('<p', home.indexOf('I write the '));
+  const line = home.slice(start, home.indexOf('</p>', start));
+  assert.match(line, /<a href="\/notes\/"[^>]*>guides<\/a>/);
+  assert.equal(textOf(line), HOME.team[1]);
 });

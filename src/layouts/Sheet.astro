@@ -7,7 +7,7 @@ import Footer from '../components/Footer.astro';
 export interface Props {
   title: string;
   description: string;
-  current?: 'work' | 'how' | 'resume' | 'contact';
+  current?: 'work' | 'how' | 'notes' | 'resume' | 'contact';
 }
 const { title, description, current } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -34,6 +34,7 @@ const image = new URL('/me.jpg', Astro.site);
         if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
       } catch (e) {}
     </script>
+    <slot name="head" />
     <ClientRouter />
   </head>
   <body>

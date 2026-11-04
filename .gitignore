@@ -5,3 +5,4 @@ dist/
 .astro/
 .impeccable/questions/
 .private-terms
+.notes-sync.json
