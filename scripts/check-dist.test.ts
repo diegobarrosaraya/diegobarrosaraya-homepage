@@ -4,6 +4,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { CASES, HOME, PRINCIPLES } from '../src/data/story';
 import { LEGACY_REDIRECTS } from '../src/data/redirects';
+import { DAY_JOB_PATTERN } from '../src/lib/notes/rules';
 
 test('home page is built HTML, not the Vite source', () => {
   const html = readFileSync('dist/index.html', 'utf8');
@@ -88,7 +89,7 @@ test('resume, contact, now and 404 are built', () => {
 });
 test('the day job, including Forge, appears only on the resume', () => {
   for (const f of htmlFilesUnder('dist').filter(f => !f.startsWith('dist/resume/')))
-    assert.doesNotMatch(readFileSync(f, 'utf8'), /atlassian|jira|confluence|servicerocket|forge/i, f);
+    assert.doesNotMatch(readFileSync(f, 'utf8'), DAY_JOB_PATTERN, f);
   assert.match(readFileSync('dist/resume/index.html', 'utf8'), /Built 8 Forge apps that run in production for an enterprise Jira Cloud site with 30,000\+ users\./);
 });
 test('every page has one h1, before any h2', () => {
