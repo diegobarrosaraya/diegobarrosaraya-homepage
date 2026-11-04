@@ -2,11 +2,13 @@
 import Sheet from '../../layouts/Sheet.astro';
 import NoteList from '../../components/NoteList.astro';
 import { allNotes } from '../../lib/notes/collection';
+import { tagAnchors } from '../../lib/notes/tags';
 
 const notes = await allNotes();
 // One group per tag, tags in alphabetical order; a note with several tags shows in each group.
 const tags = [...new Set(notes.flatMap((n) => n.tags))].sort((a, b) => a.localeCompare(b));
 const groups = tags.map((tag) => ({ tag, notes: notes.filter((n) => n.tags.includes(tag)) }));
+const anchors = tagAnchors(tags);
 const untagged = notes.filter((n) => n.tags.length === 0);
 ---
 <Sheet title="Notes | Diego Barros Araya" description="Notes and guides from my own work, grouped by topic.">
@@ -23,7 +25,7 @@ const untagged = notes.filter((n) => n.tags.length === 0);
     )}
   </div>
   {groups.map(({ tag, notes }) => (
-    <section class="block" id={`tag-${tag}`} data-tag={tag} aria-label={tag}>
+    <section class="block" id={anchors.get(tag)} data-tag={tag} aria-label={tag}>
       <h2>{tag}</h2>
       <NoteList notes={notes} />
     </section>

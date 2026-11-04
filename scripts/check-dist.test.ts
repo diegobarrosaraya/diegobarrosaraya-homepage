@@ -123,14 +123,22 @@ test('resume.pdf is a PDF printed from the current resume.json', async () => {
 // Notes: the checks follow whatever src/content/notes holds at test time, so they hold with zero notes too.
 const noteSlugs = readdirSync('src/content/notes').filter((f) => f.endsWith('.md')).map((f) => f.slice(0, -3));
 const noteFrontmatter = (slug: string) => readFileSync(`src/content/notes/${slug}.md`, 'utf8').split(/^---$/m)[1] ?? '';
+const unquote = (s: string) => s.trim().replace(/^["']|["']$/g, '');
 const noteTags = (slug: string): string[] => {
   const fm = noteFrontmatter(slug);
   const flow = fm.match(/^tags:\s*\[(.*)\]\s*$/m);
-  if (flow) return flow[1].split(',').map((t) => t.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
+  if (flow) return flow[1].split(',').map(unquote).filter(Boolean);
   const block = fm.match(/^tags:\s*\n((?:\s+-\s.*\n?)+)/m);
-  return block ? [...block[1].matchAll(/-\s+(.+)/g)].map((m) => m[1].trim().replace(/^["']|["']$/g, '')) : [];
+  return block ? [...block[1].matchAll(/-\s+(.+)/g)].map((m) => unquote(m[1])) : [];
+};
+// The HTML of the /notes/ group whose data-tag is exactly `tag` ("" is the Other group), found without a regex.
+const attr = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+const tagGroup = (index: string, tag: string): string | undefined => {
+  const at = index.indexOf(` data-tag="${attr(tag)}"`);
+  return at === -1 ? undefined : index.slice(at, index.indexOf('</section>', at));
 };
 const NOTE_LINK = /href="\/notes\/[^"/#?]+\/"/;
+const sitemap = () => readdirSync('dist').filter((f) => /^sitemap-\d+\.xml$/.test(f)).map((f) => readFileSync(`dist/${f}`, 'utf8')).join('\n');
 
 test('with no notes, nothing links to a note page and the notes index is not indexed', (t) => {
   if (noteSlugs.length > 0) return t.skip('notes present');
@@ -141,23 +149,38 @@ test('with no notes, nothing links to a note page and the notes index is not ind
   const feed = readFileSync('dist/notes/rss.xml', 'utf8');
   assert.ok(feed.startsWith('<?xml'));
   assert.doesNotMatch(feed, /<item>/);
+  assert.ok(!sitemap().includes('/notes/'), 'sitemap lists /notes/');
 });
-test('every note has a page with one h1, is listed under each of its tags, and is in the feed', (t) => {
+test('every note has a page with one h1, is listed under each of its tags, and is in the feed and sitemap', (t) => {
   if (noteSlugs.length === 0) return t.skip('no notes');
   const index = readFileSync('dist/notes/index.html', 'utf8');
   assert.doesNotMatch(index, /name="robots"/);
   const feed = readFileSync('dist/notes/rss.xml', 'utf8');
   assert.ok(feed.startsWith('<?xml'));
+  const map = sitemap();
+  assert.ok(map.includes('/notes/</loc>'), 'sitemap lacks /notes/');
   for (const slug of noteSlugs) {
     const html = readFileSync(`dist/notes/${slug}/index.html`, 'utf8');
     assert.equal(html.match(/<h1[\s>]/g)?.length, 1, slug);
     const tags = noteTags(slug);
-    assert.ok(tags.length > 0, `${slug} has no tags to check`);
-    for (const tag of tags) {
-      const group = index.match(new RegExp(`<section[^>]*data-tag="${tag}"[^>]*>([\\s\\S]*?)</section>`))?.[1];
-      assert.ok(group, `${slug}: no group for tag ${tag}`);
-      assert.match(group, new RegExp(`href="/notes/${slug}/"`), `${slug} under ${tag}`);
+    // A note with no tags is listed in the Other group, whose data-tag is empty.
+    for (const tag of tags.length ? tags : ['']) {
+      const group = tagGroup(index, tag);
+      assert.ok(group, `${slug}: no group for tag "${tag}"`);
+      assert.ok(group.includes(`href="/notes/${slug}/"`), `${slug} under "${tag}"`);
     }
     assert.ok(feed.includes(`/notes/${slug}/`), `${slug} in feed`);
+    assert.ok(map.includes(`/notes/${slug}/</loc>`), `${slug} in sitemap`);
+  }
+});
+test('tag ids on /notes/ are unique and every tag link on a note page points at one', (t) => {
+  if (noteSlugs.length === 0) return t.skip('no notes');
+  const index = readFileSync('dist/notes/index.html', 'utf8');
+  const ids = [...index.matchAll(/<section[^>]*\sid="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(new Set(ids).size, ids.length, 'duplicate tag ids');
+  for (const id of ids) assert.match(id, /^tag-[a-z0-9-]+$/);
+  for (const slug of noteSlugs) {
+    const html = readFileSync(`dist/notes/${slug}/index.html`, 'utf8');
+    for (const [, id] of html.matchAll(/href="\/notes\/#([^"]*)"/g)) assert.ok(ids.includes(id), `${slug} -> #${id}`);
   }
 });

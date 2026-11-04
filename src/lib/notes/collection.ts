@@ -1,13 +1,12 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { noteFileCount } from './note-files';
 
 export interface NoteSummary { slug: string; title: string; description: string; updated: string; created?: string; tags: string[] }
 
-// The sync may leave the folder with only .gitkeep. Skip getCollection then, so a build with no notes
-// does not log an "empty collection" warning for every page that lists notes.
-const hasNoteFiles = Object.keys(import.meta.glob('/src/content/notes/*.md')).length > 0;
-
+// Skip getCollection when there are no note files, so a build with no notes does not log an
+// "empty collection" warning for every page that lists notes. astro.config.ts uses the same count.
 export async function noteEntries(): Promise<CollectionEntry<'notes'>[]> {
-  return hasNoteFiles ? getCollection('notes') : [];
+  return noteFileCount() > 0 ? getCollection('notes') : [];
 }
 
 // Every note, newest first; ties keep a stable order by title.

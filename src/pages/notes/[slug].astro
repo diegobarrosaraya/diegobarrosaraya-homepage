@@ -1,7 +1,8 @@
 ---
 import { render } from 'astro:content';
 import Sheet from '../../layouts/Sheet.astro';
-import { noteEntries } from '../../lib/notes/collection';
+import { allNotes, noteEntries } from '../../lib/notes/collection';
+import { tagAnchors } from '../../lib/notes/tags';
 
 export async function getStaticPaths() {
   const entries = await noteEntries();
@@ -10,6 +11,8 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { title, description, tags, created, updated } = entry.data;
 const { Content } = await render(entry);
+// Ids are computed over every note's tags, the same way /notes/ computes them.
+const anchors = tagAnchors((await allNotes()).flatMap((n) => n.tags));
 ---
 <Sheet title={`${title} | Diego Barros Araya`} description={description}>
   <Fragment slot="head">
@@ -24,7 +27,7 @@ const { Content } = await render(entry);
     <p class="meta">
       Updated <time datetime={updated}>{updated}</time>
       {created && created !== updated && <>, first written <time datetime={created}>{created}</time></>}
-      {tags.length > 0 && <> · {tags.map((t, i) => <>{i > 0 && ', '}<a href={`/notes/#tag-${t}`}>{t}</a></>)}</>}
+      {tags.length > 0 && <> · {tags.map((t, i) => <>{i > 0 && ', '}<a href={`/notes/#${anchors.get(t)}`}>{t}</a></>)}</>}
     </p>
     <div class="prose"><Content /></div>
   </article>
@@ -78,7 +81,9 @@ const { Content } = await render(entry);
   .prose :global(.diagram > svg) { display: block; height: auto; }
   .prose :global(svg[id^="mermaid"] :is(text, tspan)) { fill: var(--ink) !important; font-family: var(--font-body) !important; }
   .prose :global(svg[id^="mermaid"] :is(foreignObject div, foreignObject span, foreignObject p)) { color: var(--ink) !important; font-family: var(--font-body) !important; }
-  .prose :global(svg[id^="mermaid"] :is(.node, .cluster, .actor, .note, .labelBox) :is(rect, circle, ellipse, polygon, path)) { fill: var(--plate) !important; stroke: var(--ink) !important; }
+  /* Shapes: inside a flowchart or class node, or the shape itself carries the class (sequence actors, notes, loop labels). */
+  .prose :global(svg[id^="mermaid"] :is(.node, .cluster, .actor-man) :is(rect, circle, ellipse, polygon, path)),
+  .prose :global(svg[id^="mermaid"] :is(rect, circle, ellipse, polygon, path):is(.actor, .actor-top, .actor-bottom, .actor-box, .note, .labelBox)) { fill: var(--plate) !important; stroke: var(--ink) !important; }
   .prose :global(svg[id^="mermaid"] :is(.flowchart-link, .edgePath path, .messageLine0, .messageLine1, .relation, .transition, line)) { stroke: var(--ink) !important; }
   .prose :global(svg[id^="mermaid"] :is(marker path, .arrowheadPath, .arrowMarkerPath)) { fill: var(--ink) !important; stroke: var(--ink) !important; }
   .prose :global(svg[id^="mermaid"] :is(.edgeLabel, .labelBkg, .edgeLabel p, .edgeLabel rect)) { background-color: var(--ground) !important; fill: var(--ground) !important; opacity: 1 !important; }

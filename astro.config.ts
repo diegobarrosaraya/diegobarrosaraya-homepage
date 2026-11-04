@@ -5,6 +5,7 @@ import rehypeMermaid from 'rehype-mermaid';
 import { LEGACY_REDIRECTS } from './src/data/redirects';
 import { rehypeCallouts } from './src/lib/notes/rehype-callouts';
 import { rehypeDiagramFrame } from './src/lib/notes/rehype-diagram-frame';
+import { noteFileCount } from './src/lib/notes/note-files';
 
 // Code blocks read the theme tokens: Shiki writes the placeholder colours, colorReplacements swaps
 // them for CSS variables, so the Dial and LCD views restyle code with no second theme.
@@ -26,7 +27,8 @@ export default defineConfig({
   trailingSlash: 'always',
   build: { format: 'directory' },
   redirects: LEGACY_REDIRECTS,
-  integrations: [sitemap()],
+  // With no notes, /notes/ only says "No notes yet." and carries noindex, so keep it out of the sitemap.
+  integrations: [sitemap({ filter: (page) => noteFileCount() > 0 || !new URL(page).pathname.startsWith('/notes/') })],
   markdown: {
     syntaxHighlight: { type: 'shiki', excludeLangs: ['mermaid', 'math'] },
     shikiConfig: { theme: codeTheme },
