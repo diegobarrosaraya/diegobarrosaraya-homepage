@@ -34,6 +34,7 @@ const image = new URL('/me.jpg', Astro.site);
         if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
       } catch (e) {}
     </script>
+    <slot name="head" />
     <ClientRouter />
   </head>
   <body>

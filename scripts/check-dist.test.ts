@@ -119,3 +119,45 @@ test('resume.pdf is a PDF printed from the current resume.json', async () => {
   const meta = JSON.parse(readFileSync('dist/resume.pdf.json', 'utf8'));
   assert.equal(meta.sha256, createHash('sha256').update(readFileSync('public/resume.json')).digest('hex'));
 });
+
+// Notes: the checks follow whatever src/content/notes holds at test time, so they hold with zero notes too.
+const noteSlugs = readdirSync('src/content/notes').filter((f) => f.endsWith('.md')).map((f) => f.slice(0, -3));
+const noteFrontmatter = (slug: string) => readFileSync(`src/content/notes/${slug}.md`, 'utf8').split(/^---$/m)[1] ?? '';
+const noteTags = (slug: string): string[] => {
+  const fm = noteFrontmatter(slug);
+  const flow = fm.match(/^tags:\s*\[(.*)\]\s*$/m);
+  if (flow) return flow[1].split(',').map((t) => t.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
+  const block = fm.match(/^tags:\s*\n((?:\s+-\s.*\n?)+)/m);
+  return block ? [...block[1].matchAll(/-\s+(.+)/g)].map((m) => m[1].trim().replace(/^["']|["']$/g, '')) : [];
+};
+const NOTE_LINK = /href="\/notes\/[^"/#?]+\/"/;
+
+test('with no notes, nothing links to a note page and the notes index is not indexed', (t) => {
+  if (noteSlugs.length > 0) return t.skip('notes present');
+  for (const f of htmlFilesUnder('dist')) assert.doesNotMatch(readFileSync(f, 'utf8'), NOTE_LINK, f);
+  const index = readFileSync('dist/notes/index.html', 'utf8');
+  assert.match(index, /<meta name="robots" content="noindex">/);
+  assert.match(index, /No notes yet\./);
+  const feed = readFileSync('dist/notes/rss.xml', 'utf8');
+  assert.ok(feed.startsWith('<?xml'));
+  assert.doesNotMatch(feed, /<item>/);
+});
+test('every note has a page with one h1, is listed under each of its tags, and is in the feed', (t) => {
+  if (noteSlugs.length === 0) return t.skip('no notes');
+  const index = readFileSync('dist/notes/index.html', 'utf8');
+  assert.doesNotMatch(index, /name="robots"/);
+  const feed = readFileSync('dist/notes/rss.xml', 'utf8');
+  assert.ok(feed.startsWith('<?xml'));
+  for (const slug of noteSlugs) {
+    const html = readFileSync(`dist/notes/${slug}/index.html`, 'utf8');
+    assert.equal(html.match(/<h1[\s>]/g)?.length, 1, slug);
+    const tags = noteTags(slug);
+    assert.ok(tags.length > 0, `${slug} has no tags to check`);
+    for (const tag of tags) {
+      const group = index.match(new RegExp(`<section[^>]*data-tag="${tag}"[^>]*>([\\s\\S]*?)</section>`))?.[1];
+      assert.ok(group, `${slug}: no group for tag ${tag}`);
+      assert.match(group, new RegExp(`href="/notes/${slug}/"`), `${slug} under ${tag}`);
+    }
+    assert.ok(feed.includes(`/notes/${slug}/`), `${slug} in feed`);
+  }
+});
