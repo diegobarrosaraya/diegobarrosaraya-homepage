@@ -1,6 +1,8 @@
 import { after, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, readlinkSync, rmSync, symlinkSync, writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -215,4 +217,67 @@ test('a failed run keeps the output of the last good run', () => {
   rmSync(join(vault, 'Guides', 'Other Guide.md'));
   assert.equal(run().ok, false);
   assert.deepEqual(outFiles(out), ['.gitkeep', 'acme-guide.md', 'other-guide.md']);
+});
+
+// Every file and link under a folder with its content, to show a refused run changed nothing.
+function snapshot(dir: string, rel = ''): Record<string, string> {
+  const shot: Record<string, string> = {};
+  for (const e of readdirSync(join(dir, rel), { withFileTypes: true })) {
+    const path = join(rel, e.name);
+    if (e.isSymbolicLink()) shot[path] = `link:${readlinkSync(join(dir, path))}`;
+    else if (e.isDirectory()) Object.assign(shot, { [path]: 'dir' }, snapshot(dir, path));
+    else shot[path] = readFileSync(join(dir, path), 'base64');
+  }
+  return shot;
+}
+
+test('output folders that overlap the vault or each other, or are symlinks, throw and change nothing', () => {
+  const { root, vault, out, publicDir, run } = setup();
+  assert.equal(run().ok, true);
+  const elsewhere = join(root, 'elsewhere');
+  mkdirSync(join(elsewhere, 'foreign'), { recursive: true });
+  writeFileSync(join(elsewhere, 'foreign', 'keep.txt'), 'keep');
+  symlinkSync(elsewhere, join(root, 'public-link'));
+  symlinkSync(out, join(root, 'out-link'));
+  const before = snapshot(root);
+  const cases: [string, string, RegExp][] = [
+    [out, vault, /publicDir overlaps the vault/],
+    [vault, publicDir, /out overlaps the vault/],
+    [join(vault, 'Guides'), publicDir, /out overlaps the vault/],
+    [out, join(vault, 'new', 'images'), /publicDir overlaps the vault/],
+    [out, root, /publicDir overlaps the vault/],
+    [out, out, /out and publicDir overlap/],
+    [out, join(out, 'images'), /out and publicDir overlap/],
+    [join(publicDir, 'md'), publicDir, /out and publicDir overlap/],
+    [out, join(root, 'public-link'), /publicDir is a symlink/],
+    [join(root, 'out-link'), publicDir, /out is a symlink/],
+  ];
+  for (const [o, p, message] of cases) {
+    assert.throws(() => syncVault({ vault, out: o, publicDir: p, rules }), message, `${o} ${p}`);
+  }
+  assert.deepEqual(snapshot(root), before);
+});
+
+test('a basename shared by two published notes fails only where a link uses it', () => {
+  const extra = {
+    'A/Guide.md': flagged('Guide A'), 'B/Guide.md': flagged('Guide B'),
+    'Guides/Linker.md': flagged('Linker', 'See [[Guide]].\nAnd [[A/Guide#Part|this]].\n`[[Guide]]`\n'),
+  };
+  const r = assertFailsAndWritesNothing(extra, ['ambiguous-link', 'ambiguous-link']);
+  assert.deepEqual(r.problems.map((p) => [p.where, p.line]), [['Guides/Linker.md', 1], ['Guides/Linker.md', 2]]);
+
+  const { run } = setup({ 'A/Guide.md': flagged('Guide A'), 'B/Guide.md': flagged('Guide B') });
+  assert.deepEqual(run().problems, []);
+});
+
+test('a file basename wins over a title, so a link to an unpublished file stays text', () => {
+  const { out, run } = setup({
+    'Guides/Foo.md': note('title: Real Foo File\ndescription: How it reads.\nupdated: 2026-01-01'),
+    'Guides/x.md': flagged('Foo'),
+    'Guides/Linker.md': flagged('Linker', 'See [[Foo]] and [[Long Title]] and [[short-name]].\n'),
+    'Guides/short-name.md': flagged('Long Title'),
+  });
+  assert.deepEqual(run().problems, []);
+  const linker = readFileSync(join(out, 'linker.md'), 'utf8');
+  assert.ok(linker.includes('See Foo and [Long Title](/notes/long-title/) and [short-name](/notes/long-title/).'));
 });

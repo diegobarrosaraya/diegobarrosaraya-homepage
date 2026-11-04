@@ -2,7 +2,7 @@
 // Reads the vault path and deny paths from .notes-sync.json and the private terms from
 // .private-terms (both gitignored). Writes files only; Diego reviews the diff and commits.
 import { existsSync, readFileSync, statSync } from 'node:fs';
-import { syncVault } from '../src/lib/notes/sync';
+import { SyncConfigError, syncVault } from '../src/lib/notes/sync';
 
 function fail(message: string): never {
   console.error(message);
@@ -31,8 +31,12 @@ let result;
 try {
   result = syncVault({ vault, out: 'src/content/notes', publicDir: 'public/notes', rules: { denyPaths, privateTerms } });
 } catch (e) {
-  // assertUsableRules names the empty list, never a term.
-  fail(`notes sync refused to run: ${(e as Error).message}`);
+  // Config errors name a list or a folder, never a term. Anything else may have come mid-write.
+  if (!(e instanceof SyncConfigError)) fail('notes sync stopped partway, check git status');
+  const { message } = e;
+  const file = message.startsWith('privateTerms') ? '.private-terms: '
+    : message.startsWith('denyPaths') || message.startsWith('vault') ? '.notes-sync.json: ' : '';
+  fail(`notes sync refused to run: ${file}${message}`);
 }
 
 if (!result.ok) {

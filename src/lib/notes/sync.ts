@@ -1,5 +1,7 @@
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join, posix } from 'node:path';
+import {
+  copyFileSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync,
+} from 'node:fs';
+import { basename, dirname, join, posix, resolve, sep } from 'node:path';
 import { parse, stringify } from 'yaml';
 import { FRONTMATTER, parseNote, slugify } from './parse';
 import { assertUsableRules, checkNote, type Rules } from './rules';
@@ -48,9 +50,71 @@ function findImage(name: string, noteRel: string, images: string[]): string[] {
 
 interface Output { slug: string; content: string; images: Map<string, string> }  // file name -> vault path
 
+// Thrown before anything is read or written: bad rules or unsafe output folders.
+export class SyncConfigError extends Error {}
+
+// Real path of `p`, or of its nearest existing parent plus the missing part, so nothing is created.
+function resolveReal(p: string): string {
+  const abs = resolve(p);
+  if (existsSync(abs)) return realpathSync(abs);
+  const parent = dirname(abs);
+  if (parent === abs) return abs;
+  return join(resolveReal(parent), basename(abs));
+}
+
+const within = (inner: string, outer: string) => inner === outer || inner.startsWith(outer.endsWith(sep) ? outer : outer + sep);
+const overlaps = (a: string, b: string) => within(a, b) || within(b, a);
+
+// The cleanup deletes files, so `out` and `publicDir` must be real folders apart from the vault and each other.
+function checkFolders(vault: string, out: string, publicDir: string): { vault: string; out: string; publicDir: string } {
+  for (const [name, p] of [['out', out], ['publicDir', publicDir]] as const) {
+    let link = false;
+    try { link = lstatSync(p).isSymbolicLink(); } catch { /* missing is fine */ }
+    if (link) throw new SyncConfigError(`${name} is a symlink`);
+  }
+  if (!existsSync(vault)) throw new SyncConfigError('vault does not exist');
+  const real = { vault: realpathSync(vault), out: resolveReal(out), publicDir: resolveReal(publicDir) };
+  if (overlaps(real.out, real.vault)) throw new SyncConfigError('out overlaps the vault');
+  if (overlaps(real.publicDir, real.vault)) throw new SyncConfigError('publicDir overlaps the vault');
+  if (overlaps(real.out, real.publicDir)) throw new SyncConfigError('out and publicDir overlap');
+  return real;
+}
+
+const noteKey = (target: string) => baseName(target.split('#')[0]).replace(/\.md$/i, '').trim().toLowerCase();
+
+// Wikilink keys to slugs, with Obsidian's order: a file basename wins over a title. A key that
+// points at two notes is left out and returned as ambiguous; a key whose only note is unpublished
+// is left out, so the link becomes plain text.
+function linkTargets(mdFiles: string[], notes: ParsedNote[], slugs: string[]) {
+  const slugByPath = new Map(notes.map((n, i) => [n.relPath, slugs[i]]));
+  const byBasename = new Map<string, Set<string | null>>();
+  for (const rel of mdFiles) {
+    const k = noteKey(rel);
+    if (!byBasename.has(k)) byBasename.set(k, new Set());
+    byBasename.get(k)!.add(slugByPath.get(rel) ?? null);
+  }
+  const byTitle = new Map<string, Set<string>>();
+  notes.forEach((n, i) => {
+    const k = n.title.toLowerCase();
+    if (byBasename.has(k)) return;
+    if (!byTitle.has(k)) byTitle.set(k, new Set());
+    byTitle.get(k)!.add(slugs[i]);
+  });
+  const published = new Map<string, string>();
+  const ambiguous = new Set<string>();
+  for (const [k, values] of [...byBasename, ...byTitle] as [string, Set<string | null>][]) {
+    if (values.size > 1) ambiguous.add(k);
+    else { const [v] = values; if (v) published.set(k, v); }
+  }
+  return { published, ambiguous };
+}
+
+const WIKILINK = /(?<!!)\[\[([^[\]]+?)\]\]/g;
+
 export function syncVault(opts: SyncOptions): SyncResult {
-  assertUsableRules(opts.rules);
-  const { vault, out, publicDir, rules } = opts;
+  try { assertUsableRules(opts.rules); } catch (e) { throw new SyncConfigError((e as Error).message); }
+  const { vault, out, publicDir } = checkFolders(opts.vault, opts.out, opts.publicDir);
+  const { rules } = opts;
   const files = walk(vault);
   const vaultImages = files.filter((f) => IMAGE_EXT.test(f));
   const problems: Problem[] = [];
@@ -65,13 +129,11 @@ export function syncVault(opts: SyncOptions): SyncResult {
   }
 
   const slugs = notes.map((n) => slugify(n.title));
-  const published = new Map<string, string>();
   notes.forEach((n, i) => {
     const slug = slugs[i];
     if (!slug || slugs.indexOf(slug) !== slugs.lastIndexOf(slug)) problems.push({ rule: 'slug', where: n.relPath });
-    published.set(n.title.toLowerCase(), slug);
-    published.set(baseName(n.relPath).replace(/\.md$/i, '').toLowerCase(), slug);
   });
+  const { published, ambiguous } = linkTargets(files.filter((f) => f.toLowerCase().endsWith('.md')), notes, slugs);
 
   const outputs: Output[] = notes.map((note, i) => {
     const slug = slugs[i];
@@ -80,6 +142,13 @@ export function syncVault(opts: SyncOptions): SyncResult {
     // Transform problems carry the title; report the path, like every other check.
     problems.push(...t.problems.map((p) => ({ ...p, where })));
     problems.push(...checkNote(note, t.markdown, rules));
+
+    // A link whose target names two notes would be guessed, so it fails instead.
+    maskCode(note.body).split('\n').forEach((text, line) => {
+      for (const m of text.matchAll(WIKILINK)) {
+        if (ambiguous.has(noteKey(m[1].split(/\\?\|/)[0]))) problems.push({ rule: 'ambiguous-link', where, line: line + 1 });
+      }
+    });
 
     const images = new Map<string, string>();
     for (const name of t.images) {
