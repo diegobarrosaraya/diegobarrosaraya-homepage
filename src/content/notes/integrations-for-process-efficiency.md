@@ -10,7 +10,7 @@ updated: 2026-08-07
 
 
 
-Most integration decisions in 2026 aren't binary "build or buy". They're a scoring exercise, and event-driven (webhook) design has displaced polling as the default.
+Most integration decisions in 2026 are a scoring exercise, not a choice between build and buy. Event-driven (webhook) design now replaces polling as the default.
 
 ## Decision flow
 
@@ -31,32 +31,32 @@ flowchart TD
 ## Steps
 
 1. **Audit manual workflow bottlenecks.** Status updates, ticket creation from chat messages, sync between your ticketing tool, wiki or docs tool and Slack, approval loops. Note frequency and person-hours.
-2. **Calculate true cost of ownership over six months.** A moderately complex integration (e.g. Salesforce) runs roughly $24k-$32k to build, but ongoing maintenance (~$3k/month) is typically over 70% of lifetime cost. Weigh that against a platform subscription.
+2. **Calculate true cost of ownership over six months.** A moderately complex integration (e.g. Salesforce) costs roughly $24k-$32k to build. Ongoing maintenance (~$3k/month) is typically over 70% of lifetime cost. Compare that with a platform subscription.
 3. **Score strategic importance vs. complexity** across criteria like: is this core IP or a utility, how many tools does it touch, speed-to-market pressure, auth/security burden. Roughly: 6-12 → build, 13-22 → hybrid, 23-30 → buy.
 4. **Pick the integration pattern.** Prefer event-driven webhooks (fire only when something happens) over scheduled polling; use scheduled cron jobs for genuine batch work, or a heartbeat-plus-webhook hybrid.
-5. **Pick the platform tier.** Native automation first (the tracker's built-in automation, Slack workflows), free and covers a surprising number of cases. Zapier for wide, simple multi-app automation. Make for complex visual logic. n8n when you need self-hosting, cost control, or compliance features.
-6. **Design permissions and audit controls up front.** Scope notifications to relevant channels, use role-based access, and audit integration changes monthly: most failures trace back to auth/permission misconfiguration, not the automation logic itself.
+5. **Pick the platform tier.** Native automation first (the tracker's built-in automation, Slack workflows). It is free and covers many cases. Zapier for wide, simple multi-app automation. Make for complex visual logic. n8n when you need self-hosting, cost control, or compliance features.
+6. **Design permissions and audit controls up front.** Scope notifications to relevant channels, use role-based access, and audit integration changes monthly. Most failures come from auth or permission misconfiguration, not from the automation logic.
 7. **Implement incrementally, native-first.** Start with a ticketing-tool automation rule posting to Slack before reaching for an external platform.
-8. **Monitor cost and API churn monthly.** API deprecation and auth changes are the biggest hidden cost, not bugs in your logic.
+8. **Monitor cost and API churn monthly.** API deprecations and auth changes are the largest hidden cost. Bugs in your own logic are usually smaller.
 
 ## Tips
 
-- Native platform automation (the tracker's built-in automation, Slack workflows, wiki or docs tool integrations) solves a surprising share of "we need an integration" requests at zero extra infrastructure cost.
-- Webhooks > polling: polling hammers the API even when nothing changed; webhooks fire only on real events and typically include retry logic.
-- Dedicate your best engineers to the 2-3 integrations that are genuinely a competitive advantage; buy or low-code the long tail.
+- Native platform automation (the tracker's built-in automation, Slack workflows, wiki or docs tool integrations) handles many "we need an integration" requests with no extra infrastructure cost.
+- Webhooks > polling: polling calls the API even when nothing changed. Webhooks fire only on real events and typically include retry logic.
+- Put your best engineers on the 2-3 integrations that give a real competitive advantage. Buy or use low-code for the rest.
 - Pricing model matters: Zapier/Make charge per *operation* (expensive for 10+ step workflows); n8n charges per *execution* (whole workflow = one unit), often 80-90% cheaper for complex flows.
 - Use template variables in your tracker's automation messages (`{{ticket.id}}`, `{{ticket.summary}}`) instead of custom code to carry context into Slack.
 - For regulated environments, n8n's self-hosting, external secrets vaults, and RBAC matter in ways Zapier/Make don't offer.
 
 ## Common pitfalls
 
-- **Underestimating total cost of ownership**: initial build is only ~30% of lifetime cost; ongoing API-churn maintenance is the real tax.
+- **Underestimating total cost of ownership**: the initial build is about 30% of lifetime cost. Ongoing API-churn maintenance is the larger share.
 - **Building custom integrations for non-strategic work**: every upstream API change becomes an unplanned engineering task.
 - **Polling instead of event-driven triggers**: wastes API calls and misses the retry semantics webhooks give you for free.
 - **Neglecting permissions/data scope**: most breakage in integrations between your ticketing tool, Slack and wiki or docs tool is auth/permission misconfiguration, not logic bugs.
 - **Choosing Zapier for a 10+ step workflow**: the per-operation pricing gets expensive fast; Make or n8n fit better.
-- **Skipping native platform features**: teams sometimes reach for Zapier/n8n when the tracker's built-in automation or native Slack workflows already cover the case.
-- **Assuming APIs stay stable**: budget ongoing time for deprecations, auth changes, and rate-limit adjustments as a standing cost, not a one-off.
+- **Skipping native platform features**: teams reach for Zapier or n8n when the tracker's built-in automation or native Slack workflows already cover the case.
+- **Assuming APIs stay stable**: budget ongoing time for deprecations, auth changes, and rate-limit changes. Treat this as a recurring cost.
 
 ## Related
 

@@ -11,7 +11,7 @@ updated: 2026-08-14
 
 
 
-Antigravity ships a browser-based agent manager, but the same agent runs headless from a terminal. Once it's a CLI, it composes with everything else you script: cron, CI, git hooks, other CLIs. The next lever past "one agent, one task" is splitting work across subagents, and the lever past that is a harness, a script that drives the agent loop deterministically instead of trusting one long free-form session.
+Antigravity ships a browser-based agent manager, but the same agent runs headless from a terminal. Once it is a CLI, you can script it with cron, CI, git hooks, and other CLIs. The next step past "one agent, one task" is splitting work across subagents. The step after that is a harness: a script that drives the agent loop in a fixed order, instead of trusting one long free-form session.
 
 ## Flow
 
@@ -28,30 +28,30 @@ flowchart TD
 
 ## Steps
 
-1. **Install and auth once.** `npm install -g @google/gemini-cli` (or the Antigravity-bundled binary), then run `gemini` and choose Login with Google in the prompt. Same OAuth identity as the Antigravity IDE/browser agent, no separate API key management for personal use.
-2. **Use one-shot mode for anything scriptable.** `gemini -p "<prompt>"` runs non-interactively and exits; add `--yolo` (or the CLI's equivalent auto-approve flag) to skip confirmation prompts in CI, cron, or git hooks. Never `--yolo` against a shared/production environment without a human-reviewed diff downstream.
-3. **Split before you scale.** A single agent session degrades on long, multi-part tasks, context drifts, earlier instructions get deprioritized. Break the task into independent units (one file, one endpoint, one test suite) *before* reaching for more agent calls.
-4. **Fan out subagents only when units are truly independent.** If task B needs task A's output, that's a pipeline, not parallel subagents, run them sequentially. If five files need the same mechanical edit with zero shared state, that's parallel.
-5. **Promote a repeated multi-step workflow into a harness.** The moment you're running the same "prompt → check → prompt → check" sequence by hand more than twice, script it. The harness (a plain script, not another agent) owns the loop, retries, and pass/fail gates; the agent just fills in the reasoning-heavy step it's called for.
-6. **Put a real check after every non-trivial step**, not a vibe check on the transcript: run the test suite, run the linter, diff against `main`, assert on structured output. An agent step with no verification step is a step you're trusting blind.
-7. **Review the diff, not the narration.** A subagent's summary describes intent, not necessarily what happened. Read what actually changed before treating a step as done.
+1. **Install and auth once.** Run `npm install -g @google/gemini-cli` (or use the Antigravity-bundled binary). Then run `gemini` and choose Login with Google in the prompt. It uses the same OAuth identity as the Antigravity IDE and browser agent. Personal use needs no separate API key.
+2. **Use one-shot mode for anything scriptable.** `gemini -p "<prompt>"` runs non-interactively and exits. Add `--yolo` (or the CLI's equivalent auto-approve flag) to skip confirmation prompts in CI, cron, or git hooks. Do not use `--yolo` against a shared or production environment unless a person reviews the diff afterward.
+3. **Split before you scale.** One agent session gets worse on long, multi-part tasks. Context drifts, and earlier instructions lose weight. Split the task into independent units (one file, one endpoint, one test suite) before you make more agent calls.
+4. **Fan out subagents only when units are truly independent.** If task B needs task A's output, run them in order. That is a pipeline, not parallel work. If five files need the same mechanical edit and share no state, run them in parallel.
+5. **Turn a repeated multi-step workflow into a harness.** Once you run the same "prompt, check, prompt, check" sequence by hand more than twice, script it. The harness (a plain script, not another agent) owns the loop, the retries, and the pass/fail checks. The agent fills in the reasoning-heavy step it is called for.
+6. **Run a real check after every non-trivial step.** Do not rely on a read of the transcript. Run the test suite, run the linter, diff against `main`, or assert on structured output. An agent step with no check is a step you trust blind.
+7. **Review the diff, not the narration.** A subagent's summary states what it meant to do, not always what it did. Read the actual changes before you mark a step done.
 
 ## Tips
 
-- One-shot CLI calls compose with anything that can shell out: a git pre-commit hook, a Makefile target, a scheduled job. Treat the agent as a Unix-style filter, not a chat window.
-- Give each subagent a self-contained prompt: file paths, the exact function/symbol, what "done" looks like. It has no memory of your conversation, a vague "fix the bug" produces a vague fix.
-- Independent ≠ unrelated. Five call sites of the same renamed function are independent edits (no shared state) even though they're part of one refactor, safe to parallelize.
-- A harness is not a bigger prompt. If you're tempted to cram "do X, then verify Y, then if Y fails do Z" into one mega-prompt, that branching belongs in the script, not the model.
-- Keep harness scripts boring: a loop, a subprocess call, an exit-code check. The interesting part is the agent call inside it, not the scaffolding around it.
+- One-shot CLI calls work with anything that can shell out: a git pre-commit hook, a Makefile target, a scheduled job. Treat the agent as a Unix-style filter, not a chat window.
+- Give each subagent a self-contained prompt with file paths, the exact function or symbol, and what done looks like. It has no memory of your conversation. A vague "fix the bug" gets a vague fix.
+- Independent does not mean unrelated. Five call sites of one renamed function are independent edits with no shared state, even though they belong to one refactor. They are safe to parallelize.
+- A harness is not a bigger prompt. If you are tempted to put "do X, verify Y, and if Y fails do Z" in one prompt, put that branching in the script, not the model.
+- Keep harness scripts simple: a loop, a subprocess call, an exit-code check. The agent call is the part that matters. The scaffolding is not.
 
 ## Common pitfalls
 
-- **Treating the browser agent manager and the CLI as different tools**: they're the same underlying agent; the CLI just drops the UI, which is exactly what you want for automation.
-- **`--yolo` in a shared environment**: auto-approve is for disposable branches/sandboxes, not anything touching main or production config.
-- **Parallelizing tasks with hidden shared state** (same file, same lock, same external resource), looks independent, isn't; you get merge conflicts or race conditions instead of speedup.
-- **One subagent doing five unrelated things**: defeats the purpose; if the prompt needs "and also," split it.
-- **No verification step**: an agent claiming success and an agent actually succeeding are different events; only a run test/lint/diff distinguishes them.
-- **Reaching for a harness on a one-off task**: if you'll run it once, just run the CLI directly; scripting the loop only pays off once you're repeating it.
+- **Treating the browser agent manager and the CLI as different tools**: they run the same agent. The CLI drops the UI, which is what you want for automation.
+- **`--yolo` in a shared environment**: use auto-approve only on disposable branches or sandboxes. Never use it on anything that touches main or production config.
+- **Parallelizing tasks with hidden shared state** (same file, same lock, same external resource): these look independent but are not. You get merge conflicts or race conditions instead of a speedup.
+- **One subagent doing five unrelated things**: this defeats the purpose. If the prompt says "and also," split it.
+- **No verification step**: an agent that says it succeeded and an agent that did succeed are different things. Only a test, a lint run, or a diff tells them apart.
+- **Building a harness for a one-off task**: if you run it once, run the CLI directly. A script for the loop pays off only when you repeat it.
 
 ## Related
 

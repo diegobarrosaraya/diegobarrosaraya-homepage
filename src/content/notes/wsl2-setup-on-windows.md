@@ -11,7 +11,7 @@ updated: 2026-08-07
 
 
 
-WSL2 (Windows Subsystem for Linux 2) runs a real Linux kernel inside a lightweight Hyper-V VM, giving you a native Linux dev environment without leaving Windows. Setup is a single command; getting it *fast* takes a bit of tuning.
+WSL2 (Windows Subsystem for Linux 2) runs a real Linux kernel inside a Hyper-V VM. You get a Linux dev environment without leaving Windows. Setup is one command. Making it *fast* takes some tuning.
 
 ## Setup flow
 
@@ -42,7 +42,7 @@ flowchart TD
    firewall=true
    localhostForwarding=true
    ```
-   A good memory rule of thumb is host RAM minus 8GB. Apply changes with `wsl --shutdown` (closing the terminal window is not enough).
+   A good rule for memory is host RAM minus 8GB. Apply changes with `wsl --shutdown` (closing the terminal window is not enough).
 5. **Enable systemd** in `/etc/wsl.conf` inside the distro:
    ```ini
    [boot]
@@ -52,12 +52,12 @@ flowchart TD
 6. **Install Windows Terminal** (Microsoft Store), it auto-creates a profile per WSL distro.
 7. **Install VS Code's "Remote - WSL" extension** so `code .` from inside Linux opens a fully remote-aware editor window.
 8. **Keep project files inside the WSL filesystem** (e.g. `~/projects`), not under `/mnt/c/...`. Access them from Windows Explorer via `\\wsl$\<DistroName>\home\<User>` if needed.
-9. **GPU passthrough (optional, for AI workloads):** install only the CUDA *Toolkit* inside WSL (never the Linux GPU driver, that comes from Windows via GPU-PV). Verify with `nvidia-smi` inside the distro.
+9. **GPU passthrough (optional, for AI workloads):** install only the CUDA *Toolkit* inside WSL (never the Linux GPU driver, which comes from Windows via GPU-PV). Verify with `nvidia-smi` inside the distro.
 
 ## Tips
 
-- `networkingMode=mirrored` (Windows 11 22H2+) takes WSL2 networking from ~3 Mbps to near-native speeds, set it by default.
-- Exclude the WSL VHDX, Docker data, and `~/projects` from Windows Defender real-time scanning; without this, I/O can be 10-50x slower.
+- `networkingMode=mirrored` (Windows 11 22H2+) speeds up WSL2 networking from ~3 Mbps to near-native speed. Set it by default.
+- Exclude the WSL VHDX, Docker data, and `~/projects` from Windows Defender real-time scanning. Without this, I/O can be 10-50x slower.
 - Use version managers inside WSL (`pyenv`, `fnm`) rather than installing Python/Node globally.
 - Mount extra drives via `/etc/fstab` with Virtio-FS/9p rather than reaching across `/mnt/c/`.
 
@@ -68,7 +68,7 @@ flowchart TD
 - **Forgetting `systemd=true`**: Docker/Tailscale/snapd silently fail to start.
 - **Third-party firewalls/AV** (Kaspersky, AVG, Avast, Symantec) have been reported to block WSL networking outright.
 - **`.wslconfig` changes not applying**: a plain terminal close doesn't restart the VM; run `wsl --shutdown` first.
-- Running an older Windows 11 build (<22H2) with `networkingMode=mirrored` set causes network isolation failures, check with `winver`.
+- On a Windows 11 build older than 22H2, `networkingMode=mirrored` causes network isolation failures. Check your build with `winver`.
 
 ## Related
 

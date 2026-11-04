@@ -1,6 +1,6 @@
 ---
 title: PowerToys and winget
-description: Guide to building a fast, reproducible Windows power-user setup with winget (package management) and Microsoft PowerToys (window management, launcher, OCR, batch rename).
+description: Guide to a repeatable Windows setup with winget (package management) and Microsoft PowerToys (window management, launcher, OCR, batch rename).
 tags:
   - windows
   - tooling
@@ -10,7 +10,7 @@ updated: 2026-08-07
 
 
 
-winget (Windows Package Manager) and Microsoft PowerToys turn Windows setup from a click-through chore into scripted, reproducible infrastructure. This is the direct answer to "how do I use Windows like a pro."
+winget (Windows Package Manager) and Microsoft PowerToys replace click-through Windows setup with scripts you can run again on any machine. This answers "how do I use Windows like a pro."
 
 ## Setup flow
 
@@ -49,13 +49,13 @@ flowchart TD
    ```
    winget import applist.json --ignore-versions --accept-package-agreements
    ```
-9. **Turn on Command Not Found** in PowerToys settings, when a PowerShell 7 command isn't found, it suggests the winget package that provides it.
+9. **Turn on Command Not Found** in PowerToys settings. When a PowerShell 7 command isn't found, it suggests the winget package that provides it.
 
 ## Tips
 
-- Use `--include-versions` when exporting a *pinned* reference build; use `--ignore-versions` on import so you pick up newer stable releases instead of fighting version drift.
+- Use `--include-versions` when exporting a *pinned* reference build. Use `--ignore-versions` on import so you get newer stable releases instead of version mismatches.
 - Store `applist.json` in your dotfiles repo alongside a short note on what each tool is for.
-- Enable FancyZones' "Override Windows Snap" if you run many windows, it remaps `Win+Arrow` to zone navigation.
+- If you run many windows, enable FancyZones' "Override Windows Snap." It remaps `Win+Arrow` to zone navigation.
 - PowerToys' Environment Variables editor supports named *profiles* (e.g. a `Java_Dev` profile) you toggle on/off instead of hand-editing `PATH`.
 - Text Extractor needs the OCR language pack installed, check with `Get-WindowsCapability -Online | Where-Object {$_.Name -Like 'Language.OCR*'}`.
 
@@ -65,9 +65,9 @@ flowchart TD
 - **Running from a non-admin prompt**: installs needing elevation fail silently; test elevated first.
 - **`--ignore-versions` on import** can pull in a breaking newer release; pin with `--include-versions` for anything critical.
 - **FancyZones won't snap elevated windows** (e.g. an admin Terminal) unless PowerToys itself runs as administrator.
-- **Environment Variables profiles are User-scope only**: System variables need admin mode, which trips people up switching contexts.
+- **Environment Variables profiles are User-scope only**: System variables need admin mode. People often miss this when they switch contexts.
 - **Large `applist.json` (100+ apps)** slows down import, split into `essentials.json` / `dev-tools.json` and import in stages.
-- `winget import` continues past failures by default, check the log at `%LOCALAPPDATA%\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState\DiagOutputDir` to confirm everything actually installed.
+- `winget import` continues past failures by default, check the log at `%LOCALAPPDATA%\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState\DiagOutputDir` to confirm that every package installed.
 
 ## Related
 
