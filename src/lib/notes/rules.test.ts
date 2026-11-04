@@ -111,8 +111,8 @@ test('case and NFKC variants of an allowed phrase are allowed', () => {
 });
 
 test('allowed phrases do not hide day-job words', () => {
-  const allow: Rules = { ...rules, allowedPhrases: ['acme-example-cli', 'jira cli tool'] };
-  const md = 'Run acme-example-cli with the jira cli tool.\n';
+  const allow: Rules = { ...rules, allowedPhrases: ['acme-example-cli', 'the acme-example jira tool'] };
+  const md = 'Run acme-example-cli with the acme-example jira tool.\n';
   assert.deepEqual(checkNote(note({ body: md }), md, allow),
     [{ rule: 'day-job-word', where: 'Guides/Clean.md: body', line: 1 }]);
 });
@@ -124,5 +124,65 @@ test('assertUsableRules rejects a blank or short allowed phrase without naming i
   for (const bad of ['', '   ', 'acme-', ' ＡＢＣ　 ', 'ab​cde']) {
     assert.throws(() => assertUsableRules({ ...ok, allowedPhrases: ['acme-example-cli', bad] }), (e: Error) =>
       e.message.includes('allowPhrases') && (!bad.trim() || !e.message.includes(bad.trim())));
+  }
+});
+
+test('assertUsableRules rejects a phrase that equals a term or holds only a piece of one', () => {
+  const named = (e: Error) => e.message.includes('allowPhrases')
+    && !/acme|example|xample|driver/i.test(e.message);
+  const cases: [string[], string[]][] = [
+    [['acme-example'], ['acme-example']],
+    [['acme-example'], ['ACME-Example']],
+    [['acme-example'], ['acme-exa']],
+    [['acme-example driver'], ['xample driver']],
+    [['acme-example-cli'], ['example-cli']],
+  ];
+  for (const [privateTerms, allowedPhrases] of cases) {
+    assert.throws(() => assertUsableRules({ denyPaths: ['Private/'], privateTerms, allowedPhrases }), named,
+      allowedPhrases[0]);
+  }
+  assert.doesNotThrow(() => assertUsableRules({
+    denyPaths: ['Private/'], privateTerms: ['acme-example'],
+    allowedPhrases: ['acme-example-cli', 'the acme-example driver'],
+  }));
+});
+
+test('a phrase that equals or splits a term never hides it, even without assertUsableRules', () => {
+  for (const [term, phrase, md] of [
+    ['acme-example', 'acme-example', 'Ask acme-example.'],
+    ['acme-example', 'acme-exa', 'Ask acme-example.'],
+    ['acme-example driver', 'xample driver', 'the acme-example driver'],
+    ['acme-example-cli', 'example-cli', 'run acme-example-cli'],
+  ]) {
+    const r: Rules = { denyPaths: ['Private/'], privateTerms: [term], allowedPhrases: [phrase] };
+    assert.deepEqual(checkNote(note({ body: md }), md, r).map((p) => p.rule), ['private-term'], phrase);
+  }
+});
+
+test('an allowed phrase inside a longer word does not hide the term', () => {
+  const allow: Rules = { ...rules, allowedPhrases: ['acme-example-cli'] };
+  for (const md of ['acme-example-cli-extra', 'xacme-example-cli', 'acme-example-clix', 'myacme-example-cli-team',
+    'acme-example-cli_x', 'acme-example-cli2']) {
+    assert.deepEqual(checkNote(note({ body: md }), md, allow).map((p) => p.rule), ['private-term'], md);
+  }
+});
+
+test('masking runs once, so one masked phrase cannot make room for another', () => {
+  const allow: Rules = { ...rules, allowedPhrases: ['the acme-example driver', 'acme-example driver'] };
+  const md = 'acme-examplethe acme-example driverdriver';
+  assert.deepEqual(checkNote(note({ body: md }), md, allow).map((p) => p.rule), ['private-term']);
+});
+
+test('an allowed phrase next to punctuation is still allowed', () => {
+  const allow: Rules = { ...rules, allowedPhrases: ['acme-example-cli'] };
+  for (const md of ['acme-example-cli.', 'acme-example-cli,', '(acme-example-cli)', '`acme-example-cli`',
+    '[acme-example-cli]', '/acme-example-cli/', 'see acme-example-cli', 'a\tacme-example-cli\t']) {
+    assert.deepEqual(checkNote(note({ body: md }), md, allow), [], md);
+  }
+});
+
+test('invisible operator characters do not hide a term', () => {
+  for (const md of ['acme\u2061-example', 'acme\u2062-example', 'acme\u2063-example', 'acme\u2064-example']) {
+    assert.deepEqual(check(note({ body: md }), md).map((p) => p.rule), ['private-term'], JSON.stringify(md));
   }
 });
